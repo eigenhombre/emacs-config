@@ -29,7 +29,7 @@
   '(auto-complete autopair cider color-theme zenburn-theme
     goto-last-change hy-mode main-line maxframe clojure-mode epl popup
     rainbow-delimiters smex undo-tree flycheck flycheck-hdevtools
-    kibit-mode paredit auto-indent-mode))
+    kibit-mode paredit auto-indent-mode slamhound))
 
 
 ;;;; Install my-packages as necessary:
