@@ -53,10 +53,10 @@
 	    (autopair-mode 0)))
 
 
-;; ;; Autocomplete mode -- let's try company-mode for awhile.
-;; (require 'auto-complete)
-;; (add-hook 'prog-mode-hook 'auto-complete-mode)
-(add-hook 'after-init-hook 'global-company-mode)
+;; ;; Autocomplete mode
+(require 'auto-complete)
+(add-hook 'prog-mode-hook 'auto-complete-mode)
+;;(add-hook 'after-init-hook 'global-company-mode)
 
 
 ;;;; Clever hack so lambda shows up as λ
