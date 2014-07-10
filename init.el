@@ -107,6 +107,7 @@
 (add-hook 'clojure-mode-hook
    '(lambda ()
       (paredit-mode 1)
+      (highlight-lines-matching-regexp ".\\{81\\}" 'hi-pink)
       (define-key clojure-mode-map (kbd "C-c e") 'shell-eval-last-expression)
       (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
       (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
