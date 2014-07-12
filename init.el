@@ -104,10 +104,21 @@
     (cider-interactive-eval-print last-sexp)))
 
 
+(defun highlight-long-lines ()
+  "Turn on highlighting of long lines."
+  (interactive)
+  (highlight-lines-matching-regexp ".\\{81\\}" 'hi-pink))
+
+(defun unhighlight-long-lines ()
+  "Turn off highlighting of long lines."
+  (interactive)
+  (unhighlight-regexp "^.*\\(?:.\\{81\\}\\).*$"))
+
+
 (add-hook 'clojure-mode-hook
    '(lambda ()
       (paredit-mode 1)
-      (highlight-lines-matching-regexp ".\\{81\\}" 'hi-pink)
+      (highlight-long-lines)
       (define-key clojure-mode-map (kbd "C-c e") 'shell-eval-last-expression)
       (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
       (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
@@ -197,6 +208,9 @@
 (global-set-key [select] 'set-mark-command)
 (global-set-key [insertchar] 'yank)
 (global-set-key [deletechar] 'kill-region)
+
+(global-set-key "\C-oH" 'highlight-long-lines)
+(global-set-key "\C-oh" 'unhighlight-long-lines)
 
 
 (defun set-exec-path-from-shell-PATH ()
