@@ -27,9 +27,10 @@
 (defvar my-packages)
 (setq my-packages
       '(company auto-complete autopair cider color-theme zenburn-theme
-    goto-last-change hy-mode main-line maxframe clojure-mode epl popup
-    rainbow-delimiters smex undo-tree flycheck flycheck-hdevtools
-    kibit-mode paredit auto-indent-mode slamhound))
+		diminish goto-last-change hy-mode main-line maxframe
+		clojure-mode epl popup rainbow-delimiters smex
+		undo-tree flycheck flycheck-hdevtools kibit-mode
+		paredit auto-indent-mode slamhound))
 
 
 ;;;; Install my-packages as necessary:
@@ -51,6 +52,15 @@
 	  (lambda ()
 	    (paredit-mode 1)
 	    (autopair-mode 0)))
+
+
+;; Write backup files to own directory
+(setq backup-directory-alist
+      `(("." . ,(expand-file-name
+                 (concat user-emacs-directory "backups")))))
+
+;; Make backups of files, even when they're in version control
+(setq vc-make-backup-files t)
 
 
 ;; ;; Autocomplete mode
@@ -102,6 +112,32 @@
     (with-current-buffer (current-buffer)
       (insert ";;=>"))
     (cider-interactive-eval-print last-sexp)))
+
+
+;; A few paredit things, also from whattheemacsd.com:
+(defun paredit--is-at-start-of-sexp ()
+  (and (looking-at "(\\|\\[")
+       (not (nth 3 (syntax-ppss))) ;; inside string
+       (not (nth 4 (syntax-ppss))))) ;; inside comment
+
+(defun paredit-duplicate-closest-sexp ()
+  (interactive)
+  ;; skips to start of current sexp
+  (while (not (paredit--is-at-start-of-sexp))
+    (paredit-backward))
+  (set-mark-command nil)
+  ;; while we find sexps we move forward on the line
+  (while (and (bounds-of-thing-at-point 'sexp)
+              (<= (point) (car (bounds-of-thing-at-point 'sexp)))
+              (not (= (point) (line-end-position))))
+    (forward-sexp)
+    (while (looking-at " ")
+      (forward-char)))
+  (kill-ring-save (mark) (point))
+  ;; go to the next line and copy the sexprs we encountered
+  (paredit-newline)
+  (yank)
+  (exchange-point-and-mark))
 
 
 (defun highlight-long-lines ()
@@ -178,6 +214,7 @@
 (global-set-key "\C-ot" 'beginning-of-buffer)
 (global-set-key "\C-N" 'enlarge-window)
 (global-set-key "\C-o\C-n" 'enlarge-window-horizontally)
+(global-set-key "\C-oc" 'paredit-duplicate-closest-sexp)
 (global-set-key "\C-ol" 'goto-line)
 (global-set-key "\C-ob" 'end-of-buffer)
 (global-set-key "\C-op" 'fill-region)
@@ -212,6 +249,15 @@
 (global-set-key "\C-oH" 'highlight-long-lines)
 (global-set-key "\C-oh" 'unhighlight-long-lines)
 
+;; Thanks http://whattheemacsd.com/ :
+(global-set-key (kbd "M-j")
+                (lambda ()
+                  (interactive)
+                  (join-line -1)))
+
+;; Show trailing whitespace, 'cause we hates it:
+(setq-default show-trailing-whitespace t)
+
 
 (defun set-exec-path-from-shell-PATH ()
   "Set up Emacs' `exec-path' and PATH environment variable to match
@@ -232,7 +278,29 @@
   (global-set-key (kbd "s--") 'text-scale-decrease))
 
 
-(setq-default show-trailing-whitespace t)
+;; Mode line hacks from http://whattheemacsd.com/
+(defmacro rename-modeline (package-name mode new-name)
+  `(eval-after-load ,package-name
+     '(defadvice ,mode (after rename-modeline activate)
+        (setq mode-name ,new-name))))
+
+(rename-modeline "clojure-mode" clojure-mode "Clj")
+
+
+(defun comint-delchar-or-eof-or-kill-buffer (arg)
+  "From whattheemacsd.com: With this snippet, another press of C-d
+  will kill the buffer.
+  It's pretty nice, since you then just tap C-d twice to get rid of the
+  shell and go on about your merry way."
+  (interactive "p")
+  (if (null (get-buffer-process (current-buffer)))
+      (kill-buffer)
+    (comint-delchar-or-maybe-eof arg)))
+
+(add-hook 'shell-mode-hook
+          (lambda ()
+            (define-key shell-mode-map
+              (kbd "C-d") 'comint-delchar-or-eof-or-kill-buffer)))
 
 
 (when window-system
