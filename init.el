@@ -30,7 +30,8 @@
 		diminish goto-last-change hy-mode main-line maxframe
 		clojure-mode epl popup rainbow-delimiters smex
 		undo-tree flycheck flycheck-hdevtools kibit-mode
-		paredit auto-indent-mode slamhound))
+		git-timemachine paredit auto-indent-mode slamhound
+		midje-mode))
 
 
 ;;;; Install my-packages as necessary:
