@@ -231,6 +231,7 @@
 (global-set-key "\C-op" 'fill-region)
 (global-set-key "\C-og" 'save-buffers-kill-emacs)
 (global-set-key "\C-od" 'downcase-region)
+(global-set-key "\C-oR" 'indent-region)
 (global-set-key "\C-or" 'rgrep)
 (global-set-key "\C-oo" 'overwrite-mode)
 (global-set-key "\C-L" 'delete-other-windows)
