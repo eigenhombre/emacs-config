@@ -31,7 +31,7 @@
 		clojure-mode epl popup rainbow-delimiters smex
 		undo-tree flycheck flycheck-hdevtools kibit-mode
 		git-timemachine paredit auto-indent-mode slamhound
-		midje-mode))
+		midje-mode hungry-delete))
 
 
 ;;;; Install my-packages as necessary:
@@ -317,6 +317,10 @@
 
 (when window-system
   (load-theme 'zenburn t))
+
+;; Try out hungry-delete
+(require 'hungry-delete)
+(global-hungry-delete-mode)
 
 
 (provide 'init)
