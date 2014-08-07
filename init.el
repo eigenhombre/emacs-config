@@ -26,7 +26,7 @@
 
 (defvar my-packages)
 (setq my-packages
-      '(company auto-complete autopair cider color-theme zenburn-theme
+      '(company auto-complete autopair ac-cider cider color-theme zenburn-theme
 		diminish goto-last-change hy-mode main-line maxframe
 		clojure-mode epl popup rainbow-delimiters smex
 		undo-tree flycheck flycheck-hdevtools kibit-mode
