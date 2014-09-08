@@ -30,7 +30,7 @@
 		diminish goto-last-change hy-mode main-line maxframe
 		clojure-mode epl popup rainbow-delimiters smex
 		undo-tree flycheck flycheck-hdevtools kibit-mode
-		git-timemachine paredit auto-indent-mode slamhound
+		git-timemachine paredit auto-indent-mode slamhound slime
 		midje-mode hungry-delete))
 
 
@@ -115,8 +115,23 @@
     ;; we have to be sure the evaluation won't result in an error
     (cider-eval-and-get-value last-sexp)
     (with-current-buffer (current-buffer)
-      (insert ";;=>"))
+      (insert ";;=>\n"))
     (cider-interactive-eval-print last-sexp)))
+
+
+(defun cider-format-with-out-str-pprint-eval (form)
+  "Return a string of Clojure code that will return pretty-printed FORM."
+  (format "(clojure.core/let [x %s] (with-out-str (clojure.pprint/pprint x)))" form))
+
+
+(defun cider-eval-last-sexp-and-pprint-append ()
+  "Evaluate the expression preceding point and append pretty-printed result."
+  (interactive)
+  (let ((last-sexp (cider-last-sexp)))
+    ;; we have to be sure the evaluation won't result in an error
+    (with-current-buffer (current-buffer)
+      (insert ";;=>\n")
+      (insert (cider-eval-and-get-value (cider-format-with-out-str-pprint-eval last-sexp))))))
 
 
 ;; A few paredit things, also from whattheemacsd.com:
@@ -157,16 +172,18 @@
 
 
 (add-hook 'clojure-mode-hook
-   '(lambda ()
-      (paredit-mode 1)
-      (highlight-long-lines)
-      (define-key clojure-mode-map (kbd "C-c e") 'shell-eval-last-expression)
-      (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
-      (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
-      (define-key clojure-mode-map (kbd "C-o y")
-	'cider-eval-last-sexp-and-append)
-      (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
-      (define-key clojure-mode-map (kbd "C-c x") 'shell-eval-defun)))
+          '(lambda ()
+             (paredit-mode 1)
+             (highlight-long-lines)
+             (define-key clojure-mode-map (kbd "C-c e") 'shell-eval-last-expression)
+             (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
+             (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
+	     (define-key clojure-mode-map (kbd "C-o y")
+               'cider-eval-last-sexp-and-append)
+             (define-key clojure-mode-map (kbd "C-o Y")
+               'cider-eval-last-sexp-and-pprint-append)
+	     (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
+             (define-key clojure-mode-map (kbd "C-c x") 'shell-eval-defun)))
 
 
 ;; Minibuffer size
@@ -326,6 +343,18 @@
 (require 'hungry-delete)
 (global-hungry-delete-mode)
 
+
+;; Common Lisp stuff
+;; (add-to-list 'load-path )
+(require 'slime-autoloads)
+(setq inferior-lisp-program "/usr/local/bin/sbcl")
+(setq slime-contribs '(slime-fancy))
+(add-hook 'lisp-mode-hook
+          '(lambda ()
+             (paredit-mode 1)
+             (highlight-long-lines)
+             (define-key lisp-mode-map (kbd "C-o j") 'slime)
+	     (define-key lisp-mode-map (kbd "s-i") 'slime-eval-last-expression)))
 
 (provide 'init)
 ;;; init.el ends here
