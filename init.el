@@ -55,6 +55,10 @@
 	    (autopair-mode 0)))
 
 
+;; 2 space Ruby indents
+(setq ruby-indent-level 2)
+
+
 ;; Write backup files to own directory
 (setq backup-directory-alist
       `(("." . ,(expand-file-name
