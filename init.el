@@ -28,12 +28,12 @@
 
 (defvar my-packages)
 (setq my-packages
-      '(company auto-complete autopair ac-cider cider color-theme zenburn-theme
-		diminish goto-last-change hy-mode main-line maxframe
-		clojure-mode epl popup rainbow-delimiters smex
-		undo-tree flycheck flycheck-hdevtools kibit-mode
-		git-timemachine paredit auto-indent-mode slamhound slime
-		midje-mode hungry-delete))
+     '(company auto-complete autopair ac-cider cider color-theme
+		zenburn-theme diminish goto-last-change main-line
+		maxframe clojure-mode epl popup rainbow-delimiters
+		smex undo-tree flycheck flycheck-hdevtools
+		git-timemachine paredit auto-indent-mode slamhound
+		slime midje-mode hungry-delete))
 
 
 ;;;; Install my-packages as necessary:
