@@ -26,11 +26,12 @@
 
 (defvar my-packages)
 (setq my-packages
-      '(company auto-complete autopair ac-cider cider color-theme zenburn-theme
-		diminish goto-last-change hy-mode main-line maxframe
-		clojure-mode epl popup rainbow-delimiters smex
-		undo-tree flycheck flycheck-hdevtools kibit-mode
-		git-timemachine paredit auto-indent-mode slamhound slime
+      '(company auto-complete autopair ac-cider cider color-theme
+		zenburn-theme diminish goto-last-change hy-mode
+		main-line maxframe clojure-mode epl popup
+		rainbow-delimiters smex undo-tree flycheck
+		flycheck-hdevtools kibit-mode git-timemachine paredit
+		auto-indent-mode slamhound slime lorem-ipsum
 		midje-mode hungry-delete))
 
 
@@ -234,10 +235,23 @@
 			  (interactive)
 			  (find-file "~/.emacs.d/init.el")))
 (global-set-key "\C-od" 'delete-horizontal-space)
-(global-set-key "\C-of" 'forward-word)
+;; Set up Midje fact with mark inserted at beginning of comment text
+;; (refill as needed in appropriate columns, using C-oF).
+(global-set-key "\C-of" (lambda ()
+                          (interactive)
+                          (insert "(fact                               \"\"\n\n  )")
+                          (backward-char 6)
+                          (set-mark (point))))
+;; Perform the refill operation for the text string in a Midje fact:
+(global-set-key "\C-oF" (lambda ()
+			  (interactive)
+			  (set-left-margin (mark) (point) 37)
+                          (fill-region (mark) (point))))
+
 (global-set-key "\C-ob" 'backward-word)
 (global-set-key "\C-oq" 'query-replace-regexp)
 (global-set-key "\C-on" 'flymake-goto-next-error)
+(global-set-key "\C-oL" 'lorem-ipsum-insert-paragraphs)
 (global-set-key "\C-]"  'fill-region)
 (global-set-key "\C-ot" 'beginning-of-buffer)
 (global-set-key "\C-N" 'enlarge-window)
