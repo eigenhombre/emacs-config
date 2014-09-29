@@ -25,14 +25,13 @@
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (package-initialize)
 
-
 (defvar my-packages)
 (setq my-packages
       '(company auto-complete autopair ac-cider cider color-theme
-		zenburn-theme diminish goto-last-change hy-mode
+		zenburn-theme diminish goto-last-change
 		main-line maxframe clojure-mode epl popup
 		rainbow-delimiters smex undo-tree flycheck
-		flycheck-hdevtools kibit-mode git-timemachine paredit
+		flycheck-hdevtools git-timemachine paredit
 		auto-indent-mode slamhound slime lorem-ipsum
 		midje-mode hungry-delete))
 
@@ -356,8 +355,8 @@
   (load-theme 'zenburn t))
 
 ;; Try out hungry-delete
-(require 'hungry-delete)
-(global-hungry-delete-mode)
+;; (require 'hungry-delete)
+;; (global-hungry-delete-mode)
 
 
 ;; Common Lisp stuff
