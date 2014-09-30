@@ -25,6 +25,7 @@
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (package-initialize)
 
+
 (defvar my-packages)
 (setq my-packages
       '(company auto-complete autopair ac-cider cider color-theme
@@ -32,7 +33,7 @@
 		main-line maxframe clojure-mode epl popup
 		rainbow-delimiters smex undo-tree flycheck
 		flycheck-hdevtools git-timemachine paredit
-		auto-indent-mode slamhound slime lorem-ipsum
+		auto-indent-mode slamhound lorem-ipsum
 		midje-mode hungry-delete))
 
 
@@ -167,10 +168,19 @@
   (interactive)
   (highlight-lines-matching-regexp ".\\{81\\}" 'hi-pink))
 
+
 (defun unhighlight-long-lines ()
   "Turn off highlighting of long lines."
   (interactive)
   (unhighlight-regexp "^.*\\(?:.\\{81\\}\\).*$"))
+
+
+(defun correct-single-whitespace ()
+  "Correct single-spaced Lisp toplevel forms."
+  (interactive)
+  (goto-char 1)
+  (while (search-forward-regexp ")\n\n(" nil t)
+    (replace-match ")\n\n\n(" t nil)))
 
 
 (add-hook 'clojure-mode-hook
@@ -203,6 +213,7 @@
 (global-set-key [delete] 'delete-char)
 (global-set-key [kp-delete] 'delete-char)
 
+
 (define-key function-key-map "\e[1~" [find])
 (define-key function-key-map "\e[2~" [insertchar])
 (define-key function-key-map "\e[3~" [deletechar])
@@ -212,6 +223,7 @@
 (define-key global-map [select] 'set-mark-command)
 (define-key global-map [insertchar] 'yank)
 (define-key global-map [deletechar] 'kill-region)
+
 
 (global-unset-key "\C-o")  ; make this available as a personal prefix
 (global-unset-key "\C- ")
@@ -244,17 +256,17 @@
 ;; (refill as needed in appropriate columns, using C-oF).
 (global-set-key "\C-of" (lambda ()
                           (interactive)
-                          (insert "(fact                               \"\"\n\n  )")
-                          (backward-char 6)
+			  (insert "(fact                               \"\"\n\n  )")
+			  (backward-char 6)
                           (set-mark (point))))
 ;; Perform the refill operation for the text string in a Midje fact:
 (global-set-key "\C-oF" (lambda ()
 			  (interactive)
 			  (set-left-margin (mark) (point) 37)
                           (fill-region (mark) (point))))
-
 (global-set-key "\C-ob" 'backward-word)
 (global-set-key "\C-oq" 'query-replace-regexp)
+(global-set-key "\C-oQ" 'correct-single-whitespace)
 (global-set-key "\C-on" 'flymake-goto-next-error)
 (global-set-key "\C-oL" 'lorem-ipsum-insert-paragraphs)
 (global-set-key "\C-]"  'fill-region)
@@ -279,21 +291,18 @@
 (global-set-key "\C-T" 'set-mark-command)
 (global-set-key "\C-Y" 'yank)
 (global-set-key "\C-D" 'backward-delete-char-untabify)
-
 (global-set-key "\C-\\" 'shell)
 (global-set-key "\C-oi" 'quoted-insert)
 (global-set-key "\e[1~" 'isearch-forward)
 (global-set-key [select] 'set-mark-command)
 (global-set-key [insertchar] 'yank)
 (global-set-key [deletechar] 'kill-region)
-
 (global-set-key "\C-\\" 'shell)
 (global-set-key "\C-oi" 'quoted-insert)
 (global-set-key "\e[1~" 'isearch-forward)
 (global-set-key [select] 'set-mark-command)
 (global-set-key [insertchar] 'yank)
 (global-set-key [deletechar] 'kill-region)
-
 (global-set-key "\C-oH" 'highlight-long-lines)
 (global-set-key "\C-oh" 'unhighlight-long-lines)
 
@@ -332,6 +341,7 @@
      '(defadvice ,mode (after rename-modeline activate)
         (setq mode-name ,new-name))))
 
+
 (rename-modeline "clojure-mode" clojure-mode "Clj")
 
 
@@ -345,6 +355,7 @@
       (kill-buffer)
     (comint-delchar-or-maybe-eof arg)))
 
+
 (add-hook 'shell-mode-hook
           (lambda ()
             (define-key shell-mode-map
@@ -353,6 +364,10 @@
 
 (when window-system
   (load-theme 'zenburn t))
+
+;; Stuff for columns and rows:
+;(current-column)
+;(line-number-at-pos (point))
 
 ;; Try out hungry-delete
 ;; (require 'hungry-delete)
@@ -370,6 +385,7 @@
              (highlight-long-lines)
              (define-key lisp-mode-map (kbd "C-o j") 'slime)
 	     (define-key lisp-mode-map (kbd "s-i") 'slime-eval-last-expression)))
+
 
 (provide 'init)
 ;;; init.el ends here
