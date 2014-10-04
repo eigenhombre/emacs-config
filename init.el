@@ -34,7 +34,7 @@
 		rainbow-delimiters smex undo-tree flycheck
 		flycheck-hdevtools git-timemachine paredit
 		auto-indent-mode slamhound lorem-ipsum
-		midje-mode hungry-delete))
+		midje-mode hungry-delete metar))
 
 
 ;;;; Install my-packages as necessary:
@@ -204,6 +204,33 @@
   (set (make-local-variable 'face-remapping-alist)
        '((default :height 1.5))))
 
+;;;; Swap window split orientation
+;;;; (http://emacs.stackexchange.com/questions/318/switch-window-split-orientation-fastest-way):
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
+
 ;; ;; Keybindings
 
 (global-set-key [S-deletechar]  'kill-ring-save)
@@ -271,6 +298,7 @@
 (global-set-key "\C-oL" 'lorem-ipsum-insert-paragraphs)
 (global-set-key "\C-]"  'fill-region)
 (global-set-key "\C-ot" 'beginning-of-buffer)
+(global-set-key "\C-oT" 'toggle-window-split)
 (global-set-key "\C-N" 'enlarge-window)
 (global-set-key "\C-o\C-n" 'enlarge-window-horizontally)
 (global-set-key "\C-oc" 'paredit-duplicate-closest-sexp)
@@ -386,6 +414,12 @@
              (highlight-long-lines)
              (define-key lisp-mode-map (kbd "C-o j") 'slime)
 	     (define-key lisp-mode-map (kbd "s-i") 'slime-eval-last-expression)))
+
+
+;;;; Metar test:
+;; (insert (prin1-to-string (metar-decode (metar-get-record "KMDW"))))
+;; =>
+;; ((station . "KMDW") (timestamp 21551 21244) (wind :direction (280 . degrees) :speed (29.632 . kph)) (temperature 9 . degC) (dewpoint 3 . degC) (humidity 66 . percent) (pressure 1009.14367105 . hPa))
 
 
 (provide 'init)
