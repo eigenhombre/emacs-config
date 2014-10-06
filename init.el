@@ -188,6 +188,7 @@
              (paredit-mode 1)
              (highlight-long-lines)
              (define-key clojure-mode-map (kbd "C-c e") 'shell-eval-last-expression)
+	     (define-key clojure-mode-map (kbd "C-o X") 'cider-eval-defun-at-point)
              (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
              (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
 	     (define-key clojure-mode-map (kbd "C-o y")
