@@ -277,8 +277,8 @@
 (global-set-key "\C-ou" 'uncomment-region)
 (global-set-key "\C-oe" 'eval-current-buffer)
 (global-set-key "\C-oE" (lambda ()
-			  (interactive)
-			  (find-file "~/.emacs.d/init.el")))
+                          (interactive)
+                          (find-file "~/.emacs.d/init.el")))
 (global-set-key "\C-od" 'delete-horizontal-space)
 ;; Set up Midje fact with mark inserted at beginning of comment text
 ;; (refill as needed in appropriate columns, using C-oF).
@@ -310,7 +310,9 @@
 (global-set-key "\C-od" 'downcase-region)
 (global-set-key "\C-oR" 'indent-region)
 (global-set-key "\C-or" 'rgrep)
-(global-set-key "\C-oO" 'overwrite-mode)
+(global-set-key "\C-oO" (lambda ()
+                          (interactive)
+                          (find-file "~/Dropbox/org/toplevel.org")))
 (global-set-key "\C-oo" 'join-line)
 (global-set-key "\C-L" 'delete-other-windows)
 (global-set-key "\C-B" 'scroll-down)
@@ -423,5 +425,27 @@
 ;; ((station . "KMDW") (timestamp 21551 21244) (wind :direction (280 . degrees) :speed (29.632 . kph)) (temperature 9 . degC) (dewpoint 3 . degC) (humidity 66 . percent) (pressure 1009.14367105 . hPa))
 
 
+;;;; Org mode tuning
+(setq org-export-html-style "<style>
+* {
+    font-family: \"Georgia\";
+}
+
+h1, h2, h3, h4, h5, h6,
+h1 span, h2 span, h3 span, h4 span, h5 span, h6 span,
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+    font-family: \"Arial\";
+}
+
+pre {
+    font-family: Monaco, \"Courier New\", Courier;
+}
+
+#text-table-of-contents a {
+    font-family: \"Arial\";
+}
+</style>")
+
+(setq org-agenda-files "~/Dropbox/org")
 (provide 'init)
 ;;; init.el ends here
