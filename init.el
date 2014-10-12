@@ -191,12 +191,14 @@
 	     (define-key clojure-mode-map (kbd "C-o x") 'cider-eval-defun-at-point)
              (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
              (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
-	     (define-key clojure-mode-map (kbd "C-o y")
+             (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
+	     (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
+             (define-key clojure-mode-map (kbd "C-o y")
                'cider-eval-last-sexp-and-append)
              (define-key clojure-mode-map (kbd "C-o Y")
                'cider-eval-last-sexp-and-pprint-append)
-	     (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
-             (define-key clojure-mode-map (kbd "C-c x") 'shell-eval-defun)))
+             (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
+	     (define-key clojure-mode-map (kbd "C-c x") 'shell-eval-defun)))
 
 
 ;; Minibuffer size
@@ -446,6 +448,53 @@ pre {
 }
 </style>")
 
-(setq org-agenda-files "~/Dropbox/org")
+
+;; From http://sachachua.com/blog/2007/12/clocking-time-with-emacs-org/:
+(eval-after-load 'org
+  '(progn
+     (defun wicked/org-clock-in-if-starting ()
+       "Clock in when the task is marked STARTED."
+       (when (and (string= org-state "STARTED")
+                  (not (string= org-last-state org-state)))
+         (org-clock-in)))
+     (add-hook 'org-after-todo-state-change-hook
+               'wicked/org-clock-in-if-starting)
+     (defadvice org-clock-in (after wicked activate)
+       "Set this task's status to 'STARTED'."
+       (org-todo "STARTED"))
+     (defun wicked/org-clock-out-if-waiting ()
+       "Clock out when the task is marked WAITING."
+       (when (and (string= org-state "WAITING")
+                  (equal (marker-buffer org-clock-marker) (current-buffer))
+                  (< (point) org-clock-marker)
+                  (> (save-excursion (outline-next-heading) (point))
+                     org-clock-marker)
+                  (not (string= org-last-state org-state)))
+         (org-clock-out)))
+     (add-hook 'org-after-todo-state-change-hook
+               'wicked/org-clock-out-if-waiting)))
+
+(setq org-agenda-files '("~/Dropbox/org"))
+(setq org-log-done t)
+(setq org-todo-keywords
+      '((sequence "TODO" "STARTED" "WAITING" "SOMEDAY" "DONE")))
+(define-key global-map "\C-ca" 'org-agenda)
+(org-agenda-list)
+(delete-other-windows)
+
+;; 'Remember' stuff -----------
+;; http://sachachua.com/blog/2007/12/emacs-getting-things-done-with-org-basic/
+(setq org-remember-templates
+      '(("Tasks" ?t "* TODO %?\n  %i\n  %a" "~/Dropbox/org/toplevel.org")
+        ("Appointments" ?a "* Appointment: %?\n%^T\n%i\n  %a" "~/Dropbox/org/toplevel.org")))
+(setq remember-annotation-functions '(org-remember-annotation))
+(setq remember-handler-functions '(org-remember-handler))
+(eval-after-load 'remember
+  '(add-hook 'remember-mode-hook 'org-remember-apply-template))
+(global-set-key (kbd "C-c r") 'remember)
+
+
+
+
 (provide 'init)
 ;;; init.el ends here
