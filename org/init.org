@@ -1,10 +1,25 @@
-#+TITLE: Emacs initialization code.
+#+LaTeX_HEADER:\usepackage[margin=0.75in]{geometry}
+#+TITLE: Emacs Initialization Code
 #+AUTHOR: John Jacobsen
 
-Some of this was adapted from [[https://github.com/xcthulhu][Matthew Wampler-Doty]].
 
-Make stuff a little quieter on startup:
+* Introduction
+Here's my Emacs init code.  Some of it was adapted from [[https://github.com/xcthulhu][Matthew
+Wampler-Doty]].  Other things have been borrowed from [[http://sachachua.com/blog/][Sacha Chua]] and
+other places around the Internetz.
 
+You'll find this code highly focused on Clojure and Org Mode.  I have
+a lot of unconventional keybindings since I didn't bother to learn all
+the classic ones when I started with Emacs (probably sometime in the
+1990s).
+
+* Utilities
+Matt wrote a Clojure-like =filter= function.  Probably I'll write more
+like it as I need them, since I am more used to Clojure than Emacs
+Lisp.  (Why else would one bother with a "programmable programming
+language?"[fn:1])
+
+[fn:1] John Foderaro, [[http://www.paulgraham.com/chameleon.html][CACM]], Sept. 1991.
 
 #+BEGIN_SRC emacs-lisp
 (defun filter (pred lst)
@@ -12,79 +27,110 @@ Make stuff a little quieter on startup:
   (delq nil (mapcar (lambda (x) (and (funcall pred x) x)) lst)))
 #+END_SRC
 
+* Package management
+MELPA is a bit too bleeding edge; since CIDER has broken for me
+before after upgrading, I use the more stable releases from =melpa-stable=
+only.  To get back MELPA(-bleeding-edge), swap in the following:
+
 #+BEGIN_SRC emacs-lisp
-
-;;;; Package management setup:
-(require 'package)
-;; (add-to-list 'package-archives '("MELPA" . "http://melpa.milkbox.net/packages/" ) t)
-(add-to-list 'package-archives
-             '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(package-initialize)
-
-
-(defvar my-packages)
-(setq my-packages
-      '(company auto-complete autopair ac-cider cider color-theme
-                zenburn-theme diminish goto-last-change
-                main-line maxframe clojure-mode epl popup
-                rainbow-delimiters smex undo-tree flycheck
-                flycheck-hdevtools git-timemachine paredit
-                auto-indent-mode slamhound lorem-ipsum
-                midje-mode hungry-delete metar))
-
-
-;;;; Install my-packages as necessary:
-(let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) my-packages)))
-  (when (and (not (equal uninstalled-packages '()))
-             (y-or-n-p (format "Install packages %s?"  uninstalled-packages)))
-    (package-refresh-contents)
-    (mapc 'package-install uninstalled-packages)))
-
+;; (add-to-list 'package-archives
+;;              '("MELPA" . "http://melpa.milkbox.net/packages/") t)
 #+END_SRC
 
+Define which remote archives to pull from, and which packages to use:
 #+BEGIN_SRC emacs-lisp
-
-(setq inhibit-splash-screen t          ; No splash screen
-      initial-scratch-message nil)     ; No scratch message
-
+  (require 'package)
+  (add-to-list
+   'package-archives
+   '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
+  (add-to-list 'package-archives
+               '("marmalade" . "http://marmalade-repo.org/packages/") t)
+  (package-initialize)
+  (defvar my-packages)
+  (setq my-packages
+        '(company auto-complete autopair ac-cider cider color-theme
+          zenburn-theme diminish goto-last-change main-line maxframe
+          clojure-mode epl popup rainbow-delimiters smex
+          undo-tree flycheck flycheck-hdevtools
+          git-timemachine paredit auto-indent-mode slamhound
+          lorem-ipsum midje-mode hungry-delete metar))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+Install any missing packages:
 
+#+BEGIN_SRC emacs-lisp
+  (let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x)))
+                                      my-packages)))
+    (when (and (not (equal uninstalled-packages '()))
+               (y-or-n-p (format "Install packages %s?"  uninstalled-packages)))
+      (package-refresh-contents)
+      (mapc 'package-install uninstalled-packages)))
+#+END_SRC
+
+* Startup
+Some configuration to make things quieter on start up:
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-splash-screen t
+      initial-scratch-message nil)
+#+END_SRC
+
+* Initial keybindings
+At some point I took it into my head to map most of my personal key
+bindings to combinations starting with =\C-o=.  We have to set it free
+from its usual use (=open-line=) before we can use it as a prefix.
+#+BEGIN_SRC emacs-lisp
+(global-unset-key "\C-o")
+#+END_SRC
+* Remembering Where We Were Last Time Around
+#+BEGIN_SRC emacs-lisp
+(require 'saveplace)
+(setq-default save-place t)
+(setq save-place-file "~/.emacs.d/saved-places")
+#+END_SRC
+
+* Stuff for Editing Emacs Lisp
+I add a hook for evaluating the expression just before point; I've
+played with =auto-indent-mode= and =flycheck-mode= but tired of them.
+I do want =paredit= though (and therefore don't want =autopair-mode=).
+#+BEGIN_SRC emacs-lisp
 (define-key emacs-lisp-mode-map (kbd "<s-return>") 'eval-last-sexp)
 
-(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)                      ; flycheck-mode
-(add-hook 'emacs-lisp-mode-hook 'auto-indent-mode)                   ; auto-indent-mode
+;;(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
+;;(add-hook 'emacs-lisp-mode-hook 'auto-indent-mode)
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
             (paredit-mode 1)
             (autopair-mode 0)))
+#+END_SRC
 
-
-;; 2 space Ruby indents
+* Ruby stuff
+Do two space indents for Ruby code:
+#+BEGIN_SRC emacs-lisp
 (setq ruby-indent-level 2)
+#+END_SRC
 
-
-;; Write backup files to own directory
+* Backups
+Tell Emacs to write backup files to their own directory, and make
+backups even for files in revision control:
+#+BEGIN_SRC emacs-lisp
 (setq backup-directory-alist
       `(("." . ,(expand-file-name
                  (concat user-emacs-directory "backups")))))
 
-;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
-
-
-;; ;; Autocomplete mode
-(require 'auto-complete)
-(add-hook 'prog-mode-hook 'auto-complete-mode)
-;;(add-hook 'after-init-hook 'global-company-mode)
 
 #+END_SRC
 
+* Autocomplete Mode
 #+BEGIN_SRC emacs-lisp
+;; Autocomplete mode
+(require 'auto-complete)
+(add-hook 'prog-mode-hook 'auto-complete-mode)
+#+END_SRC
 
-;;;; Clever hack so lambda shows up as λ
+* $\lambda$
+Make lambda show as $\lambda$:
+#+BEGIN_SRC emacs-lisp
 (font-lock-add-keywords
  'emacs-lisp-mode
  '(("(\\(lambda\\)\\>"
@@ -92,13 +138,207 @@ Make stuff a little quieter on startup:
          (compose-region (match-beginning 1)
                          (match-end 1)
                          ?λ))))))
+#+END_SRC
+
+* Highlighting of long lines
+#+BEGIN_SRC emacs-lisp
+(defun highlight-long-lines ()
+  "Turn on highlighting of long lines."
+  (interactive)
+  (highlight-lines-matching-regexp ".\\{81\\}" 'hi-pink))
+
+
+(defun unhighlight-long-lines ()
+  "Turn off highlighting of long lines."
+  (interactive)
+  (unhighlight-regexp "^.*\\(?:.\\{81\\}\\).*$"))
+
+;(global-set-key "\C-oH" 'highlight-long-lines)
+;(global-set-key "\C-oh" 'unhighlight-long-lines)
+#+END_SRC
+
+* Correcting single-whitespaced toplevel forms
+#+BEGIN_SRC emacs-lisp
+(defun correct-single-whitespace ()
+  "Correct single-spaced Lisp toplevel forms."
+  (interactive)
+  (goto-char 1)
+  (while (search-forward-regexp ")\n\n(" nil t)
+    (replace-match ")\n\n\n(" t nil)))
+(global-set-key "\C-oQ" 'correct-single-whitespace)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'clojure-mode-hook
+          '(lambda ()
+             (paredit-mode 1)
+             (highlight-long-lines)
+             (define-key clojure-mode-map (kbd "C-c e") 'shell-eval-last-expression)
+             (define-key clojure-mode-map (kbd "C-o x") 'cider-eval-defun-at-point)
+             (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
+             (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
+             (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
+             (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
+             (define-key clojure-mode-map (kbd "C-o y")
+               'cider-eval-last-sexp-and-append)
+             (define-key clojure-mode-map (kbd "C-o Y")
+               'cider-eval-last-sexp-and-pprint-append)
+             (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
+             (define-key clojure-mode-map (kbd "C-c x") 'shell-eval-defun)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+;; Minibuffer size
+(add-hook 'minibuffer-setup-hook 'my-minibuffer-setup)
+(defun my-minibuffer-setup ()
+  (set (make-local-variable 'face-remapping-alist)
+       '((default :height 1.5))))
 
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
+;;;; Swap window split orientation
+;;;; (http://emacs.stackexchange.com/questions/318/switch-window-split-orientation-fastest-way):
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
 
-;;;; Clojure goodness:
+#+END_SRC
 
+* Lots of keybindings
+#+BEGIN_SRC emacs-lisp
+(global-set-key [S-deletechar]  'kill-ring-save)
+;; Set up the keyboard so the delete key on both the regular keyboard
+;; and the keypad delete the character under the cursor and to the right
+;; under X, instead of the default, backspace behavior.
+(global-set-key [delete] 'delete-char)
+(global-set-key [kp-delete] 'delete-char)
+
+(define-key function-key-map "\e[1~" [find])
+(define-key function-key-map "\e[2~" [insertchar])
+(define-key function-key-map "\e[3~" [deletechar])
+(define-key function-key-map "\e[4~" [select])
+(define-key function-key-map "\e[5~" [prior])
+(define-key function-key-map "\e[6~" [next])
+(define-key global-map [select] 'set-mark-command)
+(define-key global-map [insertchar] 'yank)
+(define-key global-map [deletechar] 'kill-region)
+
+(global-unset-key "\C- ")
+(global-set-key "\C-@" 'other-window)
+(global-set-key [?\C- ] 'other-window)
+(global-set-key "\C-A" 'split-window-horizontally)
+(global-set-key "\C-oa" 'split-window-vertically)
+(global-set-key "\C-K" 'kill-line)
+(global-set-key "\C-os" 'isearch-forward-regexp)
+(global-set-key "\C-oS" (lambda () (interactive)
+                          (let ((currentbuf (get-buffer-window (current-buffer)))
+                                (newbuf     (generate-new-buffer-name "*shell*")))
+                            (generate-new-buffer newbuf)
+                            (set-window-dedicated-p currentbuf nil)
+                            (set-window-buffer currentbuf newbuf)
+                            (shell newbuf))))
+(global-set-key "\C-oD" 'find-name-dired)
+(global-set-key "\C-xS" 'sort-lines)
+(global-set-key "\C-w" 'backward-kill-word)
+(global-set-key "\C-x\C-k" 'kill-region)
+(global-set-key "\C-c\C-k" 'kill-region)
+(global-set-key "\C-ok" 'comment-region)
+(global-set-key "\C-ou" 'uncomment-region)
+(global-set-key "\C-oe" 'eval-current-buffer)
+(global-set-key "\C-oE" (lambda ()
+                          (interactive)
+                          (find-file "~/.emacs.d/org/init.org")))
+(global-set-key "\C-od" 'delete-horizontal-space)
+;; Set up Midje fact with mark inserted at beginning of comment text
+;; (refill as needed in appropriate columns, using C-oF).
+(global-set-key "\C-of" (lambda ()
+                          (interactive)
+                          (insert "(fact                               \"\"\n\n  )")
+                          (backward-char 6)
+                          (set-mark (point))))
+;; Perform the refill operation for the text string in a Midje fact:
+(global-set-key "\C-oF" (lambda ()
+                          (interactive)
+                          (set-left-margin (mark) (point) 37)
+                          (fill-region (mark) (point))))
+(global-set-key "\C-ob" 'backward-word)
+(global-set-key "\C-oq" 'query-replace-regexp)
+(global-set-key "\C-oL" 'lorem-ipsum-insert-paragraphs)
+(global-set-key "\C-]"  'fill-region)
+(global-set-key "\C-ot" 'beginning-of-buffer)
+(global-set-key "\C-oT" 'toggle-window-split)
+(global-set-key "\C-N" 'enlarge-window)
+(global-set-key "\C-o\C-n" 'enlarge-window-horizontally)
+(global-set-key "\C-oc" 'paredit-duplicate-closest-sexp)
+(global-set-key "\C-ol" 'goto-line)
+(global-set-key "\C-ob" 'end-of-buffer)
+(global-set-key "\C-op" 'fill-region)
+(global-set-key "\C-og" 'save-buffers-kill-emacs)
+(global-set-key "\C-od" 'downcase-region)
+(global-set-key "\C-oR" 'indent-region)
+(global-set-key "\C-or" 'rgrep)
+(global-set-key "\C-oO" (lambda ()
+                          (interactive)
+                          (find-file "~/Dropbox/org/toplevel.org")))
+(global-set-key "\C-oo" 'join-line)
+(global-set-key "\C-L" 'delete-other-windows)
+(global-set-key "\C-B" 'scroll-down)
+(global-set-key "\C-F" 'scroll-up)
+(global-set-key "\C-V" 'save-buffer)
+(global-set-key "\C-R" 'isearch-forward)
+(global-set-key "\C-^" 'wnt-alog-add-entry)
+(global-set-key "\C-T" 'set-mark-command)
+(global-set-key "\C-Y" 'yank)
+(global-set-key "\C-D" 'backward-delete-char-untabify)
+(global-set-key "\C-\\" 'shell)
+(global-set-key "\C-oi" 'quoted-insert)
+(global-set-key "\e[1~" 'isearch-forward)
+(global-set-key [select] 'set-mark-command)
+(global-set-key [insertchar] 'yank)
+(global-set-key [deletechar] 'kill-region)
+(global-set-key "\C-\\" 'shell)
+(global-set-key "\C-oi" 'quoted-insert)
+(global-set-key "\e[1~" 'isearch-forward)
+(global-set-key [select] 'set-mark-command)
+(global-set-key [insertchar] 'yank)
+(global-set-key [deletechar] 'kill-region)
+(global-set-key (kbd "s-0") 'org-todo-list)
+;; Thanks http://whattheemacsd.com/ :
+(global-set-key (kbd "M-j")
+                (lambda ()
+                  (interactive)
+                  (join-line -1)))
+
+;; Show trailing whitespace, 'cause we hates it:
+(setq-default show-trailing-whitespace t)
+
+#+END_SRC
+
+* Clojure setup
+
+#+BEGIN_SRC emacs-lisp
 ;; Rainbow delimiters
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
@@ -114,22 +354,13 @@ Make stuff a little quieter on startup:
 
 #+END_SRC
 
+Don't go to REPL buffer when starting Cider:
 #+BEGIN_SRC emacs-lisp
-
-;; Remember our place
-(require 'saveplace)
-(setq-default save-place t)
-(setq save-place-file "~/.emacs.d/saved-places")
-
+(setq cider-repl-pop-to-buffer-on-connect nil)
 #+END_SRC
 
+Append result of evaluating previous expression (Clojure):
 #+BEGIN_SRC emacs-lisp
-
-;; Don't go to REPL buffer when starting Cider:
-(setq cider-repl-pop-to-buffer-on-connect nil)
-
-
-;; Append result of evaluating previous expression (Clojure):
 (defun cider-eval-last-sexp-and-append ()
   "Evaluate the expression preceding point and append result."
   (interactive)
@@ -182,199 +413,9 @@ Make stuff a little quieter on startup:
   (exchange-point-and-mark))
 
 
-(defun highlight-long-lines ()
-  "Turn on highlighting of long lines."
-  (interactive)
-  (highlight-lines-matching-regexp ".\\{81\\}" 'hi-pink))
-
-
-(defun unhighlight-long-lines ()
-  "Turn off highlighting of long lines."
-  (interactive)
-  (unhighlight-regexp "^.*\\(?:.\\{81\\}\\).*$"))
-
-
-(defun correct-single-whitespace ()
-  "Correct single-spaced Lisp toplevel forms."
-  (interactive)
-  (goto-char 1)
-  (while (search-forward-regexp ")\n\n(" nil t)
-    (replace-match ")\n\n\n(" t nil)))
-
-
-(add-hook 'clojure-mode-hook
-          '(lambda ()
-             (paredit-mode 1)
-             (highlight-long-lines)
-             (define-key clojure-mode-map (kbd "C-c e") 'shell-eval-last-expression)
-             (define-key clojure-mode-map (kbd "C-o x") 'cider-eval-defun-at-point)
-             (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
-             (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
-             (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
-             (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
-             (define-key clojure-mode-map (kbd "C-o y")
-               'cider-eval-last-sexp-and-append)
-             (define-key clojure-mode-map (kbd "C-o Y")
-               'cider-eval-last-sexp-and-pprint-append)
-             (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
-             (define-key clojure-mode-map (kbd "C-c x") 'shell-eval-defun)))
-
-
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-
-;; Minibuffer size
-(add-hook 'minibuffer-setup-hook 'my-minibuffer-setup)
-(defun my-minibuffer-setup ()
-  (set (make-local-variable 'face-remapping-alist)
-       '((default :height 1.5))))
-
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-;;;; Swap window split orientation
-;;;; (http://emacs.stackexchange.com/questions/318/switch-window-split-orientation-fastest-way):
-(defun toggle-window-split ()
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
-
-;; ;; Keybindings
-
-(global-set-key [S-deletechar]  'kill-ring-save)
-;; Set up the keyboard so the delete key on both the regular keyboard
-;; and the keypad delete the character under the cursor and to the right
-;; under X, instead of the default, backspace behavior.
-(global-set-key [delete] 'delete-char)
-(global-set-key [kp-delete] 'delete-char)
-
-(define-key function-key-map "\e[1~" [find])
-(define-key function-key-map "\e[2~" [insertchar])
-(define-key function-key-map "\e[3~" [deletechar])
-(define-key function-key-map "\e[4~" [select])
-(define-key function-key-map "\e[5~" [prior])
-(define-key function-key-map "\e[6~" [next])
-(define-key global-map [select] 'set-mark-command)
-(define-key global-map [insertchar] 'yank)
-(define-key global-map [deletechar] 'kill-region)
-
-
-(global-unset-key "\C-o")  ; make this available as a personal prefix
-(global-unset-key "\C- ")
-(global-set-key "\C-@" 'other-window)
-(global-set-key [?\C- ] 'other-window)
-(global-set-key "\C-A" 'split-window-horizontally)
-(global-set-key "\C-oa" 'split-window-vertically)
-(global-set-key "\C-K" 'kill-line)
-(global-set-key "\C-os" 'isearch-forward-regexp)
-(global-set-key "\C-oS" (lambda () (interactive)
-                          (let ((currentbuf (get-buffer-window (current-buffer)))
-                                (newbuf     (generate-new-buffer-name "*shell*")))
-                            (generate-new-buffer newbuf)
-                            (set-window-dedicated-p currentbuf nil)
-                            (set-window-buffer currentbuf newbuf)
-                            (shell newbuf))))
-(global-set-key "\C-oD" 'find-name-dired)
-(global-set-key "\C-xS" 'sort-lines)
-(global-set-key "\C-w" 'backward-kill-word)
-(global-set-key "\C-x\C-k" 'kill-region)
-(global-set-key "\C-c\C-k" 'kill-region)
-(global-set-key "\C-ok" 'comment-region)
-(global-set-key "\C-ou" 'uncomment-region)
-(global-set-key "\C-oe" 'eval-current-buffer)
-(global-set-key "\C-oE" (lambda ()
-                          (interactive)
-                          (find-file "~/.emacs.d/org/init.org")))
-(global-set-key "\C-od" 'delete-horizontal-space)
-;; Set up Midje fact with mark inserted at beginning of comment text
-;; (refill as needed in appropriate columns, using C-oF).
-(global-set-key "\C-of" (lambda ()
-                          (interactive)
-                          (insert "(fact                               \"\"\n\n  )")
-                          (backward-char 6)
-                          (set-mark (point))))
-;; Perform the refill operation for the text string in a Midje fact:
-(global-set-key "\C-oF" (lambda ()
-                          (interactive)
-                          (set-left-margin (mark) (point) 37)
-                          (fill-region (mark) (point))))
-(global-set-key "\C-ob" 'backward-word)
-(global-set-key "\C-oq" 'query-replace-regexp)
-(global-set-key "\C-oQ" 'correct-single-whitespace)
-(global-set-key "\C-oL" 'lorem-ipsum-insert-paragraphs)
-(global-set-key "\C-]"  'fill-region)
-(global-set-key "\C-ot" 'beginning-of-buffer)
-(global-set-key "\C-oT" 'toggle-window-split)
-(global-set-key "\C-N" 'enlarge-window)
-(global-set-key "\C-o\C-n" 'enlarge-window-horizontally)
-(global-set-key "\C-oc" 'paredit-duplicate-closest-sexp)
-(global-set-key "\C-ol" 'goto-line)
-(global-set-key "\C-ob" 'end-of-buffer)
-(global-set-key "\C-op" 'fill-region)
-(global-set-key "\C-og" 'save-buffers-kill-emacs)
-(global-set-key "\C-od" 'downcase-region)
-(global-set-key "\C-oR" 'indent-region)
-(global-set-key "\C-or" 'rgrep)
-(global-set-key "\C-oO" (lambda ()
-                          (interactive)
-                          (find-file "~/Dropbox/org/toplevel.org")))
-(global-set-key "\C-oo" 'join-line)
-(global-set-key "\C-L" 'delete-other-windows)
-(global-set-key "\C-B" 'scroll-down)
-(global-set-key "\C-F" 'scroll-up)
-(global-set-key "\C-V" 'save-buffer)
-(global-set-key "\C-R" 'isearch-forward)
-(global-set-key "\C-^" 'wnt-alog-add-entry)
-(global-set-key "\C-T" 'set-mark-command)
-(global-set-key "\C-Y" 'yank)
-(global-set-key "\C-D" 'backward-delete-char-untabify)
-(global-set-key "\C-\\" 'shell)
-(global-set-key "\C-oi" 'quoted-insert)
-(global-set-key "\e[1~" 'isearch-forward)
-(global-set-key [select] 'set-mark-command)
-(global-set-key [insertchar] 'yank)
-(global-set-key [deletechar] 'kill-region)
-(global-set-key "\C-\\" 'shell)
-(global-set-key "\C-oi" 'quoted-insert)
-(global-set-key "\e[1~" 'isearch-forward)
-(global-set-key [select] 'set-mark-command)
-(global-set-key [insertchar] 'yank)
-(global-set-key [deletechar] 'kill-region)
-(global-set-key "\C-oH" 'highlight-long-lines)
-(global-set-key "\C-oh" 'unhighlight-long-lines)
-(global-set-key (kbd "s-0") 'org-todo-list)
-;; Thanks http://whattheemacsd.com/ :
-(global-set-key (kbd "M-j")
-                (lambda ()
-                  (interactive)
-                  (join-line -1)))
-
-;; Show trailing whitespace, 'cause we hates it:
-(setq-default show-trailing-whitespace t)
-
-#+END_SRC
-
+* Shell stuff - still needed?
 #+BEGIN_SRC emacs-lisp
 
 (defun set-exec-path-from-shell-PATH ()
@@ -391,6 +432,7 @@ Make stuff a little quieter on startup:
 
 #+END_SRC
 
+* Mode line hacks
 #+BEGIN_SRC emacs-lisp
 ;; Mode line hacks from http://whattheemacsd.com/
 (defmacro rename-modeline (package-name mode new-name)
@@ -424,47 +466,35 @@ Make stuff a little quieter on startup:
 
 #+END_SRC
 
+* Stuff related to configuring Emacs-in-a-window
 #+BEGIN_SRC emacs-lisp
-(when window-system
-  (load-theme 'zenburn t))
-
-  ;; Enable keyboard shortcuts for resizing:
-(when window-system
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (set-exec-path-from-shell-PATH)
-  (global-set-key (kbd "s-=") 'text-scale-increase)
-  (global-set-key (kbd "s--") 'text-scale-decrease))
+  (when window-system
+    (load-theme 'zenburn t)
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1)
+    (set-exec-path-from-shell-PATH)
+    (global-set-key (kbd "s-=") 'text-scale-increase)
+    (global-set-key (kbd "s--") 'text-scale-decrease))
 #+END_SRC
 
+* Common Lisp
+I haven't done too much Common Lisp programming yet, but have just
+played around.  So far I find Emacs integration to be at least as good
+as with Clojure.
 #+BEGIN_SRC emacs-lisp
-
-
-;; Stuff for columns and rows:
-;(current-column)
-;(line-number-at-pos (point))
-
-;; Try out hungry-delete
-;; (require 'hungry-delete)
-;; (global-hungry-delete-mode)
-
+  (require 'slime-autoloads)
+  (setq inferior-lisp-program "/usr/local/bin/sbcl")
+  (setq slime-contribs '(slime-fancy))
+  (add-hook 'lisp-mode-hook
+            '(lambda ()
+               (paredit-mode 1)
+               (highlight-long-lines)
+               (define-key lisp-mode-map (kbd "C-o j") 'slime)
+               (define-key lisp-mode-map (kbd "s-i")
+                           'slime-eval-last-expression)))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-
-;; Common Lisp stuff
-;; (add-to-list 'load-path )
-(require 'slime-autoloads)
-(setq inferior-lisp-program "/usr/local/bin/sbcl")
-(setq slime-contribs '(slime-fancy))
-(add-hook 'lisp-mode-hook
-          '(lambda ()
-             (paredit-mode 1)
-             (highlight-long-lines)
-             (define-key lisp-mode-map (kbd "C-o j") 'slime)
-             (define-key lisp-mode-map (kbd "s-i") 'slime-eval-last-expression)))
-
-#+END_SRC
+* Org Mode
 
 #+BEGIN_SRC emacs-lisp
 ;; Org-babel common lisp stuff
@@ -482,13 +512,6 @@ Make stuff a little quieter on startup:
 
 (require 'org)
 (require 'ob-clojure)
-
-
-;;;; Metar test:
-;; (insert (prin1-to-string (metar-decode (metar-get-record "KMDW"))))
-;; =>
-;; ((station . "KMDW") (timestamp 21551 21244) (wind :direction (280 . degrees) :speed (29.632 . kph)) (temperature 9 . degC) (dewpoint 3 . degC) (humidity 66 . percent) (pressure 1009.14367105 . hPa))
-
 
 ;; From http://sachachua.com/blog/2007/12/clocking-time-with-emacs-org/:
 (eval-after-load 'org
@@ -539,4 +562,9 @@ Make stuff a little quieter on startup:
 
 (provide 'init)
 ;;; init.el ends here
+#+END_SRC
+
+* \LaTeX Customization
+Nothing yet....
+#+BEGIN_SRC emacs-lisp
 #+END_SRC
