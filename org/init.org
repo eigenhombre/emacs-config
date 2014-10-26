@@ -496,6 +496,11 @@ as with Clojure.
 
 * Org Mode
 
+Put clock in/out timestamps into drawer, so they stay hidden when expanding items.
+#+BEGIN_SRC emacs-lisp
+(setq org-clock-into-drawer t)
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
 ;; Org-babel common lisp stuff
 (org-babel-do-load-languages
