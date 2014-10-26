@@ -142,7 +142,7 @@ backups even for files in revision control:
 #+END_SRC
 
 * $\lambda$
-Make lambda show as $\lambda$:
+Make =lambda= show as $\lambda$:
 #+BEGIN_SRC emacs-lisp
 (font-lock-add-keywords
  'emacs-lisp-mode
@@ -174,84 +174,76 @@ Make lambda show as $\lambda$:
 Many of these are extremely old, having followed me from machine to
 machine over the years.  Some could probably be deleted.
 #+BEGIN_SRC emacs-lisp
-(global-set-key [S-deletechar]  'kill-ring-save)
-;; Set up the keyboard so the delete key on both the regular keyboard
-;; and the keypad delete the character under the cursor and to the right
-;; under X, instead of the default, backspace behavior.
-(global-set-key [delete] 'delete-char)
-(global-set-key [kp-delete] 'delete-char)
-
-(define-key function-key-map "\e[1~" [find])
-(define-key function-key-map "\e[2~" [insertchar])
-(define-key function-key-map "\e[3~" [deletechar])
-(define-key function-key-map "\e[4~" [select])
-(define-key function-key-map "\e[5~" [prior])
-(define-key function-key-map "\e[6~" [next])
-(define-key global-map [select] 'set-mark-command)
-(define-key global-map [insertchar] 'yank)
-(define-key global-map [deletechar] 'kill-region)
-
-(global-unset-key "\C- ")
-(global-set-key "\C-@" 'other-window)
-(global-set-key [?\C- ] 'other-window)
-(global-set-key "\C-A" 'split-window-horizontally)
-(global-set-key "\C-oa" 'split-window-vertically)
-(global-set-key "\C-K" 'kill-line)
-(global-set-key "\C-os" 'isearch-forward-regexp)
-(global-set-key "\C-oS" (lambda () (interactive)
-                          (let ((currentbuf (get-buffer-window (current-buffer)))
-                                (newbuf (generate-new-buffer-name "*shell*")))
-                            (generate-new-buffer newbuf)
-                            (set-window-dedicated-p currentbuf nil)
-                            (set-window-buffer currentbuf newbuf)
-                            (shell newbuf))))
-(global-set-key "\C-oD" 'find-name-dired)
-(global-set-key "\C-xS" 'sort-lines)
-(global-set-key "\C-w" 'backward-kill-word)
-(global-set-key "\C-x\C-k" 'kill-region)
-(global-set-key "\C-c\C-k" 'kill-region)
-(global-set-key "\C-ok" 'comment-region)
-(global-set-key "\C-ou" 'uncomment-region)
-(global-set-key "\C-oe" 'eval-current-buffer)
-(global-set-key "\C-od" 'delete-horizontal-space)
-(global-set-key "\C-ob" 'backward-word)
-(global-set-key "\C-oq" 'query-replace-regexp)
-(global-set-key "\C-oL" 'lorem-ipsum-insert-paragraphs)
-(global-set-key "\C-]"  'fill-region)
-(global-set-key "\C-ot" 'beginning-of-buffer)
-(global-set-key "\C-oT" 'toggle-window-split)
-(global-set-key "\C-N" 'enlarge-window)
-(global-set-key "\C-o\C-n" 'enlarge-window-horizontally)
-(global-set-key "\C-oc" 'paredit-duplicate-closest-sexp)
-(global-set-key "\C-ol" 'goto-line)
-(global-set-key "\C-ob" 'end-of-buffer)
-(global-set-key "\C-op" 'fill-region)
-(global-set-key "\C-og" 'save-buffers-kill-emacs)
-(global-set-key "\C-od" 'downcase-region)
-(global-set-key "\C-oR" 'indent-region)
-(global-set-key "\C-or" 'rgrep)
-(global-set-key "\C-L" 'delete-other-windows)
-(global-set-key "\C-B" 'scroll-down)
-(global-set-key "\C-F" 'scroll-up)
-(global-set-key "\C-V" 'save-buffer)
-(global-set-key "\C-R" 'isearch-forward)
-(global-set-key "\C-^" 'wnt-alog-add-entry)
-(global-set-key "\C-T" 'set-mark-command)
-(global-set-key "\C-Y" 'yank)
-(global-set-key "\C-D" 'backward-delete-char-untabify)
-(global-set-key "\C-\\" 'shell)
-(global-set-key "\C-oi" 'quoted-insert)
-(global-set-key "\e[1~" 'isearch-forward)
-(global-set-key [select] 'set-mark-command)
-(global-set-key [insertchar] 'yank)
-(global-set-key [deletechar] 'kill-region)
-(global-set-key "\C-\\" 'shell)
-(global-set-key "\C-oi" 'quoted-insert)
-(global-set-key "\e[1~" 'isearch-forward)
-(global-set-key [select] 'set-mark-command)
-(global-set-key [insertchar] 'yank)
-(global-set-key [deletechar] 'kill-region)
-(global-set-key (kbd "s-0") 'org-todo-list)
+  (global-set-key [S-deletechar]  'kill-ring-save)
+  ;; Set up the keyboard so the delete key on both the regular keyboard
+  ;; and the keypad delete the character under the cursor and to the right
+  ;; under X, instead of the default, backspace behavior.
+  (global-set-key [delete] 'delete-char)
+  (global-set-key [kp-delete] 'delete-char)
+  
+  (define-key function-key-map "\e[1~" [find])
+  (define-key function-key-map "\e[2~" [insertchar])
+  (define-key function-key-map "\e[3~" [deletechar])
+  (define-key function-key-map "\e[4~" [select])
+  (define-key function-key-map "\e[5~" [prior])
+  (define-key function-key-map "\e[6~" [next])
+  (define-key global-map [select] 'set-mark-command)
+  (define-key global-map [insertchar] 'yank)
+  (define-key global-map [deletechar] 'kill-region)
+  
+  (global-unset-key "\C- ")
+  (global-set-key [?\C- ] 'other-window)
+  (global-set-key "\C-A" 'split-window-horizontally)
+  (global-set-key "\C-oa" 'split-window-vertically)
+  (global-set-key "\C-K" 'kill-line)
+  (global-set-key "\C-os" 'isearch-forward-regexp)
+  (global-set-key "\C-oD" 'find-name-dired)
+  (global-set-key "\C-xS" 'sort-lines)
+  (global-set-key "\C-w" 'backward-kill-word)
+  (global-set-key "\C-x\C-k" 'kill-region)
+  (global-set-key "\C-c\C-k" 'kill-region)
+  (global-set-key "\C-ok" 'comment-region)
+  (global-set-key "\C-ou" 'uncomment-region)
+  (global-set-key "\C-oe" 'eval-current-buffer)
+  (global-set-key "\C-od" 'delete-horizontal-space)
+  (global-set-key "\C-ob" 'backward-word)
+  (global-set-key "\C-oq" 'query-replace-regexp)
+  (global-set-key "\C-oL" 'lorem-ipsum-insert-paragraphs)
+  (global-set-key "\C-]"  'fill-region)
+  (global-set-key "\C-ot" 'beginning-of-buffer)
+  (global-set-key "\C-oT" 'toggle-window-split)
+  (global-set-key "\C-N" 'enlarge-window)
+  (global-set-key "\C-o\C-n" 'enlarge-window-horizontally)
+  (global-set-key "\C-oc" 'paredit-duplicate-closest-sexp)
+  (global-set-key "\C-ol" 'goto-line)
+  (global-set-key "\C-ob" 'end-of-buffer)
+  (global-set-key "\C-op" 'fill-region)
+  (global-set-key "\C-og" 'save-buffers-kill-emacs)
+  (global-set-key "\C-od" 'downcase-region)
+  (global-set-key "\C-oR" 'indent-region)
+  (global-set-key "\C-or" 'rgrep)
+  (global-set-key "\C-L" 'delete-other-windows)
+  (global-set-key "\C-B" 'scroll-down)
+  (global-set-key "\C-F" 'scroll-up)
+  (global-set-key "\C-V" 'save-buffer)
+  (global-set-key "\C-R" 'isearch-forward)
+  (global-set-key "\C-^" 'wnt-alog-add-entry)
+  (global-set-key "\C-T" 'set-mark-command)
+  (global-set-key "\C-Y" 'yank)
+  (global-set-key "\C-D" 'backward-delete-char-untabify)
+  (global-set-key "\C-\\" 'shell)
+  (global-set-key "\C-oi" 'quoted-insert)
+  (global-set-key "\e[1~" 'isearch-forward)
+  (global-set-key [select] 'set-mark-command)
+  (global-set-key [insertchar] 'yank)
+  (global-set-key [deletechar] 'kill-region)
+  (global-set-key "\C-\\" 'shell)
+  (global-set-key "\C-oi" 'quoted-insert)
+  (global-set-key "\e[1~" 'isearch-forward)
+  (global-set-key [select] 'set-mark-command)
+  (global-set-key [insertchar] 'yank)
+  (global-set-key [deletechar] 'kill-region)
+  (global-set-key (kbd "s-0") 'org-todo-list)
 #+END_SRC
 
 Shortcuts for jumping directly into most commonly-used buffers:
@@ -272,7 +264,7 @@ Keyboard shortcuts for joining lines before and after point (thanks to
 (global-set-key "\C-oo" 'join-line)
 #+END_SRC
 
-Show trailing whitespace, 'cause /we hates it..../
+Show trailing whitespace, `cause /we hates it..../
 #+BEGIN_SRC emacs-lisp
 (setq-default show-trailing-whitespace t)
 #+END_SRC
@@ -438,7 +430,8 @@ Shorten =clojure-mode= in mode line[fn:: From http://whattheemacsd.com/].
 (rename-modeline "clojure-mode" clojure-mode "Clj")
 #+END_SRC
 
-* Shell stuff - still needed?
+* Shell stuff, for running shells within Emacs
+** Path Magic
 Smooth the waters for starting processes from the shell.  "Set up
 Emacs' `exec-path' and PATH environment variable to match the user's
 shell.  This is particularly useful under Mac OSX, where GUI apps are
@@ -455,10 +448,26 @@ http://stackoverflow.com/questions/8606954/path-and-exec-path-set-but-emacs-does
       (setq exec-path (split-string path-from-shell path-separator))))
 #+END_SRC
 
+** Moar Shells
+Create shell in new buffer when needed, rather than just loading up
+the existing shell buffer.
+#+BEGIN_SRC emacs-lisp
+(defun create-shell-in-new-buffer ()
+  (interactive)
+  (let ((currentbuf (get-buffer-window (current-buffer)))
+	(newbuf (generate-new-buffer-name "*shell*")))
+    (generate-new-buffer newbuf)
+    (set-window-dedicated-p currentbuf nil)
+    (set-window-buffer currentbuf newbuf)
+    (shell newbuf)))
+
+(global-set-key "\C-oS" 'create-shell-in-new-buffer)
+#+END_SRC
+
 ** Kill shell buffers quickly
 "With this snippet, [a second] press of C-d will
 kill the buffer.  It's pretty nice, since you then just tap C-d twice
-to get rid of the shell and go on about your merry way[fn:: From whattheemacsd.com.]"
+to get rid of the shell and go on about your merry way[fn:: From http://whattheemacsd.com.]"
 #+BEGIN_SRC emacs-lisp
 (defun comint-delchar-or-eof-or-kill-buffer (arg)
   (interactive "p")
@@ -473,6 +482,9 @@ to get rid of the shell and go on about your merry way[fn:: From whattheemacsd.c
 #+END_SRC
 
 * Stuff related to configuring Emacs-in-a-window
+When running GUI Emacs (i.e. on OS-X, which is the only way I run
+Emacs these days anyways), set the theme to Zenburn, turn off visual
+noise, fix up the PATH for shells, and allow resizing of window.
 #+BEGIN_SRC emacs-lisp
   (when window-system
     (load-theme 'zenburn t)
@@ -486,7 +498,8 @@ to get rid of the shell and go on about your merry way[fn:: From whattheemacsd.c
 * Common Lisp
 I haven't done too much Common Lisp programming yet, but have just
 played around.  So far I find Emacs integration to be at least as good
-as with Clojure.
+as with Clojure.  Here I mimic two of the keybindings I use most from
+Clojure.
 #+BEGIN_SRC emacs-lisp
   (require 'slime-autoloads)
   (setq inferior-lisp-program "/usr/local/bin/sbcl")
@@ -507,20 +520,24 @@ Put clock in/out timestamps into drawer, so they stay hidden when expanding item
 (setq org-clock-into-drawer t)
 #+END_SRC
 
+Set Clojure backend for literate programming.
 #+BEGIN_SRC emacs-lisp
-;; Org-babel common lisp stuff
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((lisp . t)))
-
 (setq org-babel-clojure-backend 'cider)
+#+END_SRC
 
-(defun my-org-confirm-babel-evaluate (lang body)
-  (or
-   (not (string= lang "lisp"))
-   (not (string= lang "clojure"))))  ; don't ask for lisp
-(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+Don't ask for confirmation before evaluating code in these languages
+(*use at your own risk*):
+#+BEGIN_SRC emacs-lisp
+  (defun my-org-confirm-babel-evaluate (lang body)
+    (and
+     (not (string= lang "lisp"))
+     (not (string= lang "emacs-lisp"))
+     (not (string= lang "clojure"))))
+  (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+#+END_SRC
 
+Much general Org setup...:
+#+BEGIN_SRC emacs-lisp
 (require 'org)
 (require 'ob-clojure)
 
@@ -560,8 +577,13 @@ Put clock in/out timestamps into drawer, so they stay hidden when expanding item
       '((sequence "TODO" "STARTED" "WAITING" "SOMEDAY" "DONE")))
 (define-key global-map "\C-ca" 'org-agenda)
 
-;; 'Remember' stuff -----------
-;; http://sachachua.com/blog/2007/12/emacs-getting-things-done-with-org-basic/
+#+END_SRC
+
+'Remember' stuff[fn::
+http://sachachua.com/blog/2007/12/emacs-getting-things-done-with-org-basic/]. TODO:
+use Org's own capture system.
+
+#+BEGIN_SRC emacs-lisp
 (setq org-remember-templates
       '(("Tasks" ?t "* TODO %?\n  %i\n  %a" "~/Dropbox/org/toplevel.org")
         ("Appointments" ?a "* Appointment: %?\n%^T\n%i\n  %a" "~/Dropbox/org/toplevel.org")))
@@ -570,12 +592,14 @@ Put clock in/out timestamps into drawer, so they stay hidden when expanding item
 (eval-after-load 'remember
   '(add-hook 'remember-mode-hook 'org-remember-apply-template))
 (global-set-key (kbd "C-c r") 'remember)
-
-(provide 'init)
-;;; init.el ends here
 #+END_SRC
 
 * \LaTeX Customization
 Nothing yet....
+
+* Tidying up
+Be a nicely-behaved module or "[[http://www.delorie.com/gnu/docs/elisp-manual-21/elisp_201.html][feature]]":
 #+BEGIN_SRC emacs-lisp
+(provide 'init)
 #+END_SRC
+
