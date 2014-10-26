@@ -88,6 +88,19 @@ from its usual use (=open-line=) before we can use it as a prefix.
 (setq save-place-file "~/.emacs.d/saved-places")
 #+END_SRC
 
+* General Lisp stuff
+Rainbow delimiters for all programming major modes:
+#+BEGIN_SRC emacs-lisp
+(require 'rainbow-delimiters)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+#+END_SRC
+
+Show paren balancing nicely:
+#+BEGIN_SRC emacs-lisp
+(require 'paren)
+(set-face-background 'show-paren-match "white")
+(add-hook 'prog-mode-hook 'show-paren-mode)
+#+END_SRC
 * Stuff for Editing Emacs Lisp
 I add a hook for evaluating the expression just before point; I've
 played with =auto-indent-mode= and =flycheck-mode= but tired of them.
@@ -157,7 +170,195 @@ Make lambda show as $\lambda$:
 ;(global-set-key "\C-oh" 'unhighlight-long-lines)
 #+END_SRC
 
-* Correcting single-whitespaced toplevel forms
+* Lots of keybindings
+Many of these are extremely old, having followed me from machine to
+machine over the years.  Some could probably be deleted.
+#+BEGIN_SRC emacs-lisp
+(global-set-key [S-deletechar]  'kill-ring-save)
+;; Set up the keyboard so the delete key on both the regular keyboard
+;; and the keypad delete the character under the cursor and to the right
+;; under X, instead of the default, backspace behavior.
+(global-set-key [delete] 'delete-char)
+(global-set-key [kp-delete] 'delete-char)
+
+(define-key function-key-map "\e[1~" [find])
+(define-key function-key-map "\e[2~" [insertchar])
+(define-key function-key-map "\e[3~" [deletechar])
+(define-key function-key-map "\e[4~" [select])
+(define-key function-key-map "\e[5~" [prior])
+(define-key function-key-map "\e[6~" [next])
+(define-key global-map [select] 'set-mark-command)
+(define-key global-map [insertchar] 'yank)
+(define-key global-map [deletechar] 'kill-region)
+
+(global-unset-key "\C- ")
+(global-set-key "\C-@" 'other-window)
+(global-set-key [?\C- ] 'other-window)
+(global-set-key "\C-A" 'split-window-horizontally)
+(global-set-key "\C-oa" 'split-window-vertically)
+(global-set-key "\C-K" 'kill-line)
+(global-set-key "\C-os" 'isearch-forward-regexp)
+(global-set-key "\C-oS" (lambda () (interactive)
+                          (let ((currentbuf (get-buffer-window (current-buffer)))
+                                (newbuf (generate-new-buffer-name "*shell*")))
+                            (generate-new-buffer newbuf)
+                            (set-window-dedicated-p currentbuf nil)
+                            (set-window-buffer currentbuf newbuf)
+                            (shell newbuf))))
+(global-set-key "\C-oD" 'find-name-dired)
+(global-set-key "\C-xS" 'sort-lines)
+(global-set-key "\C-w" 'backward-kill-word)
+(global-set-key "\C-x\C-k" 'kill-region)
+(global-set-key "\C-c\C-k" 'kill-region)
+(global-set-key "\C-ok" 'comment-region)
+(global-set-key "\C-ou" 'uncomment-region)
+(global-set-key "\C-oe" 'eval-current-buffer)
+(global-set-key "\C-od" 'delete-horizontal-space)
+(global-set-key "\C-ob" 'backward-word)
+(global-set-key "\C-oq" 'query-replace-regexp)
+(global-set-key "\C-oL" 'lorem-ipsum-insert-paragraphs)
+(global-set-key "\C-]"  'fill-region)
+(global-set-key "\C-ot" 'beginning-of-buffer)
+(global-set-key "\C-oT" 'toggle-window-split)
+(global-set-key "\C-N" 'enlarge-window)
+(global-set-key "\C-o\C-n" 'enlarge-window-horizontally)
+(global-set-key "\C-oc" 'paredit-duplicate-closest-sexp)
+(global-set-key "\C-ol" 'goto-line)
+(global-set-key "\C-ob" 'end-of-buffer)
+(global-set-key "\C-op" 'fill-region)
+(global-set-key "\C-og" 'save-buffers-kill-emacs)
+(global-set-key "\C-od" 'downcase-region)
+(global-set-key "\C-oR" 'indent-region)
+(global-set-key "\C-or" 'rgrep)
+(global-set-key "\C-L" 'delete-other-windows)
+(global-set-key "\C-B" 'scroll-down)
+(global-set-key "\C-F" 'scroll-up)
+(global-set-key "\C-V" 'save-buffer)
+(global-set-key "\C-R" 'isearch-forward)
+(global-set-key "\C-^" 'wnt-alog-add-entry)
+(global-set-key "\C-T" 'set-mark-command)
+(global-set-key "\C-Y" 'yank)
+(global-set-key "\C-D" 'backward-delete-char-untabify)
+(global-set-key "\C-\\" 'shell)
+(global-set-key "\C-oi" 'quoted-insert)
+(global-set-key "\e[1~" 'isearch-forward)
+(global-set-key [select] 'set-mark-command)
+(global-set-key [insertchar] 'yank)
+(global-set-key [deletechar] 'kill-region)
+(global-set-key "\C-\\" 'shell)
+(global-set-key "\C-oi" 'quoted-insert)
+(global-set-key "\e[1~" 'isearch-forward)
+(global-set-key [select] 'set-mark-command)
+(global-set-key [insertchar] 'yank)
+(global-set-key [deletechar] 'kill-region)
+(global-set-key (kbd "s-0") 'org-todo-list)
+#+END_SRC
+
+Shortcuts for jumping directly into most commonly-used buffers:
+#+BEGIN_SRC emacs-lisp
+(global-set-key "\C-oO" (lambda ()
+                          (interactive)
+                          (find-file "~/Dropbox/org/toplevel.org")))
+(global-set-key "\C-oE" (lambda ()
+                          (interactive)
+                          (find-file "~/.emacs.d/org/init.org")))
+#+END_SRC
+
+Keyboard shortcuts for joining lines before and after point (thanks to
+[[http://whattheemacsd.com/][http://whattheemacsd.com/]] for the =(join-line -1) trick)=:
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-j")
+  (lambda () (interactive) (join-line -1)))
+(global-set-key "\C-oo" 'join-line)
+#+END_SRC
+
+Show trailing whitespace, 'cause /we hates it..../
+#+BEGIN_SRC emacs-lisp
+(setq-default show-trailing-whitespace t)
+#+END_SRC
+
+* Clojure setup
+Don't go to REPL buffer when starting Cider:
+#+BEGIN_SRC emacs-lisp
+(setq cider-repl-pop-to-buffer-on-connect nil)
+#+END_SRC
+
+** Key bindings special to Midje facts
+Set up Midje fact with mark inserted at beginning of comment text
+(refill as needed in appropriate columns, using =C-oF=).
+#+BEGIN_SRC emacs-lisp
+(global-set-key "\C-of" (lambda ()
+                          (interactive)
+                          (insert "(fact                               \"\"\n\n  )")
+                          (backward-char 6)
+                          (set-mark (point))))
+#+END_SRC
+Perform the refill operation for the text string in a Midje fact:
+#+BEGIN_SRC emacs-lisp
+(global-set-key "\C-oF" (lambda ()
+                          (interactive)
+                          (set-left-margin (mark) (point) 37)
+                          (fill-region (mark) (point))))
+
+#+END_SRC
+
+Append result of evaluating previous expression (Clojure):
+#+BEGIN_SRC emacs-lisp
+(defun cider-eval-last-sexp-and-append ()
+  "Evaluate the expression preceding point and append result."
+  (interactive)
+  (let ((last-sexp (cider-last-sexp)))
+    ;; we have to be sure the evaluation won't result in an error
+    (cider-eval-and-get-value last-sexp)
+    (with-current-buffer (current-buffer)
+      (insert ";;=>\n"))
+    (cider-interactive-eval-print last-sexp)))
+
+
+(defun cider-format-with-out-str-pprint-eval (form)
+  "Return a string of Clojure code that will return pretty-printed FORM."
+  (format "(clojure.core/let [x %s] (with-out-str (clojure.pprint/pprint x)))" form))
+
+
+(defun cider-eval-last-sexp-and-pprint-append ()
+  "Evaluate the expression preceding point and append pretty-printed result."
+  (interactive)
+  (let ((last-sexp (cider-last-sexp)))
+    ;; we have to be sure the evaluation won't result in an error
+    (with-current-buffer (current-buffer)
+      (insert ";;=>\n")
+      (insert (cider-eval-and-get-value (cider-format-with-out-str-pprint-eval last-sexp))))))
+
+
+;; A few paredit things, also from whattheemacsd.com:
+(defun paredit--is-at-start-of-sexp ()
+  (and (looking-at "(\\|\\[")
+       (not (nth 3 (syntax-ppss))) ;; inside string
+       (not (nth 4 (syntax-ppss))))) ;; inside comment
+
+(defun paredit-duplicate-closest-sexp ()
+  (interactive)
+  ;; skips to start of current sexp
+  (while (not (paredit--is-at-start-of-sexp))
+    (paredit-backward))
+  (set-mark-command nil)
+  ;; while we find sexps we move forward on the line
+  (while (and (bounds-of-thing-at-point 'sexp)
+              (<= (point) (car (bounds-of-thing-at-point 'sexp)))
+              (not (= (point) (line-end-position))))
+    (forward-sexp)
+    (while (looking-at " ")
+      (forward-char)))
+  (kill-ring-save (mark) (point))
+  ;; go to the next line and copy the sexprs we encountered
+  (paredit-newline)
+  (yank)
+  (exchange-point-and-mark))
+
+
+#+END_SRC
+
+** Correcting single-whitespaced toplevel forms
 #+BEGIN_SRC emacs-lisp
 (defun correct-single-whitespace ()
   "Correct single-spaced Lisp toplevel forms."
@@ -226,244 +427,49 @@ Make lambda show as $\lambda$:
 
 #+END_SRC
 
-* Lots of keybindings
+** Mode line hack
+Shorten =clojure-mode= in mode line[fn:: From http://whattheemacsd.com/].
 #+BEGIN_SRC emacs-lisp
-(global-set-key [S-deletechar]  'kill-ring-save)
-;; Set up the keyboard so the delete key on both the regular keyboard
-;; and the keypad delete the character under the cursor and to the right
-;; under X, instead of the default, backspace behavior.
-(global-set-key [delete] 'delete-char)
-(global-set-key [kp-delete] 'delete-char)
-
-(define-key function-key-map "\e[1~" [find])
-(define-key function-key-map "\e[2~" [insertchar])
-(define-key function-key-map "\e[3~" [deletechar])
-(define-key function-key-map "\e[4~" [select])
-(define-key function-key-map "\e[5~" [prior])
-(define-key function-key-map "\e[6~" [next])
-(define-key global-map [select] 'set-mark-command)
-(define-key global-map [insertchar] 'yank)
-(define-key global-map [deletechar] 'kill-region)
-
-(global-unset-key "\C- ")
-(global-set-key "\C-@" 'other-window)
-(global-set-key [?\C- ] 'other-window)
-(global-set-key "\C-A" 'split-window-horizontally)
-(global-set-key "\C-oa" 'split-window-vertically)
-(global-set-key "\C-K" 'kill-line)
-(global-set-key "\C-os" 'isearch-forward-regexp)
-(global-set-key "\C-oS" (lambda () (interactive)
-                          (let ((currentbuf (get-buffer-window (current-buffer)))
-                                (newbuf     (generate-new-buffer-name "*shell*")))
-                            (generate-new-buffer newbuf)
-                            (set-window-dedicated-p currentbuf nil)
-                            (set-window-buffer currentbuf newbuf)
-                            (shell newbuf))))
-(global-set-key "\C-oD" 'find-name-dired)
-(global-set-key "\C-xS" 'sort-lines)
-(global-set-key "\C-w" 'backward-kill-word)
-(global-set-key "\C-x\C-k" 'kill-region)
-(global-set-key "\C-c\C-k" 'kill-region)
-(global-set-key "\C-ok" 'comment-region)
-(global-set-key "\C-ou" 'uncomment-region)
-(global-set-key "\C-oe" 'eval-current-buffer)
-(global-set-key "\C-oE" (lambda ()
-                          (interactive)
-                          (find-file "~/.emacs.d/org/init.org")))
-(global-set-key "\C-od" 'delete-horizontal-space)
-;; Set up Midje fact with mark inserted at beginning of comment text
-;; (refill as needed in appropriate columns, using C-oF).
-(global-set-key "\C-of" (lambda ()
-                          (interactive)
-                          (insert "(fact                               \"\"\n\n  )")
-                          (backward-char 6)
-                          (set-mark (point))))
-;; Perform the refill operation for the text string in a Midje fact:
-(global-set-key "\C-oF" (lambda ()
-                          (interactive)
-                          (set-left-margin (mark) (point) 37)
-                          (fill-region (mark) (point))))
-(global-set-key "\C-ob" 'backward-word)
-(global-set-key "\C-oq" 'query-replace-regexp)
-(global-set-key "\C-oL" 'lorem-ipsum-insert-paragraphs)
-(global-set-key "\C-]"  'fill-region)
-(global-set-key "\C-ot" 'beginning-of-buffer)
-(global-set-key "\C-oT" 'toggle-window-split)
-(global-set-key "\C-N" 'enlarge-window)
-(global-set-key "\C-o\C-n" 'enlarge-window-horizontally)
-(global-set-key "\C-oc" 'paredit-duplicate-closest-sexp)
-(global-set-key "\C-ol" 'goto-line)
-(global-set-key "\C-ob" 'end-of-buffer)
-(global-set-key "\C-op" 'fill-region)
-(global-set-key "\C-og" 'save-buffers-kill-emacs)
-(global-set-key "\C-od" 'downcase-region)
-(global-set-key "\C-oR" 'indent-region)
-(global-set-key "\C-or" 'rgrep)
-(global-set-key "\C-oO" (lambda ()
-                          (interactive)
-                          (find-file "~/Dropbox/org/toplevel.org")))
-(global-set-key "\C-oo" 'join-line)
-(global-set-key "\C-L" 'delete-other-windows)
-(global-set-key "\C-B" 'scroll-down)
-(global-set-key "\C-F" 'scroll-up)
-(global-set-key "\C-V" 'save-buffer)
-(global-set-key "\C-R" 'isearch-forward)
-(global-set-key "\C-^" 'wnt-alog-add-entry)
-(global-set-key "\C-T" 'set-mark-command)
-(global-set-key "\C-Y" 'yank)
-(global-set-key "\C-D" 'backward-delete-char-untabify)
-(global-set-key "\C-\\" 'shell)
-(global-set-key "\C-oi" 'quoted-insert)
-(global-set-key "\e[1~" 'isearch-forward)
-(global-set-key [select] 'set-mark-command)
-(global-set-key [insertchar] 'yank)
-(global-set-key [deletechar] 'kill-region)
-(global-set-key "\C-\\" 'shell)
-(global-set-key "\C-oi" 'quoted-insert)
-(global-set-key "\e[1~" 'isearch-forward)
-(global-set-key [select] 'set-mark-command)
-(global-set-key [insertchar] 'yank)
-(global-set-key [deletechar] 'kill-region)
-(global-set-key (kbd "s-0") 'org-todo-list)
-;; Thanks http://whattheemacsd.com/ :
-(global-set-key (kbd "M-j")
-                (lambda ()
-                  (interactive)
-                  (join-line -1)))
-
-;; Show trailing whitespace, 'cause we hates it:
-(setq-default show-trailing-whitespace t)
-
-#+END_SRC
-
-* Clojure setup
-
-#+BEGIN_SRC emacs-lisp
-;; Rainbow delimiters
-(require 'rainbow-delimiters)
-(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-
-;; show-paren-mode
-(require 'paren)
-(set-face-background 'show-paren-match "white")
-(add-hook 'prog-mode-hook 'show-paren-mode)
-
-#+END_SRC
-
-Don't go to REPL buffer when starting Cider:
-#+BEGIN_SRC emacs-lisp
-(setq cider-repl-pop-to-buffer-on-connect nil)
-#+END_SRC
-
-Append result of evaluating previous expression (Clojure):
-#+BEGIN_SRC emacs-lisp
-(defun cider-eval-last-sexp-and-append ()
-  "Evaluate the expression preceding point and append result."
-  (interactive)
-  (let ((last-sexp (cider-last-sexp)))
-    ;; we have to be sure the evaluation won't result in an error
-    (cider-eval-and-get-value last-sexp)
-    (with-current-buffer (current-buffer)
-      (insert ";;=>\n"))
-    (cider-interactive-eval-print last-sexp)))
-
-
-(defun cider-format-with-out-str-pprint-eval (form)
-  "Return a string of Clojure code that will return pretty-printed FORM."
-  (format "(clojure.core/let [x %s] (with-out-str (clojure.pprint/pprint x)))" form))
-
-
-(defun cider-eval-last-sexp-and-pprint-append ()
-  "Evaluate the expression preceding point and append pretty-printed result."
-  (interactive)
-  (let ((last-sexp (cider-last-sexp)))
-    ;; we have to be sure the evaluation won't result in an error
-    (with-current-buffer (current-buffer)
-      (insert ";;=>\n")
-      (insert (cider-eval-and-get-value (cider-format-with-out-str-pprint-eval last-sexp))))))
-
-
-;; A few paredit things, also from whattheemacsd.com:
-(defun paredit--is-at-start-of-sexp ()
-  (and (looking-at "(\\|\\[")
-       (not (nth 3 (syntax-ppss))) ;; inside string
-       (not (nth 4 (syntax-ppss))))) ;; inside comment
-
-(defun paredit-duplicate-closest-sexp ()
-  (interactive)
-  ;; skips to start of current sexp
-  (while (not (paredit--is-at-start-of-sexp))
-    (paredit-backward))
-  (set-mark-command nil)
-  ;; while we find sexps we move forward on the line
-  (while (and (bounds-of-thing-at-point 'sexp)
-              (<= (point) (car (bounds-of-thing-at-point 'sexp)))
-              (not (= (point) (line-end-position))))
-    (forward-sexp)
-    (while (looking-at " ")
-      (forward-char)))
-  (kill-ring-save (mark) (point))
-  ;; go to the next line and copy the sexprs we encountered
-  (paredit-newline)
-  (yank)
-  (exchange-point-and-mark))
-
-
-#+END_SRC
-
-* Shell stuff - still needed?
-#+BEGIN_SRC emacs-lisp
-
-(defun set-exec-path-from-shell-PATH ()
-  "Set up Emacs' `exec-path' and PATH environment variable to match
-   the user's shell.  This is particularly useful under Mac OSX, where
-   GUI apps are not started from a shell."
-  (interactive)
-  (let ((path-from-shell
-         (replace-regexp-in-string "[ \t\n]*$" ""
-                                   (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-    (setenv "PATH" path-from-shell)
-    (setq exec-path (split-string path-from-shell path-separator))))
-
-
-#+END_SRC
-
-* Mode line hacks
-#+BEGIN_SRC emacs-lisp
-;; Mode line hacks from http://whattheemacsd.com/
 (defmacro rename-modeline (package-name mode new-name)
   `(eval-after-load ,package-name
      '(defadvice ,mode (after rename-modeline activate)
         (setq mode-name ,new-name))))
 
-
 (rename-modeline "clojure-mode" clojure-mode "Clj")
-
 #+END_SRC
 
+* Shell stuff - still needed?
+Smooth the waters for starting processes from the shell.  "Set up
+Emacs' `exec-path' and PATH environment variable to match the user's
+shell.  This is particularly useful under Mac OSX, where GUI apps are
+not started from a shell[fn:: See
+http://stackoverflow.com/questions/8606954/path-and-exec-path-set-but-emacs-does-not-find-executable]."
 #+BEGIN_SRC emacs-lisp
+  (defun set-exec-path-from-shell-PATH ()
+    (interactive)
+    (let ((path-from-shell
+           (replace-regexp-in-string
+            "[ \t\n]*$" ""
+            (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
+      (setenv "PATH" path-from-shell)
+      (setq exec-path (split-string path-from-shell path-separator))))
+#+END_SRC
 
+** Kill shell buffers quickly
+"With this snippet, [a second] press of C-d will
+kill the buffer.  It's pretty nice, since you then just tap C-d twice
+to get rid of the shell and go on about your merry way[fn:: From whattheemacsd.com.]"
+#+BEGIN_SRC emacs-lisp
 (defun comint-delchar-or-eof-or-kill-buffer (arg)
-  "From whattheemacsd.com: With this snippet, another press of C-d
-  will kill the buffer.
-  It's pretty nice, since you then just tap C-d twice to get rid of the
-  shell and go on about your merry way."
   (interactive "p")
   (if (null (get-buffer-process (current-buffer)))
       (kill-buffer)
     (comint-delchar-or-maybe-eof arg)))
 
-
 (add-hook 'shell-mode-hook
           (lambda ()
             (define-key shell-mode-map
               (kbd "C-d") 'comint-delchar-or-eof-or-kill-buffer)))
-
-
 #+END_SRC
 
 * Stuff related to configuring Emacs-in-a-window
