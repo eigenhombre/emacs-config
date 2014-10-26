@@ -1,7 +1,7 @@
 * Emacs configuration
 
 Put =init.el= and =org/init.org= in your =~/.emacs.d= directory, or
-just steal the parts you like.  [[org/init.pdf][PDF file]] provides a more literate
+just steal the parts you like.  The [[org/init.pdf][PDF file]] provides a more literate
 version.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
