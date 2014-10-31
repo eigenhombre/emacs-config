@@ -1,4 +1,5 @@
 (package-initialize)
 (require 'org-install)
 (require 'ob-tangle)
-(org-babel-load-file "/Users/jjacobsen/.emacs.d/org/init.org")
+(org-babel-load-file (concat user-emacs-directory "org/init.org"))
+

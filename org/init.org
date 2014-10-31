@@ -143,7 +143,6 @@ Trying out Helm[fn:: http://emacs-helm.github.io/helm/]:
 (helm-mode)
 #+END_SRC
 
-
 * Autocomplete Mode
 This is one of several available auto-complete modes for Emacs.  It's basic but
 I've found it more reliable than =company-mode=.
@@ -206,7 +205,7 @@ machine over the years.  Some could probably be deleted.
   (global-set-key [?\C- ] 'other-window)
   (global-set-key "\C-oW" (lambda ()
                             (interactive)
-                            (org-babel-load-file "/Users/jjacobsen/.emacs.d/org/init.org")))
+                            (org-babel-load-file (concat user-emacs-directory "org/init.org"))))
   (global-set-key "\C-A" 'split-window-horizontally)
   (global-set-key "\C-oa" 'split-window-vertically)
   (global-set-key "\C-K" 'kill-line)
