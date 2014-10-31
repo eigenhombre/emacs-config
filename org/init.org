@@ -17,9 +17,8 @@ the classic ones when I started with Emacs (probably sometime in the
 Matt wrote a Clojure-like =filter= function.  Probably I'll write more
 like it as I need them, since I am more used to Clojure than Emacs
 Lisp.  (Why else would one bother with a "programmable programming
-language?"[fn:1])
-
-[fn:1] John Foderaro, [[http://www.paulgraham.com/chameleon.html][CACM]], Sept. 1991.
+language"[fn:: John Foderaro, [[http://www.paulgraham.com/chameleon.html][CACM]], Sept. 1991.], if not to tailor
+one's language to one's liking?)
 
 #+BEGIN_SRC emacs-lisp
 (defun filter (pred lst)
@@ -50,10 +49,10 @@ Define which remote archives to pull from, and which packages to use:
   (setq my-packages
         '(company auto-complete autopair ac-cider cider color-theme
           zenburn-theme diminish goto-last-change main-line maxframe
-          clojure-mode epl popup rainbow-delimiters smex
-          undo-tree flycheck flycheck-hdevtools
-          git-timemachine paredit auto-indent-mode slamhound
-          lorem-ipsum midje-mode hungry-delete metar))
+          clojure-mode epl popup rainbow-delimiters smex undo-tree
+          flycheck flycheck-hdevtools org git-timemachine paredit
+          auto-indent-mode slamhound lorem-ipsum midje-mode
+          hungry-delete metar helm))
 #+END_SRC
 
 Install any missing packages:
@@ -117,7 +116,8 @@ I do want =paredit= though (and therefore don't want =autopair-mode=).
 #+END_SRC
 
 * Ruby stuff
-Do two space indents for Ruby code:
+Sometimes I have to write Rails or Ruby code.  You might, too.  Do two
+space indents for Ruby code:
 #+BEGIN_SRC emacs-lisp
 (setq ruby-indent-level 2)
 #+END_SRC
@@ -134,9 +134,19 @@ backups even for files in revision control:
 
 #+END_SRC
 
-* Autocomplete Mode
+* File Completion
+
+Trying out Helm[fn:: http://emacs-helm.github.io/helm/]:
+
 #+BEGIN_SRC emacs-lisp
-;; Autocomplete mode
+(require 'helm-config)
+#+END_SRC
+
+
+* Autocomplete Mode
+This is one of several available auto-complete modes for Emacs.  It's basic but
+I've found it more reliable than =company-mode=.
+#+BEGIN_SRC emacs-lisp
 (require 'auto-complete)
 (add-hook 'prog-mode-hook 'auto-complete-mode)
 #+END_SRC
@@ -180,7 +190,7 @@ machine over the years.  Some could probably be deleted.
   ;; under X, instead of the default, backspace behavior.
   (global-set-key [delete] 'delete-char)
   (global-set-key [kp-delete] 'delete-char)
-  
+
   (define-key function-key-map "\e[1~" [find])
   (define-key function-key-map "\e[2~" [insertchar])
   (define-key function-key-map "\e[3~" [deletechar])
@@ -190,9 +200,12 @@ machine over the years.  Some could probably be deleted.
   (define-key global-map [select] 'set-mark-command)
   (define-key global-map [insertchar] 'yank)
   (define-key global-map [deletechar] 'kill-region)
-  
+
   (global-unset-key "\C- ")
   (global-set-key [?\C- ] 'other-window)
+  (global-set-key "\C-oW" (lambda ()
+                            (interactive)
+                            (org-babel-load-file "/Users/jacobsen/.emacs.d/org/init.org")))
   (global-set-key "\C-A" 'split-window-horizontally)
   (global-set-key "\C-oa" 'split-window-vertically)
   (global-set-key "\C-K" 'kill-line)
@@ -594,6 +607,29 @@ use Org's own capture system.
 (global-set-key (kbd "C-c r") 'remember)
 #+END_SRC
 
+Trying to use Org's capture system:
+
+#+BEGIN_SRC emacs-lisp
+(setq org-default-notes-file (concat org-directory "/toplevel.org"))
+(define-key global-map "\C-cc" 'org-capture)
+#+END_SRC
+
+* Blogging
+This is taken from [[http://bzg.fr/blogging-from-emacs.html][=http://bzg.fr/blogging-from-emacs.html=]] and
+=http://getbootstrap.com/getting-started/=.
+#+BEGIN_SRC emacs-lisp
+  (setq org-publish-project-alist
+          `(("blog"
+             :base-directory "~/Dropbox/org/blog"
+             :html-extension "html"
+             :base-extension "org"
+             :publishing-directory "~/Dropbox/org/html"
+             :publishing-function (org-html-publish-to-html)
+             :section-numbers nil
+             :html-preamble nil
+             :html-head-extra nil
+             :html-postamble nil)))
+#+END_SRC
 * \LaTeX Customization
 Nothing yet....
 
