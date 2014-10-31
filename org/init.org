@@ -140,6 +140,7 @@ Trying out Helm[fn:: http://emacs-helm.github.io/helm/]:
 
 #+BEGIN_SRC emacs-lisp
 (require 'helm-config)
+(helm-mode)
 #+END_SRC
 
 
@@ -205,7 +206,7 @@ machine over the years.  Some could probably be deleted.
   (global-set-key [?\C- ] 'other-window)
   (global-set-key "\C-oW" (lambda ()
                             (interactive)
-                            (org-babel-load-file "/Users/jacobsen/.emacs.d/org/init.org")))
+                            (org-babel-load-file "/Users/jjacobsen/.emacs.d/org/init.org")))
   (global-set-key "\C-A" 'split-window-horizontally)
   (global-set-key "\C-oa" 'split-window-vertically)
   (global-set-key "\C-K" 'kill-line)
@@ -506,6 +507,12 @@ noise, fix up the PATH for shells, and allow resizing of window.
     (set-exec-path-from-shell-PATH)
     (global-set-key (kbd "s-=") 'text-scale-increase)
     (global-set-key (kbd "s--") 'text-scale-decrease))
+#+END_SRC
+
+Don't pop up newly-opened files in a new frame -- use existing one:
+
+#+BEGIN_SRC emacs-lisp
+(setq ns-pop-up-frames nil)
 #+END_SRC
 
 * Common Lisp
