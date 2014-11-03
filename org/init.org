@@ -1,5 +1,5 @@
 #+LaTeX_HEADER:\usepackage[margin=0.75in]{geometry}
-#+TITLE: Emacs Initialization Code
+#+TITLE: Emacs Initialization
 #+AUTHOR: John Jacobsen
 
 
@@ -443,7 +443,7 @@ Shorten =clojure-mode= in mode line[fn:: From http://whattheemacsd.com/].
 (rename-modeline "clojure-mode" clojure-mode "Clj")
 #+END_SRC
 
-* Shell stuff, for running shells within Emacs
+* Stuff for running shells within Emacs
 ** Path Magic
 Smooth the waters for starting processes from the shell.  "Set up
 Emacs' `exec-path' and PATH environment variable to match the user's
@@ -533,6 +533,21 @@ Clojure.
 #+END_SRC
 
 * Org Mode
+General setup:
+#+BEGIN_SRC emacs-lisp
+(require 'org)
+(require 'ob-clojure)
+#+END_SRC
+
+Show source code highlighting in code blocks:
+#+BEGIN_SRC emacs-lisp
+(setq org-src-fontify-natively t)
+#+END_SRC
+
+Allow alphabetical plain lists (=a.=, =A.=, =a)=, =A)=).
+#+BEGIN_SRC emacs-lisp
+(setq org-list-allow-alphabetical t)
+#+END_SRC
 
 Put clock in/out timestamps into drawer, so they stay hidden when expanding items.
 #+BEGIN_SRC emacs-lisp
@@ -555,12 +570,10 @@ Don't ask for confirmation before evaluating code in these languages
   (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
 #+END_SRC
 
-Much general Org setup...:
-#+BEGIN_SRC emacs-lisp
-(require 'org)
-(require 'ob-clojure)
+Clock in/out based on TODO state changes[fn:: From
+http://sachachua.com/blog/2007/12/clocking-time-with-emacs-org/].
 
-;; From http://sachachua.com/blog/2007/12/clocking-time-with-emacs-org/:
+#+BEGIN_SRC emacs-lisp
 (eval-after-load 'org
   '(progn
      (defun wicked/org-clock-in-if-starting ()
@@ -585,59 +598,99 @@ Much general Org setup...:
      (add-hook 'org-after-todo-state-change-hook
                'wicked/org-clock-out-if-waiting)))
 
-(setq org-agenda-files '("~/Dropbox/org"))
+#+END_SRC
+
+Log when an item goes to DONE state:
+#+BEGIN_SRC emacs-lisp
 (setq org-log-done t)
+#+END_SRC
+
+Refile things sensibly based on where they occur in original outline:
+#+BEGIN_SRC emacs-lisp
 (setq org-refile-targets (quote ((nil :maxlevel . 10)
                                  (org-agenda-files :maxlevel . 10))))
 (setq org-refile-use-outline-path t)
 (setq org-outline-path-complete-in-steps nil)
 (setq org-refile-allow-creating-parent-nodes (quote confirm))
+#+END_SRC
+
+GTD-style TODO states:
+#+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
       '((sequence "TODO" "STARTED" "WAITING" "SOMEDAY" "DONE")))
+#+END_SRC
+
+Where to find agenda files:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-files '("~/Dropbox/org"))
+#+END_SRC
+
+Quickly launch agenda:
+#+BEGIN_SRC emacs-lisp
 (define-key global-map "\C-ca" 'org-agenda)
 
 #+END_SRC
 
-'Remember' stuff[fn::
-http://sachachua.com/blog/2007/12/emacs-getting-things-done-with-org-basic/]. TODO:
-use Org's own capture system.
-
+Use Org's capture system:
 #+BEGIN_SRC emacs-lisp
-(setq org-remember-templates
-      '(("Tasks" ?t "* TODO %?\n  %i\n  %a" "~/Dropbox/org/toplevel.org")
-        ("Appointments" ?a "* Appointment: %?\n%^T\n%i\n  %a" "~/Dropbox/org/toplevel.org")))
-(setq remember-annotation-functions '(org-remember-annotation))
-(setq remember-handler-functions '(org-remember-handler))
-(eval-after-load 'remember
-  '(add-hook 'remember-mode-hook 'org-remember-apply-template))
-(global-set-key (kbd "C-c r") 'remember)
-#+END_SRC
-
-Trying to use Org's capture system:
-
-#+BEGIN_SRC emacs-lisp
-(setq org-default-notes-file (concat org-directory "/toplevel.org"))
-(define-key global-map "\C-cc" 'org-capture)
+  (setq org-default-notes-file "~/Dropbox/org/toplevel.org")
+  (define-key global-map "\C-cc" 'org-capture)
 #+END_SRC
 
 * Blogging
-This is taken from [[http://bzg.fr/blogging-from-emacs.html][=http://bzg.fr/blogging-from-emacs.html=]] and
-=http://getbootstrap.com/getting-started/=.
 #+BEGIN_SRC emacs-lisp
+  (setq org-sitemap-link-format
+        "@@html:<span class='sm-d'>%d</span> <span class='sm-t'>%t</span>@@"
+        org-sitemap-html-preamble
+        "<link rel=\"stylesheet\" href=\"../css/style.css\" type=\"text/css\" />
+         <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css\">
+         <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap-theme.min.css\">
+         <script src=\"https://cdn.jsdelivr.net/bootstrap/3.3.0/js/bootstrap.min.js\"></script>
+         <div id=\"my-org-div-home-and-up\">
+            <a href=\"index.html\">home </a>
+            <span class=\"muted\">...</span>
+            <a href=\"sitemap.html\"> archive </a>
+         </div>")
+
   (setq org-publish-project-alist
           `(("blog"
-             :base-directory "~/Dropbox/org/blog"
+             :base-directory "~/Dropbox/org/blog/src"
              :html-extension "html"
+             :exclude "^\\(style\\|theindex\\)"
              :base-extension "org"
-             :publishing-directory "~/Dropbox/org/html"
+             :publishing-directory "~/Dropbox/org/blog/html"
              :publishing-function (org-html-publish-to-html)
              :section-numbers nil
-             :html-preamble nil
+             :auto-sitemap t
+             :sitemap-sort-files "chronologically"
+             :sitemap-file-entry-format ,org-sitemap-link-format
+             :html-link-up ""
+             :html-link-home ""
+             :sitemap-title "Site Map"
              :html-head-extra nil
-             :html-postamble nil)))
+             :html-preamble ,org-sitemap-html-preamble)))
 #+END_SRC
-* \LaTeX Customization
-Nothing yet....
+Keyboard mappings to publish and to open local copy of new blog.
+Using =\C-oX= forces Org to (re-)publish even unmodified files.
+#+BEGIN_SRC emacs-lisp
+  (global-set-key "\C-ox" (lambda () (interactive) (org-publish-project "blog")))
+  (global-set-key "\C-oX" (lambda () (interactive) (org-publish-project "blog" t)))
+
+  (defun open-blog-index ()
+    (interactive)
+    (shell-command "open file:///Users/jacobsen/Dropbox/org/blog/html/index.html"))
+
+  (global-set-key "\C-oZ" 'open-blog-index)
+
+  (defun open-blog-sitemap ()
+    (interactive)
+    (shell-command "open file:///Users/jacobsen/Dropbox/org/blog/html/sitemap.html"))
+
+  (global-set-key "\C-oz" 'open-blog-sitemap)
+#+END_SRC
+
+#+RESULTS:
+: open-blog-sitemap
 
 * Tidying up
 Be a nicely-behaved module or "[[http://www.delorie.com/gnu/docs/elisp-manual-21/elisp_201.html][feature]]":
