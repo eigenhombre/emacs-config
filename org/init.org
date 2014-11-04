@@ -678,13 +678,13 @@ Using =\C-oX= forces Org to (re-)publish even unmodified files.
 
   (defun open-blog-index ()
     (interactive)
-    (shell-command "open file:///Users/jacobsen/Dropbox/org/blog/html/index.html"))
+    (shell-command (concat "open file://" (expand-file-name "~/Dropbox/org/blog/html/index.html"))))
 
   (global-set-key "\C-oZ" 'open-blog-index)
 
   (defun open-blog-sitemap ()
     (interactive)
-    (shell-command "open file:///Users/jacobsen/Dropbox/org/blog/html/sitemap.html"))
+    (shell-command (concat "open file://" (expand-file-name "~/Dropbox/org/blog/html/sitemap.html"))))
 
   (global-set-key "\C-oz" 'open-blog-sitemap)
 #+END_SRC
