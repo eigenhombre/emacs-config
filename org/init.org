@@ -52,7 +52,7 @@ Define which remote archives to pull from, and which packages to use:
           clojure-mode epl popup rainbow-delimiters smex undo-tree
           flycheck flycheck-hdevtools org git-timemachine paredit
           auto-indent-mode slamhound lorem-ipsum midje-mode
-          hungry-delete metar helm))
+          hungry-delete metar helm htmlize))
 #+END_SRC
 
 Install any missing packages:
@@ -646,6 +646,7 @@ Use Org's capture system:
          <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css\">
          <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap-theme.min.css\">
          <script src=\"https://cdn.jsdelivr.net/bootstrap/3.3.0/js/bootstrap.min.js\"></script>
+         <link rel=\"shortcut icon\" href=\"../images/favicon.gif\">
          <div id=\"my-org-div-home-and-up\">
             <a href=\"index.html\">home </a>
             <span class=\"muted\">...</span>
@@ -656,6 +657,7 @@ Use Org's capture system:
           `(("blog"
              :base-directory "~/Dropbox/org/blog/src"
              :html-extension "html"
+             :htmlized-source t
              :exclude "^\\(style\\|theindex\\)"
              :base-extension "org"
              :publishing-directory "~/Dropbox/org/blog/html"
