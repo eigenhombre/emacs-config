@@ -52,7 +52,7 @@ Define which remote archives to pull from, and which packages to use:
           clojure-mode epl popup rainbow-delimiters smex undo-tree
           flycheck flycheck-hdevtools org git-timemachine paredit
           auto-indent-mode slamhound lorem-ipsum midje-mode
-          hungry-delete metar helm htmlize))
+          hungry-delete metar helm htmlize magit))
 #+END_SRC
 
 Install any missing packages:
