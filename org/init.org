@@ -52,7 +52,7 @@ Define which remote archives to pull from, and which packages to use:
           clojure-mode epl popup rainbow-delimiters smex undo-tree
           flycheck flycheck-hdevtools org git-timemachine paredit
           auto-indent-mode slamhound lorem-ipsum midje-mode
-          hungry-delete metar helm htmlize magit))
+          hungry-delete metar helm htmlize magit expand-region))
 #+END_SRC
 
 Install any missing packages:
@@ -217,6 +217,7 @@ machine over the years.  Some could probably be deleted.
   (global-set-key "\C-c\C-k" 'kill-region)
   (global-set-key "\C-ok" 'comment-region)
   (global-set-key "\C-ou" 'uncomment-region)
+  (global-set-key "\C-on" 'er/expand-region)
   (global-set-key "\C-oe" 'eval-current-buffer)
   (global-set-key "\C-od" 'delete-horizontal-space)
   (global-set-key "\C-ob" 'backward-word)
@@ -640,25 +641,54 @@ Use Org's capture system:
 * Blogging
 #+BEGIN_SRC emacs-lisp
   (setq org-sitemap-link-format
-        "@@html:<span class='sm-d'>%d</span> <span class='sm-t'>%t</span>@@"
+        "@@html:<span class='sm-d'>%d</span> &nbsp; &nbsp; &nbsp; <span class='sm-t'>%t</span>@@"
         org-sitemap-html-preamble
         "<link rel=\"stylesheet\" href=\"../css/style.css\" type=\"text/css\" />
+         <link rel=\"stylesheet\" href=\"http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css\" />
          <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap.min.css\">
          <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/bootstrap/3.3.0/css/bootstrap-theme.min.css\">
+         <script src=\"http://code.jquery.com/jquery-1.9.1.js\"></script>
+         <script src=\"http://code.jquery.com/ui/1.10.3/jquery-ui.js\"></script>
          <script src=\"https://cdn.jsdelivr.net/bootstrap/3.3.0/js/bootstrap.min.js\"></script>
          <link rel=\"shortcut icon\" href=\"../images/favicon.gif\">
          <div id=\"my-org-div-home-and-up\">
             <a href=\"index.html\">home </a>
             <span class=\"muted\">...</span>
             <a href=\"sitemap.html\"> archive </a>
-         </div>")
+         </div>"
+        org-sitemap-html-postamble
+        "<div id=\"disqus_thread\"></div>
+<script type=\"text/javascript\">
+    var disqus_shortname = 'eigenhombrecom'; // required: replace example with your forum shortname
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href=\"http://disqus.com/?ref_noscript\">comments powered by Disqus.</a></noscript>
+<a href=\"http://disqus.com\" class=\"dsq-brlink\">blog comments powered by <span class=\"logo-disqus\">Disqus</span></a>
+<script type=\"text/javascript\">
+ var _gaq = _gaq || [];
+ _gaq.push(['_setAccount', 'UA-40279882-1']);
+ _gaq.push(['_trackPageview']);
+
+ (function() {
+   var ga = document.createElement('script');
+   ga.type = 'text/javascript';
+   ga.async = true;
+   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+ })();
+</script>")
 
   (setq org-publish-project-alist
           `(("blog"
              :base-directory "~/Dropbox/org/blog/src"
              :html-extension "html"
              :htmlized-source t
-             :exclude "^\\(style\\|theindex\\)"
+             :exclude "^\\(style\\|theindex\\|index\\)"
              :base-extension "org"
              :publishing-directory "~/Dropbox/org/blog/html"
              :publishing-function (org-html-publish-to-html)
@@ -668,9 +698,10 @@ Use Org's capture system:
              :sitemap-file-entry-format ,org-sitemap-link-format
              :html-link-up ""
              :html-link-home ""
-             :sitemap-title "Site Map"
+             :sitemap-title "Things you can find here"
              :html-head-extra nil
-             :html-preamble ,org-sitemap-html-preamble)))
+             :html-preamble ,org-sitemap-html-preamble
+             :html-postamble ,org-sitemap-html-postamble)))
 #+END_SRC
 Keyboard mappings to publish and to open local copy of new blog.
 Using =\C-oX= forces Org to (re-)publish even unmodified files.
