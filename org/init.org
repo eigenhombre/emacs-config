@@ -533,6 +533,11 @@ Clojure.
                            'slime-eval-last-expression)))
 #+END_SRC
 
+* Magit stuff
+Bind key for quick Git status:
+#+BEGIN_SRC emacs-lisp
+  (global-set-key "\C-om" 'magit-status)
+#+END_SRC
 * Org Mode
 General setup:
 #+BEGIN_SRC emacs-lisp
@@ -726,6 +731,18 @@ Using =\C-oX= forces Org to (re-)publish even unmodified files.
     (shell-command (concat "open file://" (expand-file-name "~/Dropbox/org/blog/html/sitemap.html"))))
 
   (global-set-key "\C-oz" 'open-blog-sitemap)
+
+#+END_SRC
+I use this little bit of magic to reformat blog posts extracted from
+Blogger /(delete when no longer needed)/.
+#+BEGIN_SRC emacs-lisp
+  (global-set-key "\C-oV" (lambda ()
+                            (interactive)
+                            (search-forward "# layout")
+                            (beginning-of-line)
+                            (set-mark-command nil)
+                            (search-forward "---")
+                            (comment-or-uncomment-region (region-beginning) (region-end))))
 #+END_SRC
 
 #+RESULTS:
