@@ -638,6 +638,12 @@ Use Org's capture system:
   (define-key global-map "\C-cc" 'org-capture)
 #+END_SRC
 
+Export " as `` and '':
+#+BEGIN_SRC emacs-lisp
+(setq org-export-with-smart-quotes t)
+#+END_SRC
+
+
 * Blogging
 #+BEGIN_SRC emacs-lisp
   (setq org-sitemap-link-format
@@ -688,7 +694,7 @@ Use Org's capture system:
              :base-directory "~/Dropbox/org/blog/src"
              :html-extension "html"
              :htmlized-source t
-             :exclude "^\\(style\\|theindex\\|index\\)"
+             :exclude "^\\(style\\|theindex\\)"
              :base-extension "org"
              :publishing-directory "~/Dropbox/org/blog/html"
              :publishing-function (org-html-publish-to-html)
