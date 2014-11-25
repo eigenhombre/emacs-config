@@ -10,8 +10,7 @@ other places around the Internetz.
 
 You'll find this code highly focused on Clojure and Org Mode.  I have
 a lot of unconventional keybindings since I didn't bother to learn all
-the classic ones when I started with Emacs (probably sometime in the
-1990s).
+the classic ones when I started with Emacs (sometime before /cough/ 1997).
 
 * Utilities
 Matt wrote a Clojure-like =filter= function.  Probably I'll write more
@@ -28,20 +27,19 @@ one's language to one's liking?)
 
 * Package management
 MELPA is a bit too bleeding edge; since CIDER has broken for me
-before after upgrading, I use the more stable releases from =melpa-stable=
-only.  To get back MELPA(-bleeding-edge), swap in the following:
+before after upgrading, I sometimes use the more stable releases from =melpa-stable=
+only.  To get back to the stable version, I swap in the following:
 
 #+BEGIN_SRC emacs-lisp
-;; (add-to-list 'package-archives
-;;              '("MELPA" . "http://melpa.milkbox.net/packages/") t)
+;;  (add-to-list 'package-archives
+;;   '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
 #+END_SRC
 
 Define which remote archives to pull from, and which packages to use:
 #+BEGIN_SRC emacs-lisp
   (require 'package)
-  (add-to-list
-   'package-archives
-   '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
+  (add-to-list 'package-archives
+               '("MELPA" . "http://melpa.milkbox.net/packages/") t)
   (add-to-list 'package-archives
                '("marmalade" . "http://marmalade-repo.org/packages/") t)
   (package-initialize)
@@ -64,6 +62,14 @@ Install any missing packages:
                (y-or-n-p (format "Install packages %s?"  uninstalled-packages)))
       (package-refresh-contents)
       (mapc 'package-install uninstalled-packages)))
+#+END_SRC
+
+* Manually installed packages
+
+See =http://ergoemacs.org/emacs/emacs_installing_packages.html=.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/hand-installed/")
 #+END_SRC
 
 * Startup
@@ -120,6 +126,12 @@ Sometimes I have to write Rails or Ruby code.  You might, too.  Do two
 space indents for Ruby code:
 #+BEGIN_SRC emacs-lisp
 (setq ruby-indent-level 2)
+#+END_SRC
+
+* Opening files in other applications
+This nice, tiny library by Üstün Özgür allows one to launch the current file (or directory!) in another app.
+#+BEGIN_SRC emacs-lisp
+(load "~/.emacs.d/hand-installed/emacs_friends.el")
 #+END_SRC
 
 * Backups
@@ -294,79 +306,79 @@ Add el-doc for cider.
   (require 'cider-eldoc)
 #+END_SRC
 
-** Key bindings special to Midje facts
-Set up Midje fact with mark inserted at beginning of comment text
-(refill as needed in appropriate columns, using =C-oF=).
-#+BEGIN_SRC emacs-lisp
-(global-set-key "\C-of" (lambda ()
-                          (interactive)
-                          (insert "(fact                               \"\"\n\n  )")
-                          (backward-char 6)
-                          (set-mark (point))))
-#+END_SRC
-Perform the refill operation for the text string in a Midje fact:
-#+BEGIN_SRC emacs-lisp
-(global-set-key "\C-oF" (lambda ()
-                          (interactive)
-                          (set-left-margin (mark) (point) 37)
-                          (fill-region (mark) (point))))
-
-#+END_SRC
+** Inserting Clojure results directly into source buffer
 
 Append result of evaluating previous expression (Clojure):
+
 #+BEGIN_SRC emacs-lisp
-(defun cider-eval-last-sexp-and-append ()
-  "Evaluate the expression preceding point and append result."
-  (interactive)
-  (let ((last-sexp (cider-last-sexp)))
-    ;; we have to be sure the evaluation won't result in an error
-    (cider-eval-and-get-value last-sexp)
-    (with-current-buffer (current-buffer)
-      (insert ";;=>\n"))
-    (cider-interactive-eval-print last-sexp)))
+  (defun jj-cider-eval-and-get-value (v)
+    (nrepl-dict-get (nrepl-sync-request:eval v) "value"))
+
+  (defun jj-cider-interactive-eval-print (form)
+    "Evaluate the given FORM and print value in current buffer."
+    (let ((buffer (current-buffer)))
+      (cider-eval form
+                  (cider-eval-print-handler buffer)
+                  (cider-current-ns))))
+
+  (defun jj-cider-eval-last-sexp-and-append ()
+    "Evaluate the expression preceding point and append result."
+    (interactive)
+    (let ((last-sexp (cider-last-sexp)))
+      ;; we have to be sure the evaluation won't result in an error
+      (jj-cider-eval-and-get-value last-sexp)
+      (with-current-buffer (current-buffer)
+        (insert ";;=>\n"))
+      (jj-cider-interactive-eval-print last-sexp)
+      ;;(cider--pprint-eval-form last-sexp (cider-last-sexp-start-pos))
+      ;;(cider-pprint-eval-last-sexp last-sexp)
+      ))
 
 
-(defun cider-format-with-out-str-pprint-eval (form)
-  "Return a string of Clojure code that will return pretty-printed FORM."
-  (format "(clojure.core/let [x %s] (with-out-str (clojure.pprint/pprint x)))" form))
+  (defun jj-cider-format-with-out-str-pprint-eval (form)
+    "Return a string of Clojure code that will return pretty-printed FORM."
+    (format "(clojure.core/let [x %s] (with-out-str (clojure.pprint/pprint x)))"
+        form))
 
 
-(defun cider-eval-last-sexp-and-pprint-append ()
-  "Evaluate the expression preceding point and append pretty-printed result."
-  (interactive)
-  (let ((last-sexp (cider-last-sexp)))
-    ;; we have to be sure the evaluation won't result in an error
-    (with-current-buffer (current-buffer)
-      (insert ";;=>\n")
-      (insert (cider-eval-and-get-value (cider-format-with-out-str-pprint-eval last-sexp))))))
+  (defun jj-cider-eval-last-sexp-and-pprint-append ()
+    "Evaluate the expression preceding point and append pretty-printed result."
+    (interactive)
+    (let ((last-sexp (cider-last-sexp)))
+      ;; we have to be sure the evaluation won't result in an error
+      (with-current-buffer (current-buffer)
+        (insert (concat "\n;;=>\n"
+                        (read
+                          (jj-cider-eval-and-get-value
+                           (jj-cider-format-with-out-str-pprint-eval last-sexp))))))))
+#+END_SRC
 
+** A few paredit things, also from =whattheemacsd.com=
 
-;; A few paredit things, also from whattheemacsd.com:
-(defun paredit--is-at-start-of-sexp ()
-  (and (looking-at "(\\|\\[")
-       (not (nth 3 (syntax-ppss))) ;; inside string
-       (not (nth 4 (syntax-ppss))))) ;; inside comment
+#+BEGIN_SRC emacs-lisp
+  (defun paredit--is-at-start-of-sexp ()
+    (and (looking-at "(\\|\\[")
+         (not (nth 3 (syntax-ppss))) ;; inside string
+         (not (nth 4 (syntax-ppss))))) ;; inside comment
 
-(defun paredit-duplicate-closest-sexp ()
-  (interactive)
-  ;; skips to start of current sexp
-  (while (not (paredit--is-at-start-of-sexp))
-    (paredit-backward))
-  (set-mark-command nil)
-  ;; while we find sexps we move forward on the line
-  (while (and (bounds-of-thing-at-point 'sexp)
-              (<= (point) (car (bounds-of-thing-at-point 'sexp)))
-              (not (= (point) (line-end-position))))
-    (forward-sexp)
-    (while (looking-at " ")
-      (forward-char)))
-  (kill-ring-save (mark) (point))
-  ;; go to the next line and copy the sexprs we encountered
-  (paredit-newline)
-  (yank)
-  (exchange-point-and-mark))
-
-
+  (defun paredit-duplicate-closest-sexp ()
+    (interactive)
+    ;; skips to start of current sexp
+    (while (not (paredit--is-at-start-of-sexp))
+      (paredit-backward))
+    (set-mark-command nil)
+    ;; while we find sexps we move forward on the line
+    (while (and (bounds-of-thing-at-point 'sexp)
+                (<= (point) (car (bounds-of-thing-at-point 'sexp)))
+                (not (= (point) (line-end-position))))
+      (forward-sexp)
+      (while (looking-at " ")
+        (forward-char)))
+    (kill-ring-save (mark) (point))
+    ;; go to the next line and copy the sexprs we encountered
+    (paredit-newline)
+    (yank)
+    (exchange-point-and-mark))
 #+END_SRC
 
 ** Correcting single-whitespaced toplevel forms
@@ -392,9 +404,9 @@ Append result of evaluating previous expression (Clojure):
              (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
              (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
              (define-key clojure-mode-map (kbd "C-o y")
-               'cider-eval-last-sexp-and-append)
+               'jj-cider-eval-last-sexp-and-append)
              (define-key clojure-mode-map (kbd "C-o Y")
-               'cider-eval-last-sexp-and-pprint-append)
+               'jj-cider-eval-last-sexp-and-pprint-append)
              (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
              (define-key clojure-mode-map (kbd "C-c x") 'shell-eval-defun)))
 #+END_SRC
@@ -474,7 +486,7 @@ the existing shell buffer.
 (defun create-shell-in-new-buffer ()
   (interactive)
   (let ((currentbuf (get-buffer-window (current-buffer)))
-	(newbuf (generate-new-buffer-name "*shell*")))
+        (newbuf (generate-new-buffer-name "*shell*")))
     (generate-new-buffer newbuf)
     (set-window-dedicated-p currentbuf nil)
     (set-window-buffer currentbuf newbuf)
@@ -526,16 +538,16 @@ played around.  So far I find Emacs integration to be at least as good
 as with Clojure.  Here I mimic two of the keybindings I use most from
 Clojure.
 #+BEGIN_SRC emacs-lisp
-  (require 'slime-autoloads)
-  (setq inferior-lisp-program "/usr/local/bin/sbcl")
-  (setq slime-contribs '(slime-fancy))
-  (add-hook 'lisp-mode-hook
-            '(lambda ()
-               (paredit-mode 1)
-               (highlight-long-lines)
-               (define-key lisp-mode-map (kbd "C-o j") 'slime)
-               (define-key lisp-mode-map (kbd "s-i")
-                           'slime-eval-last-expression)))
+  ;; (require 'slime-autoloads)
+  ;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
+  ;; (setq slime-contribs '(slime-fancy))
+  ;; (add-hook 'lisp-mode-hook
+  ;;           '(lambda ()
+  ;;              (paredit-mode 1)
+  ;;              (highlight-long-lines)
+  ;;              (define-key lisp-mode-map (kbd "C-o j") 'slime)
+  ;;              (define-key lisp-mode-map (kbd "s-i")
+  ;;                          'slime-eval-last-expression)))
 #+END_SRC
 
 * Magit stuff
@@ -547,7 +559,16 @@ Bind key for quick Git status:
 General setup:
 #+BEGIN_SRC emacs-lisp
 (require 'org)
+#+END_SRC
+
+Set Clojure backend for literate programming.
+#+BEGIN_SRC emacs-lisp
+(setq org-babel-clojure-backend 'cider)
 (require 'ob-clojure)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((sh . t)
+   (clojure . t)))
 #+END_SRC
 
 Show source code highlighting in code blocks:
@@ -563,11 +584,6 @@ Allow alphabetical plain lists (=a.=, =A.=, =a)=, =A)=).
 Put clock in/out timestamps into drawer, so they stay hidden when expanding items.
 #+BEGIN_SRC emacs-lisp
 (setq org-clock-into-drawer t)
-#+END_SRC
-
-Set Clojure backend for literate programming.
-#+BEGIN_SRC emacs-lisp
-(setq org-babel-clojure-backend 'cider)
 #+END_SRC
 
 Don't ask for confirmation before evaluating code in these languages
@@ -608,7 +624,12 @@ http://sachachua.com/blog/2007/12/clocking-time-with-emacs-org/].
          (org-clock-out)))
      (add-hook 'org-after-todo-state-change-hook
                'wicked/org-clock-out-if-waiting)))
+#+END_SRC
 
+Add Markdown export functionality (=http://stackoverflow.com/questions/22988092/emacs-org-mode-export-markdown=):
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "org"
+  '(require 'ox-md nil t))
 #+END_SRC
 
 Log when an item goes to DONE state:
@@ -652,7 +673,6 @@ Export " as `` and '':
 #+BEGIN_SRC emacs-lisp
 (setq org-export-with-smart-quotes t)
 #+END_SRC
-
 
 * Blogging
 #+BEGIN_SRC emacs-lisp
@@ -752,6 +772,25 @@ Blogger /(delete when no longer needed)/.
 
 #+RESULTS:
 : open-blog-sitemap
+
+* Marginalia
+
+Launch Marginalia automagically on =C-of=:
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key "\C-of" (lambda ()
+                            (interactive)
+                            (message "Launching Marginalia...")
+                            (let ((target-directory (locate-dominating-file default-directory
+                                                                            "project.clj")))
+                              (when target-directory
+                                (let* ((marg-cmd (concat "cd " target-directory " && "
+                                                         "lein marg "
+                                                         buffer-file-name
+                                                         "&& open docs/uberdoc.html"))
+                                       (result (shell-command-to-string marg-cmd)))
+                                  (message result))))))
+#+END_SRC
 
 * Tidying up
 Be a nicely-behaved module or "[[http://www.delorie.com/gnu/docs/elisp-manual-21/elisp_201.html][feature]]":
