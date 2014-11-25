@@ -306,45 +306,46 @@ Don't go to REPL buffer when starting Cider:
 Append result of evaluating previous expression (Clojure):
 
 #+BEGIN_SRC emacs-lisp
-    (defun jj-cider-eval-and-get-value (v)
-      (nrepl-dict-get (nrepl-sync-request:eval v) "value"))
+  (defun jj-cider-eval-and-get-value (v)
+    (nrepl-dict-get (nrepl-sync-request:eval v) "value"))
 
-    (defun jj-cider-interactive-eval-print (form)
-      "Evaluate the given FORM and print value in current buffer."
-      (let ((buffer (current-buffer)))
-        (cider-eval form
-                    (cider-eval-print-handler buffer)
-                    (cider-current-ns))))
+  (defun jj-cider-interactive-eval-print (form)
+    "Evaluate the given FORM and print value in current buffer."
+    (let ((buffer (current-buffer)))
+      (cider-eval form
+                  (cider-eval-print-handler buffer)
+                  (cider-current-ns))))
 
-    (defun jj-cider-eval-last-sexp-and-append ()
-      "Evaluate the expression preceding point and append result."
-      (interactive)
-      (let ((last-sexp (cider-last-sexp)))
-        ;; we have to be sure the evaluation won't result in an error
-        (jj-cider-eval-and-get-value last-sexp)
-        (with-current-buffer (current-buffer)
-          (insert ";;=>\n"))
-        (jj-cider-interactive-eval-print last-sexp)
-        ;;(cider--pprint-eval-form last-sexp (cider-last-sexp-start-pos))
-        ;;(cider-pprint-eval-last-sexp last-sexp)
-        ))
-
-
-    (defun jj-cider-format-with-out-str-pprint-eval (form)
-      "Return a string of Clojure code that will return pretty-printed FORM."
-      (cider-format-pprint-eval form 0))
-      ;(format "(clojure.core/let [x %s] (with-out-str (clojure.pprint/pprint x)))" form))
+  (defun jj-cider-eval-last-sexp-and-append ()
+    "Evaluate the expression preceding point and append result."
+    (interactive)
+    (let ((last-sexp (cider-last-sexp)))
+      ;; we have to be sure the evaluation won't result in an error
+      (jj-cider-eval-and-get-value last-sexp)
+      (with-current-buffer (current-buffer)
+        (insert ";;=>\n"))
+      (jj-cider-interactive-eval-print last-sexp)
+      ;;(cider--pprint-eval-form last-sexp (cider-last-sexp-start-pos))
+      ;;(cider-pprint-eval-last-sexp last-sexp)
+      ))
 
 
-    (defun jj-cider-eval-last-sexp-and-pprint-append ()
-      "Evaluate the expression preceding point and append pretty-printed result."
-      (interactive)
-      (let ((last-sexp (cider-last-sexp)))
-        ;; we have to be sure the evaluation won't result in an error
-        (with-current-buffer (current-buffer)
-          (insert (concat "\n;;=>\n"
+  (defun jj-cider-format-with-out-str-pprint-eval (form)
+    "Return a string of Clojure code that will return pretty-printed FORM."
+    (format "(clojure.core/let [x %s] (with-out-str (clojure.pprint/pprint x)))"
+        form))
+
+
+  (defun jj-cider-eval-last-sexp-and-pprint-append ()
+    "Evaluate the expression preceding point and append pretty-printed result."
+    (interactive)
+    (let ((last-sexp (cider-last-sexp)))
+      ;; we have to be sure the evaluation won't result in an error
+      (with-current-buffer (current-buffer)
+        (insert (concat "\n;;=>\n"
+                        (read
                           (jj-cider-eval-and-get-value
-                           (jj-cider-format-with-out-str-pprint-eval last-sexp)))))))
+                           (jj-cider-format-with-out-str-pprint-eval last-sexp))))))))
 #+END_SRC
 
 ** A few paredit things, also from =whattheemacsd.com=
@@ -398,9 +399,9 @@ Append result of evaluating previous expression (Clojure):
              (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
              (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
              (define-key clojure-mode-map (kbd "C-o y")
-               'cider-eval-last-sexp-and-append)
+               'jj-cider-eval-last-sexp-and-append)
              (define-key clojure-mode-map (kbd "C-o Y")
-               'cider-eval-last-sexp-and-pprint-append)
+               'jj-cider-eval-last-sexp-and-pprint-append)
              (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
              (define-key clojure-mode-map (kbd "C-c x") 'shell-eval-defun)))
 #+END_SRC
@@ -480,7 +481,7 @@ the existing shell buffer.
 (defun create-shell-in-new-buffer ()
   (interactive)
   (let ((currentbuf (get-buffer-window (current-buffer)))
-	(newbuf (generate-new-buffer-name "*shell*")))
+        (newbuf (generate-new-buffer-name "*shell*")))
     (generate-new-buffer newbuf)
     (set-window-dedicated-p currentbuf nil)
     (set-window-buffer currentbuf newbuf)
@@ -532,16 +533,16 @@ played around.  So far I find Emacs integration to be at least as good
 as with Clojure.  Here I mimic two of the keybindings I use most from
 Clojure.
 #+BEGIN_SRC emacs-lisp
-  (require 'slime-autoloads)
-  (setq inferior-lisp-program "/usr/local/bin/sbcl")
-  (setq slime-contribs '(slime-fancy))
-  (add-hook 'lisp-mode-hook
-            '(lambda ()
-               (paredit-mode 1)
-               (highlight-long-lines)
-               (define-key lisp-mode-map (kbd "C-o j") 'slime)
-               (define-key lisp-mode-map (kbd "s-i")
-                           'slime-eval-last-expression)))
+  ;; (require 'slime-autoloads)
+  ;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
+  ;; (setq slime-contribs '(slime-fancy))
+  ;; (add-hook 'lisp-mode-hook
+  ;;           '(lambda ()
+  ;;              (paredit-mode 1)
+  ;;              (highlight-long-lines)
+  ;;              (define-key lisp-mode-map (kbd "C-o j") 'slime)
+  ;;              (define-key lisp-mode-map (kbd "s-i")
+  ;;                          'slime-eval-last-expression)))
 #+END_SRC
 
 * Magit stuff
@@ -553,7 +554,16 @@ Bind key for quick Git status:
 General setup:
 #+BEGIN_SRC emacs-lisp
 (require 'org)
+#+END_SRC
+
+Set Clojure backend for literate programming.
+#+BEGIN_SRC emacs-lisp
+(setq org-babel-clojure-backend 'cider)
 (require 'ob-clojure)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((sh . t)
+   (clojure . t)))
 #+END_SRC
 
 Show source code highlighting in code blocks:
@@ -569,11 +579,6 @@ Allow alphabetical plain lists (=a.=, =A.=, =a)=, =A)=).
 Put clock in/out timestamps into drawer, so they stay hidden when expanding items.
 #+BEGIN_SRC emacs-lisp
 (setq org-clock-into-drawer t)
-#+END_SRC
-
-Set Clojure backend for literate programming.
-#+BEGIN_SRC emacs-lisp
-(setq org-babel-clojure-backend 'cider)
 #+END_SRC
 
 Don't ask for confirmation before evaluating code in these languages
@@ -614,7 +619,12 @@ http://sachachua.com/blog/2007/12/clocking-time-with-emacs-org/].
          (org-clock-out)))
      (add-hook 'org-after-todo-state-change-hook
                'wicked/org-clock-out-if-waiting)))
+#+END_SRC
 
+Add Markdown export functionality (=http://stackoverflow.com/questions/22988092/emacs-org-mode-export-markdown=):
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "org"
+  '(require 'ox-md nil t))
 #+END_SRC
 
 Log when an item goes to DONE state:
@@ -658,7 +668,6 @@ Export " as `` and '':
 #+BEGIN_SRC emacs-lisp
 (setq org-export-with-smart-quotes t)
 #+END_SRC
-
 
 * Blogging
 #+BEGIN_SRC emacs-lisp
