@@ -301,79 +301,78 @@ Don't go to REPL buffer when starting Cider:
 (setq cider-repl-pop-to-buffer-on-connect nil)
 #+END_SRC
 
-** Key bindings special to Midje facts
-Set up Midje fact with mark inserted at beginning of comment text
-(refill as needed in appropriate columns, using =C-oF=).
-#+BEGIN_SRC emacs-lisp
-(global-set-key "\C-of" (lambda ()
-                          (interactive)
-                          (insert "(fact                               \"\"\n\n  )")
-                          (backward-char 6)
-                          (set-mark (point))))
-#+END_SRC
-Perform the refill operation for the text string in a Midje fact:
-#+BEGIN_SRC emacs-lisp
-(global-set-key "\C-oF" (lambda ()
-                          (interactive)
-                          (set-left-margin (mark) (point) 37)
-                          (fill-region (mark) (point))))
-
-#+END_SRC
+** Inserting Clojure results directly into source buffer
 
 Append result of evaluating previous expression (Clojure):
+
 #+BEGIN_SRC emacs-lisp
-(defun cider-eval-last-sexp-and-append ()
-  "Evaluate the expression preceding point and append result."
-  (interactive)
-  (let ((last-sexp (cider-last-sexp)))
-    ;; we have to be sure the evaluation won't result in an error
-    (cider-eval-and-get-value last-sexp)
-    (with-current-buffer (current-buffer)
-      (insert ";;=>\n"))
-    (cider-interactive-eval-print last-sexp)))
+    (defun jj-cider-eval-and-get-value (v)
+      (nrepl-dict-get (nrepl-sync-request:eval v) "value"))
+
+    (defun jj-cider-interactive-eval-print (form)
+      "Evaluate the given FORM and print value in current buffer."
+      (let ((buffer (current-buffer)))
+        (cider-eval form
+                    (cider-eval-print-handler buffer)
+                    (cider-current-ns))))
+
+    (defun jj-cider-eval-last-sexp-and-append ()
+      "Evaluate the expression preceding point and append result."
+      (interactive)
+      (let ((last-sexp (cider-last-sexp)))
+        ;; we have to be sure the evaluation won't result in an error
+        (jj-cider-eval-and-get-value last-sexp)
+        (with-current-buffer (current-buffer)
+          (insert ";;=>\n"))
+        (jj-cider-interactive-eval-print last-sexp)
+        ;;(cider--pprint-eval-form last-sexp (cider-last-sexp-start-pos))
+        ;;(cider-pprint-eval-last-sexp last-sexp)
+        ))
 
 
-(defun cider-format-with-out-str-pprint-eval (form)
-  "Return a string of Clojure code that will return pretty-printed FORM."
-  (format "(clojure.core/let [x %s] (with-out-str (clojure.pprint/pprint x)))" form))
+    (defun jj-cider-format-with-out-str-pprint-eval (form)
+      "Return a string of Clojure code that will return pretty-printed FORM."
+      (cider-format-pprint-eval form 0))
+      ;(format "(clojure.core/let [x %s] (with-out-str (clojure.pprint/pprint x)))" form))
 
 
-(defun cider-eval-last-sexp-and-pprint-append ()
-  "Evaluate the expression preceding point and append pretty-printed result."
-  (interactive)
-  (let ((last-sexp (cider-last-sexp)))
-    ;; we have to be sure the evaluation won't result in an error
-    (with-current-buffer (current-buffer)
-      (insert ";;=>\n")
-      (insert (cider-eval-and-get-value (cider-format-with-out-str-pprint-eval last-sexp))))))
+    (defun jj-cider-eval-last-sexp-and-pprint-append ()
+      "Evaluate the expression preceding point and append pretty-printed result."
+      (interactive)
+      (let ((last-sexp (cider-last-sexp)))
+        ;; we have to be sure the evaluation won't result in an error
+        (with-current-buffer (current-buffer)
+          (insert (concat "\n;;=>\n"
+                          (jj-cider-eval-and-get-value
+                           (jj-cider-format-with-out-str-pprint-eval last-sexp)))))))
+#+END_SRC
 
+** A few paredit things, also from =whattheemacsd.com=
 
-;; A few paredit things, also from whattheemacsd.com:
-(defun paredit--is-at-start-of-sexp ()
-  (and (looking-at "(\\|\\[")
-       (not (nth 3 (syntax-ppss))) ;; inside string
-       (not (nth 4 (syntax-ppss))))) ;; inside comment
+#+BEGIN_SRC emacs-lisp
+  (defun paredit--is-at-start-of-sexp ()
+    (and (looking-at "(\\|\\[")
+         (not (nth 3 (syntax-ppss))) ;; inside string
+         (not (nth 4 (syntax-ppss))))) ;; inside comment
 
-(defun paredit-duplicate-closest-sexp ()
-  (interactive)
-  ;; skips to start of current sexp
-  (while (not (paredit--is-at-start-of-sexp))
-    (paredit-backward))
-  (set-mark-command nil)
-  ;; while we find sexps we move forward on the line
-  (while (and (bounds-of-thing-at-point 'sexp)
-              (<= (point) (car (bounds-of-thing-at-point 'sexp)))
-              (not (= (point) (line-end-position))))
-    (forward-sexp)
-    (while (looking-at " ")
-      (forward-char)))
-  (kill-ring-save (mark) (point))
-  ;; go to the next line and copy the sexprs we encountered
-  (paredit-newline)
-  (yank)
-  (exchange-point-and-mark))
-
-
+  (defun paredit-duplicate-closest-sexp ()
+    (interactive)
+    ;; skips to start of current sexp
+    (while (not (paredit--is-at-start-of-sexp))
+      (paredit-backward))
+    (set-mark-command nil)
+    ;; while we find sexps we move forward on the line
+    (while (and (bounds-of-thing-at-point 'sexp)
+                (<= (point) (car (bounds-of-thing-at-point 'sexp)))
+                (not (= (point) (line-end-position))))
+      (forward-sexp)
+      (while (looking-at " ")
+        (forward-char)))
+    (kill-ring-save (mark) (point))
+    ;; go to the next line and copy the sexprs we encountered
+    (paredit-newline)
+    (yank)
+    (exchange-point-and-mark))
 #+END_SRC
 
 ** Correcting single-whitespaced toplevel forms
