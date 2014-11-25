@@ -10,8 +10,7 @@ other places around the Internetz.
 
 You'll find this code highly focused on Clojure and Org Mode.  I have
 a lot of unconventional keybindings since I didn't bother to learn all
-the classic ones when I started with Emacs (probably sometime in the
-1990s).
+the classic ones when I started with Emacs (sometime before /cough/ 1997).
 
 * Utilities
 Matt wrote a Clojure-like =filter= function.  Probably I'll write more
@@ -28,20 +27,19 @@ one's language to one's liking?)
 
 * Package management
 MELPA is a bit too bleeding edge; since CIDER has broken for me
-before after upgrading, I use the more stable releases from =melpa-stable=
-only.  To get back MELPA(-bleeding-edge), swap in the following:
+before after upgrading, I sometimes use the more stable releases from =melpa-stable=
+only.  To get back to the stable version, I swap in the following:
 
 #+BEGIN_SRC emacs-lisp
-;; (add-to-list 'package-archives
-;;              '("MELPA" . "http://melpa.milkbox.net/packages/") t)
+;;  (add-to-list 'package-archives
+;;   '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
 #+END_SRC
 
 Define which remote archives to pull from, and which packages to use:
 #+BEGIN_SRC emacs-lisp
   (require 'package)
-  (add-to-list
-   'package-archives
-   '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
+  (add-to-list 'package-archives
+               '("MELPA" . "http://melpa.milkbox.net/packages/") t)
   (add-to-list 'package-archives
                '("marmalade" . "http://marmalade-repo.org/packages/") t)
   (package-initialize)
@@ -64,6 +62,14 @@ Install any missing packages:
                (y-or-n-p (format "Install packages %s?"  uninstalled-packages)))
       (package-refresh-contents)
       (mapc 'package-install uninstalled-packages)))
+#+END_SRC
+
+* Manually installed packages
+
+See =http://ergoemacs.org/emacs/emacs_installing_packages.html=.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/hand-installed/")
 #+END_SRC
 
 * Startup
@@ -120,6 +126,12 @@ Sometimes I have to write Rails or Ruby code.  You might, too.  Do two
 space indents for Ruby code:
 #+BEGIN_SRC emacs-lisp
 (setq ruby-indent-level 2)
+#+END_SRC
+
+* Opening files in other applications
+This nice, tiny library by Üstün Özgür allows one to launch the current file (or directory!) in another app.
+#+BEGIN_SRC emacs-lisp
+(load "~/.emacs.d/hand-installed/emacs_friends.el")
 #+END_SRC
 
 * Backups
@@ -747,6 +759,25 @@ Blogger /(delete when no longer needed)/.
 
 #+RESULTS:
 : open-blog-sitemap
+
+* Marginalia
+
+Launch Marginalia automagically on =C-of=:
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key "\C-of" (lambda ()
+                            (interactive)
+                            (message "Launching Marginalia...")
+                            (let ((target-directory (locate-dominating-file default-directory
+                                                                            "project.clj")))
+                              (when target-directory
+                                (let* ((marg-cmd (concat "cd " target-directory " && "
+                                                         "lein marg "
+                                                         buffer-file-name
+                                                         "&& open docs/uberdoc.html"))
+                                       (result (shell-command-to-string marg-cmd)))
+                                  (message result))))))
+#+END_SRC
 
 * Tidying up
 Be a nicely-behaved module or "[[http://www.delorie.com/gnu/docs/elisp-manual-21/elisp_201.html][feature]]":
