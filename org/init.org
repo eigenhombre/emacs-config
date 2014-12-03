@@ -50,7 +50,8 @@ Define which remote archives to pull from, and which packages to use:
           clojure-mode epl popup rainbow-delimiters smex undo-tree
           flycheck flycheck-hdevtools org git-timemachine paredit
           auto-indent-mode slamhound lorem-ipsum midje-mode
-          hungry-delete metar helm htmlize magit expand-region))
+          hungry-delete metar helm htmlize magit expand-region
+          clj-refactor))
 #+END_SRC
 
 Install any missing packages:
@@ -77,6 +78,11 @@ Some configuration to make things quieter on start up:
 #+BEGIN_SRC emacs-lisp
 (setq inhibit-splash-screen t
       initial-scratch-message nil)
+#+END_SRC
+
+Turn on =recentf-mode= for reopening recently used files:
+#+BEGIN_SRC emacs-lisp
+(recentf-mode 1)
 #+END_SRC
 
 * Initial keybindings
@@ -461,6 +467,13 @@ Shorten =clojure-mode= in mode line[fn:: From http://whattheemacsd.com/].
 (rename-modeline "clojure-mode" clojure-mode "Clj")
 #+END_SRC
 
+** Stuff for =clj-refactor=:
+#+BEGIN_SRC emacs-lisp
+  (require 'clj-refactor)
+  (add-hook 'clojure-mode-hook (lambda ()
+                                 (clj-refactor-mode 1)
+                                 (cljr-add-keybindings-with-prefix "C-c C-m")))
+#+END_SRC
 * Stuff for running shells within Emacs
 ** Path Magic
 Smooth the waters for starting processes from the shell.  "Set up
