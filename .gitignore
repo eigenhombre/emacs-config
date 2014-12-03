@@ -1,0 +1,12 @@
+ac-comphist.dat
+auto-save-list/
+backups/
+elpa/
+init.el~
+org/init.dvi
+org/init.el
+org/init.html
+org/init.org~
+org/init.tex
+saved-places
+src/
