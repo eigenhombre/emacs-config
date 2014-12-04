@@ -307,51 +307,54 @@ Don't go to REPL buffer when starting Cider:
 (setq cider-repl-pop-to-buffer-on-connect nil)
 #+END_SRC
 
+Add el-doc for cider.
+#+BEGIN_SRC emacs-lisp
+  (require 'cider-eldoc)
+#+END_SRC
+
 ** Inserting Clojure results directly into source buffer
 
 Append result of evaluating previous expression (Clojure):
 
 #+BEGIN_SRC emacs-lisp
-  (defun jj-cider-eval-and-get-value (v)
-    (nrepl-dict-get (nrepl-sync-request:eval v) "value"))
+(defun jj-cider-eval-and-get-value (v)
+  (let ((nrepl-sync-request-timeout nil))
+  (nrepl-dict-get (nrepl-sync-request:eval v) "value")))
 
-  (defun jj-cider-interactive-eval-print (form)
-    "Evaluate the given FORM and print value in current buffer."
-    (let ((buffer (current-buffer)))
-      (cider-eval form
-                  (cider-eval-print-handler buffer)
-                  (cider-current-ns))))
+(defun jj-cider-interactive-eval-print (form)
+  "Evaluate the given FORM and print value in current buffer."
+  (let ((buffer (current-buffer)))
+    (cider-eval form
+                (cider-eval-print-handler buffer)
+                (cider-current-ns))))
 
-  (defun jj-cider-eval-last-sexp-and-append ()
-    "Evaluate the expression preceding point and append result."
-    (interactive)
-    (let ((last-sexp (cider-last-sexp)))
-      ;; we have to be sure the evaluation won't result in an error
-      (jj-cider-eval-and-get-value last-sexp)
-      (with-current-buffer (current-buffer)
-        (insert ";;=>\n"))
-      (jj-cider-interactive-eval-print last-sexp)
-      ;;(cider--pprint-eval-form last-sexp (cider-last-sexp-start-pos))
-      ;;(cider-pprint-eval-last-sexp last-sexp)
-      ))
+(defun jj-cider-eval-last-sexp-and-append ()
+  "Evaluate the expression preceding point and append result."
+  (interactive)
+  (let ((last-sexp (cider-last-sexp)))
+    ;; we have to be sure the evaluation won't result in an error
+    (jj-cider-eval-and-get-value last-sexp)
+    (with-current-buffer (current-buffer)
+      (insert ";;=>\n"))
+    (jj-cider-interactive-eval-print last-sexp)))
 
 
-  (defun jj-cider-format-with-out-str-pprint-eval (form)
-    "Return a string of Clojure code that will return pretty-printed FORM."
-    (format "(clojure.core/let [x %s] (with-out-str (clojure.pprint/pprint x)))"
-        form))
+(defun jj-cider-format-with-out-str-pprint-eval (form)
+  "Return a string of Clojure code that will return pretty-printed FORM."
+  (format "(clojure.core/let [x %s] (with-out-str (clojure.pprint/pprint x)))"
+      form))
 
 
-  (defun jj-cider-eval-last-sexp-and-pprint-append ()
-    "Evaluate the expression preceding point and append pretty-printed result."
-    (interactive)
-    (let ((last-sexp (cider-last-sexp)))
-      ;; we have to be sure the evaluation won't result in an error
-      (with-current-buffer (current-buffer)
-        (insert (concat "\n;;=>\n"
-                        (read
-                          (jj-cider-eval-and-get-value
-                           (jj-cider-format-with-out-str-pprint-eval last-sexp))))))))
+(defun jj-cider-eval-last-sexp-and-pprint-append ()
+  "Evaluate the expression preceding point and append pretty-printed result."
+  (interactive)
+  (let ((last-sexp (cider-last-sexp)))
+    ;; we have to be sure the evaluation won't result in an error
+    (with-current-buffer (current-buffer)
+      (insert (concat "\n;;=>\n"
+                      (read
+                        (jj-cider-eval-and-get-value
+                         (jj-cider-format-with-out-str-pprint-eval last-sexp))))))))
 #+END_SRC
 
 ** A few paredit things, also from =whattheemacsd.com=
