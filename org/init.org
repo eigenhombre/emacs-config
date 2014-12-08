@@ -574,12 +574,13 @@ General setup:
 
 Set Clojure backend for literate programming.
 #+BEGIN_SRC emacs-lisp
-(setq org-babel-clojure-backend 'cider)
-(require 'ob-clojure)
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((sh . t)
-   (clojure . t)))
+  (setq org-babel-clojure-backend 'cider)
+  (require 'ob-clojure)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((sh . t)
+     (clojure . t)
+     (plantuml . t)))
 #+END_SRC
 
 Show source code highlighting in code blocks:
@@ -683,6 +684,12 @@ Use Org's capture system:
 Export " as `` and '':
 #+BEGIN_SRC emacs-lisp
 (setq org-export-with-smart-quotes t)
+#+END_SRC
+
+** Set up =plantuml=:
+#+BEGIN_SRC emacs-lisp
+(setq org-plantuml-jar-path
+      (expand-file-name "~/bin/plantuml.jar"))
 #+END_SRC
 
 * Blogging
