@@ -51,7 +51,7 @@ Define which remote archives to pull from, and which packages to use:
           flycheck flycheck-hdevtools org git-timemachine paredit
           auto-indent-mode slamhound lorem-ipsum midje-mode
           hungry-delete metar helm htmlize magit expand-region
-          clj-refactor))
+          clj-refactor floobits))
 #+END_SRC
 
 Install any missing packages:
@@ -194,8 +194,8 @@ Make =lambda= show as $\lambda$:
   (interactive)
   (unhighlight-regexp "^.*\\(?:.\\{81\\}\\).*$"))
 
-;(global-set-key "\C-oH" 'highlight-long-lines)
-;(global-set-key "\C-oh" 'unhighlight-long-lines)
+(global-set-key "\C-oH" 'highlight-long-lines)
+(global-set-key "\C-oh" 'unhighlight-long-lines)
 #+END_SRC
 
 * Lots of keybindings
