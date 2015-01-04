@@ -328,6 +328,11 @@ Append result of evaluating previous expression (Clojure):
                 (cider-eval-print-handler buffer)
                 (cider-current-ns))))
 
+(defun jj-cider-move-forward-and-eval ()
+  (interactive)
+  (paredit-forward)
+  (cider-eval-last-sexp))
+
 (defun jj-cider-eval-last-sexp-and-append ()
   "Evaluate the expression preceding point and append result."
   (interactive)
@@ -412,6 +417,7 @@ Append result of evaluating previous expression (Clojure):
              (define-key clojure-mode-map (kbd "C-o Y")
                'jj-cider-eval-last-sexp-and-pprint-append)
              (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
+             (define-key clojure-mode-map (kbd "s-I") 'jj-cider-move-forward-and-eval)
              (define-key clojure-mode-map (kbd "C-c x") 'shell-eval-defun)))
 #+END_SRC
 
