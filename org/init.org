@@ -605,6 +605,7 @@ Don't ask for confirmation before evaluating code in these languages
     (and
      (not (string= lang "lisp"))
      (not (string= lang "emacs-lisp"))
+     (not (string= lang "plantuml"))
      (not (string= lang "clojure"))))
   (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
 #+END_SRC
@@ -790,7 +791,6 @@ Blogger /(delete when no longer needed)/.
 
 #+RESULTS:
 : open-blog-sitemap
-
 * Marginalia
 
 Launch Marginalia automagically on =C-of=:
@@ -805,7 +805,7 @@ Launch Marginalia automagically on =C-of=:
                                 (let* ((marg-cmd (concat "cd " target-directory " && "
                                                          "lein marg "
                                                          buffer-file-name
-                                                         "&& open docs/uberdoc.html"))
+                                                         "&& open docs/uberdoc.html &"))
                                        (result (shell-command-to-string marg-cmd)))
                                   (message result))))))
 #+END_SRC
