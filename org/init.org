@@ -478,6 +478,23 @@ Shorten =clojure-mode= in mode line[fn:: From http://whattheemacsd.com/].
                                  (clj-refactor-mode 1)
                                  (cljr-add-keybindings-with-prefix "C-c C-t")))
 #+END_SRC
+
+** Fix currently broken Cider
+
+For "namespace not found" issues:
+
+#+BEGIN_SRC emacs-lisp
+  ;; FIXME: make clojure-mode only
+  ;;  (add-hook 'clojure-mode-hook (lambda ()
+  (add-hook 'clojure-mode-hook
+            (lambda ()
+              (global-set-key "\C-o1" (lambda ()
+                                        (interactive)
+                                        (let ((bname (buffer-file-name)))
+                                          (cider-load-file bname)
+                                          (cider-macroexpand-all))))))
+#+END_SRC
+
 * Stuff for running shells within Emacs
 ** Path Magic
 Smooth the waters for starting processes from the shell.  "Set up
