@@ -35,13 +35,15 @@ only.  To get back to the stable version, I swap in the following:
 ;;   '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
 #+END_SRC
 
-Define which remote archives to pull from, and which packages to use:
+Define which remote archives to pull from, and which packages to use.
+Pin Cider to a stable version.
 #+BEGIN_SRC emacs-lisp
   (require 'package)
   (add-to-list 'package-archives
-               '("MELPA" . "http://melpa.milkbox.net/packages/") t)
+               '("melpa-stable" . "http://stable.melpa.org/packages/") t)
   (add-to-list 'package-archives
-               '("marmalade" . "http://marmalade-repo.org/packages/") t)
+               '("MELPA" . "http://melpa.org/packages/") t)
+  (add-to-list 'package-pinned-packages '(cider . "melpa-stable") t)
   (package-initialize)
   (defvar my-packages)
   (setq my-packages
