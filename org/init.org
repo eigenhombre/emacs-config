@@ -493,8 +493,7 @@ For "namespace not found" issues:
               (global-set-key "\C-o1" (lambda ()
                                         (interactive)
                                         (let ((bname (buffer-file-name)))
-                                          (cider-load-file bname)
-                                          (cider-macroexpand-all))))))
+                                          (cider-load-file bname))))))
 #+END_SRC
 
 * Stuff for running shells within Emacs
