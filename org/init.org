@@ -412,24 +412,40 @@ Append result of evaluating previous expression (Clojure):
 (global-set-key "\C-oQ" 'correct-single-whitespace)
 #+END_SRC
 
+** Handling Clojure indentation for certain macros
+
+(WHY DOES THIS WORK!??! and give 2 space indents when I give value of
+1, but 4 space indents otherwise?!)
+
 #+BEGIN_SRC emacs-lisp
-(add-hook 'clojure-mode-hook
-          '(lambda ()
-             (paredit-mode 1)
-             (highlight-long-lines)
-             (define-key clojure-mode-map (kbd "C-c e") 'shell-eval-last-expression)
-             (define-key clojure-mode-map (kbd "C-o x") 'cider-eval-defun-at-point)
-             (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
-             (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
-             (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
-             (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
-             (define-key clojure-mode-map (kbd "C-o y")
-               'jj-cider-eval-last-sexp-and-append)
-             (define-key clojure-mode-map (kbd "C-o Y")
-               'jj-cider-eval-last-sexp-and-pprint-append)
-             (define-key clojure-mode-map (kbd "s-i") 'jj-cider-eval-last-sexp)
-             (define-key clojure-mode-map (kbd "s-I") 'jj-cider-move-forward-and-eval)
-             (define-key clojure-mode-map (kbd "C-c x") 'shell-eval-defun)))
+(put-clojure-indent 'describe 1)
+(put-clojure-indent 'describe-server 1)
+(put-clojure-indent 'it 1)
+(put-clojure-indent 'before-all 1)
+(put-clojure-indent 'after-all 1)
+(put-clojure-indent 'before 1)
+(put-clojure-indent 'after 1)
+#+END_SRC
+
+** Clojure mode hooks
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'clojure-mode-hook
+            '(lambda ()
+               (paredit-mode 1)
+               (highlight-long-lines)
+               (define-key clojure-mode-map (kbd "C-c e") 'shell-eval-last-expression)
+               (define-key clojure-mode-map (kbd "C-o x") 'cider-eval-defun-at-point)
+               (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
+               (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
+               (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
+               (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
+               (define-key clojure-mode-map (kbd "C-o y")
+                 'jj-cider-eval-last-sexp-and-append)
+               (define-key clojure-mode-map (kbd "C-o Y")
+                 'jj-cider-eval-last-sexp-and-pprint-append)
+               (define-key clojure-mode-map (kbd "s-i") 'jj-cider-eval-last-sexp)
+               (define-key clojure-mode-map (kbd "s-I") 'jj-cider-move-forward-and-eval)
+               (define-key clojure-mode-map (kbd "C-c x") 'shell-eval-defun)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
