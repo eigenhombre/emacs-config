@@ -843,6 +843,19 @@ Launch Marginalia automagically on =C-of=:
                                   (message result))))))
 #+END_SRC
 
+* M$ interop
+
+Hide =^M=. From
+http://stackoverflow.com/questions/3048906/dont-display-m-characters-with-emacs:
+
+#+BEGIN_SRC emacs-lisp
+  (defun hide-ctrl-M ()
+    "Hides the disturbing '^M' showing up in files containing mixed UNIX and DOS line endings."
+    (interactive)
+    (setq buffer-display-table (make-display-table))
+    (aset buffer-display-table ?\^M []))
+#+END_SRC
+
 * Tidying up
 Be a nicely-behaved module or "[[http://www.delorie.com/gnu/docs/elisp-manual-21/elisp_201.html][feature]]":
 #+BEGIN_SRC emacs-lisp
