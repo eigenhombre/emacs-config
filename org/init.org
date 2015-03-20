@@ -53,7 +53,7 @@ Pin Cider to a stable version.
           flycheck flycheck-hdevtools org git-timemachine paredit
           auto-indent-mode slamhound lorem-ipsum midje-mode
           hungry-delete metar helm htmlize magit expand-region
-          clj-refactor floobits))
+          clj-refactor floobits hideshow))
 #+END_SRC
 
 Install any missing packages:
@@ -426,6 +426,7 @@ Append result of evaluating previous expression (Clojure):
 (put-clojure-indent 'after-all 1)
 (put-clojure-indent 'before 1)
 (put-clojure-indent 'after 1)
+(put-clojure-indent 'watcher 1)
 #+END_SRC
 
 ** Clojure mode hooks
@@ -611,6 +612,12 @@ Clojure.
   ;;                          'slime-eval-last-expression)))
 #+END_SRC
 
+* Hideshow Package
+#+BEGIN_SRC emacs-lisp
+(load-library "hideshow")
+(add-hook 'clojure-mode-hook 'hs-minor-mode)
+(global-set-key [backtab] 'hs-toggle-hiding)
+#+END_SRC
 * Magit stuff
 Bind key for quick Git status:
 #+BEGIN_SRC emacs-lisp
