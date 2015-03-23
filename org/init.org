@@ -745,9 +745,20 @@ Export " as `` and '':
 #+END_SRC
 
 ** Set up =plantuml=:
+
 #+BEGIN_SRC emacs-lisp
 (setq org-plantuml-jar-path
       (expand-file-name "~/bin/plantuml.jar"))
+#+END_SRC
+
+** Add language blocks per Logan Buckley:
+
+#+BEGIN_SRC emacs-lisp
+(defun lmb-insert-org-src-block (lang)
+  (interactive "sEnter source language: ")
+  (insert "#+BEGIN_SRC " lang "\n\n#+END_SRC")
+  (move-beginning-of-line 1)
+  (forward-line -1))
 #+END_SRC
 
 * Blogging
