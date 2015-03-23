@@ -53,7 +53,7 @@ Pin Cider to a stable version.
           flycheck flycheck-hdevtools org git-timemachine paredit
           auto-indent-mode slamhound lorem-ipsum midje-mode
           hungry-delete metar helm htmlize magit expand-region
-          clj-refactor floobits hideshow))
+          clj-refactor floobits hideshow writeroom-mode))
 #+END_SRC
 
 Install any missing packages:
