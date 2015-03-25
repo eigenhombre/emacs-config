@@ -751,15 +751,23 @@ Export " as `` and '':
       (expand-file-name "~/bin/plantuml.jar"))
 #+END_SRC
 
-** Add language blocks per Logan Buckley:
+** Add language blocks
+
+Adapted from Logan Buckley.
 
 #+BEGIN_SRC emacs-lisp
-(defun lmb-insert-org-src-block (lang)
-  (interactive "sEnter source language: ")
-  (insert "#+BEGIN_SRC " lang "\n\n#+END_SRC")
+(defun lmb-insert-org-src-block ()
+  (interactive)
+  (let ((lang (read-from-minibuffer "Enter source language: ")))
+    (if (equal lang "")
+      (insert "#+BEGIN_EXAMPLE\n\n#+END_EXAMPLE")
+      (insert "#+BEGIN_SRC " lang "\n\n#+END_SRC")))
   (move-beginning-of-line 1)
   (forward-line -1))
+
+(define-key global-map "\C-oC" 'lmb-insert-org-src-block)
 #+END_SRC
+
 
 * Blogging
 #+BEGIN_SRC emacs-lisp
