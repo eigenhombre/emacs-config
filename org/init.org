@@ -886,6 +886,14 @@ Launch Marginalia automagically on =C-of=:
                                   (message result))))))
 #+END_SRC
 
+* Writeroom Mode
+
+Ahhhh.... distraction-free.....
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key "\C-oM" 'writeroom-mode)
+#+END_SRC
+
 * M$ interop
 
 Hide =^M=. From
