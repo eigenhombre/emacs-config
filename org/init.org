@@ -101,6 +101,15 @@ from its usual use (=open-line=) before we can use it as a prefix.
 (setq save-place-file "~/.emacs.d/saved-places")
 #+END_SRC
 
+* Scrolling
+
+Scroll one line at a time (see [[http://stackoverflow.com/questions/1128927/how-to-scroll-line-by-line-in-gnu-emacs][this SO post]]).
+
+#+BEGIN_SRC emacs-lisp
+(setq scroll-step            1
+      scroll-conservatively  10000)
+#+END_SRC
+
 * General Lisp stuff
 Rainbow delimiters for all programming major modes:
 #+BEGIN_SRC emacs-lisp
@@ -754,7 +763,7 @@ Export " as `` and '':
 
 ** Add language blocks
 
-Adapted from Logan Buckley.
+Add Org language box with a few keystrokes.  Adapted from Logan Buckley.
 
 #+BEGIN_SRC emacs-lisp
 (defun lmb-insert-org-src-block ()
