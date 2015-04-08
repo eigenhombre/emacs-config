@@ -437,6 +437,7 @@ Append result of evaluating previous expression (Clojure):
 (put-clojure-indent 'before 1)
 (put-clojure-indent 'after 1)
 (put-clojure-indent 'watcher 1)
+(put-clojure-indent 'with 1)
 #+END_SRC
 
 ** Clojure mode hooks
@@ -677,34 +678,34 @@ Don't ask for confirmation before evaluating code in these languages
   (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
 #+END_SRC
 
-Clock in/out based on TODO state changes[fn:: From
-http://sachachua.com/blog/2007/12/clocking-time-with-emacs-org/].
+# Clock in/out based on TODO state changes[fn:: From
+# http://sachachua.com/blog/2007/12/clocking-time-with-emacs-org/].
 
-#+BEGIN_SRC emacs-lisp
-(eval-after-load 'org
-  '(progn
-     (defun wicked/org-clock-in-if-starting ()
-       "Clock in when the task is marked STARTED."
-       (when (and (string= org-state "STARTED")
-                  (not (string= org-last-state org-state)))
-         (org-clock-in)))
-     (add-hook 'org-after-todo-state-change-hook
-               'wicked/org-clock-in-if-starting)
-     (defadvice org-clock-in (after wicked activate)
-       "Set this task's status to 'STARTED'."
-       (org-todo "STARTED"))
-     (defun wicked/org-clock-out-if-waiting ()
-       "Clock out when the task is marked WAITING."
-       (when (and (string= org-state "WAITING")
-                  (equal (marker-buffer org-clock-marker) (current-buffer))
-                  (< (point) org-clock-marker)
-                  (> (save-excursion (outline-next-heading) (point))
-                     org-clock-marker)
-                  (not (string= org-last-state org-state)))
-         (org-clock-out)))
-     (add-hook 'org-after-todo-state-change-hook
-               'wicked/org-clock-out-if-waiting)))
-#+END_SRC
+# #+BEGIN_SRC emacs-lisp
+# (eval-after-load 'org
+#   '(progn
+#      (defun wicked/org-clock-in-if-starting ()
+#        "Clock in when the task is marked STARTED."
+#        (when (and (string= org-state "STARTED")
+#                   (not (string= org-last-state org-state)))
+#          (org-clock-in)))
+#      (add-hook 'org-after-todo-state-change-hook
+#                'wicked/org-clock-in-if-starting)
+#      (defadvice org-clock-in (after wicked activate)
+#        "Set this task's status to 'STARTED'."
+#        (org-todo "STARTED"))
+#      (defun wicked/org-clock-out-if-waiting ()
+#        "Clock out when the task is marked WAITING."
+#        (when (and (string= org-state "WAITING")
+#                   (equal (marker-buffer org-clock-marker) (current-buffer))
+#                   (< (point) org-clock-marker)
+#                   (> (save-excursion (outline-next-heading) (point))
+#                      org-clock-marker)
+#                   (not (string= org-last-state org-state)))
+#          (org-clock-out)))
+#      (add-hook 'org-after-todo-state-change-hook
+#                'wicked/org-clock-out-if-waiting)))
+# #+END_SRC
 
 Add Markdown export functionality (=http://stackoverflow.com/questions/22988092/emacs-org-mode-export-markdown=):
 #+BEGIN_SRC emacs-lisp
@@ -712,10 +713,10 @@ Add Markdown export functionality (=http://stackoverflow.com/questions/22988092/
   '(require 'ox-md nil t))
 #+END_SRC
 
-Log when an item goes to DONE state:
-#+BEGIN_SRC emacs-lisp
-(setq org-log-done t)
-#+END_SRC
+# Log when an item goes to DONE state:
+# #+BEGIN_SRC emacs-lisp
+# (setq org-log-done t)
+# #+END_SRC
 
 Refile things sensibly based on where they occur in original outline:
 #+BEGIN_SRC emacs-lisp
@@ -917,6 +918,11 @@ http://stackoverflow.com/questions/3048906/dont-display-m-characters-with-emacs:
     (aset buffer-display-table ?\^M []))
 #+END_SRC
 
+* JavaScript
+** Indentation
+#+BEGIN_SRC emacs-lisp
+(setq js-indent-level 2)
+#+END_SRC
 * Tidying up
 Be a nicely-behaved module or "[[http://www.delorie.com/gnu/docs/elisp-manual-21/elisp_201.html][feature]]":
 #+BEGIN_SRC emacs-lisp
