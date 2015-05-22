@@ -429,7 +429,14 @@ Append result of evaluating previous expression (Clojure):
 #+BEGIN_SRC emacs-lisp
 (put-clojure-indent 'describe 1)
 (put-clojure-indent 'describe-examples 2)
+(put-clojure-indent 'context* 2)
+(put-clojure-indent 'context 2)
+(put-clojure-indent 'GET* 2)
+(put-clojure-indent 'PUT* 2)
+(put-clojure-indent 'POST* 2)
+(put-clojure-indent 'DELETE* 2)
 (put-clojure-indent 'describe-with-server 1)
+(put-clojure-indent 'describe-with-dawg 1)
 (put-clojure-indent 'describe-with-db 1)
 (put-clojure-indent 'it 1)
 (put-clojure-indent 'before-all 1)
@@ -500,6 +507,10 @@ Append result of evaluating previous expression (Clojure):
 
 #+END_SRC
 
+*** Add =clojure-mode= for =boot= scripts
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.boot\\'" . clojure-mode))
+#+END_SRC
 ** Mode line hack
 Shorten =clojure-mode= in mode line[fn:: From http://whattheemacsd.com/].
 #+BEGIN_SRC emacs-lisp
