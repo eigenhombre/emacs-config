@@ -411,6 +411,11 @@ Append result of evaluating previous expression (Clojure):
     (exchange-point-and-mark))
 #+END_SRC
 
+** Recognize =.boot= as a Clojure file
+#+BEGIN_SRC clojure
+(add-to-list 'auto-mode-alist '("\\.boot\\'" . clojure-mode))
+#+END_SRC
+
 ** Correcting single-whitespaced toplevel forms
 #+BEGIN_SRC emacs-lisp
 (defun correct-single-whitespace ()
