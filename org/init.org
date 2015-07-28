@@ -53,7 +53,7 @@ Pin Cider to a stable version.
           flycheck flycheck-hdevtools org git-timemachine paredit
           auto-indent-mode slamhound lorem-ipsum midje-mode
           hungry-delete metar helm htmlize magit expand-region
-          clj-refactor floobits hideshow writeroom-mode))
+          clj-refactor floobits hideshow writeroom-mode hy-mode))
 #+END_SRC
 
 Install any missing packages:
@@ -546,6 +546,32 @@ For "namespace not found" issues:
                                         (interactive)
                                         (let ((bname (buffer-file-name)))
                                           (cider-load-file bname))))))
+#+END_SRC
+
+* Hy setup
+** Paredit, when Hy-ing
+#+BEGIN_SRC emacs-lisp
+(add-hook 'hy-mode-hook 'paredit-mode)
+#+END_SRC
+
+** Start =hy-mode= automagically
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.hy\\'" . hy-mode))
+#+END_SRC
+
+** Other keybindings
+#+BEGIN_SRC emacs-lisp
+  (defun jj-hy-move-forward-and-eval ()
+    (interactive)
+    (paredit-forward)
+    (lisp-eval-last-sexp))
+
+  (add-hook 'hy-mode-hook
+            '(lambda ()
+               (highlight-long-lines)
+               (define-key hy-mode-map (kbd "s-I") 'jj-hy-move-forward-and-eval)
+               (define-key hy-mode-map (kbd "s-i") 'lisp-eval-last-sexp)
+               (define-key hy-mode-map (kbd "C-o j") 'inferior-lisp)))
 #+END_SRC
 
 * Stuff for running shells within Emacs
