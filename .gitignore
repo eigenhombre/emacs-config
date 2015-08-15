@@ -1,7 +1,7 @@
-bookmarks
 ac-comphist.dat
 auto-save-list/
 backups/
+bookmarks
 elpa/
 init.el~
 org/init.dvi
@@ -9,5 +9,6 @@ org/init.el
 org/init.html
 org/init.org~
 org/init.tex
+projectile-bookmarks.eld
 saved-places
 src/

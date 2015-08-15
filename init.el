@@ -22,11 +22,15 @@
       '(cider
         clj-refactor
 	company
+	helm
+	helm-projectile
 	magit
 	paredit
+	projectile
 	zenburn-theme))
 
-;; Install any missing packages:
+
+;; Install missing packages:
 (let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x)))
                                     my-packages)))
   (when (and (not (equal uninstalled-packages '()))
@@ -34,7 +38,8 @@
     (package-refresh-contents)
     (mapc 'package-install uninstalled-packages)))
 
-;; Stuff for running shells within Emacs
+
+;; Stuff for running shells within Emacs.........................
 ;;
 ;; Path Magic
 ;; Smooth the waters for starting processes from the shell. “Set up
@@ -53,7 +58,7 @@
     (setq exec-path (split-string path-from-shell path-separator))))
 
 
-;; Highlighting of long lines
+;; Highlighting of long lines.....................................
 (defun highlight-long-lines ()
   "Turn on highlighting of long lines."
   (interactive)
@@ -65,9 +70,11 @@
   (interactive)
   (unhighlight-regexp "^.*\\(?:.\\{81\\}\\).*$"))
 
+
 (global-unset-key "\C-o")
 
-;; Clojure mode hooks
+
+;; Clojure mode hooks.............................................
 (add-hook 'clojure-mode-hook
           '(lambda ()
              (paredit-mode 1)
@@ -98,11 +105,15 @@
 		  (cider-eval-last-sexp)))))
 
 
-;; Cider setup
+;; Cider setup................................................
+;;
 (add-hook 'cider-mode-hook #'eldoc-mode)
 (setq cider-auto-select-error-buffer nil)
 (setq cider-interactive-eval-result-prefix ";; => ")
 (setq cider-repl-history-file (concat user-emacs-directory "../.cider-history"))
+;; Fix https://github.com/clojure-emacs/cider/issues/1258:
+(defvar cider-eval-progress-bar-show nil)
+
 
 ;; Lots of keybindings
 ;;
@@ -289,6 +300,17 @@
 (setq company-tooltip-flip-when-above t)
 
 (global-company-mode 1)
+
+
+;; Helm.......................
+(require 'helm)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(helm-mode 1)
+
+;; Projectile.................
+(projectile-global-mode)
+(setq projectile-completion-system 'helm)
+(helm-projectile-on)
 
 
 (provide 'init)
