@@ -27,6 +27,7 @@
 	magit
 	paredit
 	projectile
+	org
 	zenburn-theme))
 
 
@@ -104,6 +105,9 @@
 		  (paredit-forward)
 		  (cider-eval-last-sexp)))))
 
+;; Find Leiningen.............................................
+(add-to-list 'exec-path "/usr/local/bin")
+
 
 ;; Cider setup................................................
 ;;
@@ -114,6 +118,15 @@
 ;; Fix https://github.com/clojure-emacs/cider/issues/1258:
 (defvar cider-eval-progress-bar-show nil)
 
+
+;; JSON->Clojure snippet from Brett Lischalk
+(defun json->clj-map ()
+  (interactive)
+  (if (region-active-p)
+      (replace-regexp "\\(\"\\([A-z0-9_-]+\\)\"\s*:\\)" ":\\2 "
+                      nil (region-beginning) (region-end))))
+
+(global-set-key (kbd "C-c C-j h") 'json->clj-map)
 
 ;; Lots of keybindings
 ;;
@@ -232,7 +245,7 @@
   (load-theme 'zenburn t)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
-;;  (set-exec-path-from-shell-PATH)
+  (set-exec-path-from-shell-PATH)
   (global-set-key (kbd "s-=") 'text-scale-increase)
   (global-set-key (kbd "s--") 'text-scale-decrease))
 
@@ -312,6 +325,10 @@
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
 
+;; Org Mode...................
+(require 'org)
+(setq org-export-with-smart-quotes t)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -324,5 +341,14 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+;; Backups...........................
+;; Tell Emacs to write backup files to their own directory, and make backups even for files in revision control:
+
+(setq backup-directory-alist
+      `(("." . ,(expand-file-name
+                 (concat user-emacs-directory "backups")))))
+
+(setq vc-make-backup-files t)
 
 (provide 'init)
