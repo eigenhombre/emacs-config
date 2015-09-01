@@ -59,6 +59,22 @@
     (setq exec-path (split-string path-from-shell path-separator))))
 
 
+;; Moar Shells.........................................................
+;; Create shell in new buffer when needed, rather than just loading up
+;; the existing shell buffer.
+(defun create-shell-in-new-buffer ()
+  (interactive)
+  (let ((currentbuf (get-buffer-window (current-buffer)))
+        (newbuf (generate-new-buffer-name "*shell*")))
+    (generate-new-buffer newbuf)
+    (set-window-dedicated-p currentbuf nil)
+    (set-window-buffer currentbuf newbuf)
+    (shell newbuf)))
+
+(global-set-key "\C-oS" 'create-shell-in-new-buffer)
+
+
+
 ;; Highlighting of long lines.....................................
 (defun highlight-long-lines ()
   "Turn on highlighting of long lines."
