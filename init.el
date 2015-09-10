@@ -71,6 +71,9 @@
     (set-window-buffer currentbuf newbuf)
     (shell newbuf)))
 
+
+(global-unset-key "\C-o")
+
 (global-set-key "\C-oS" 'create-shell-in-new-buffer)
 
 
@@ -86,10 +89,6 @@
   "Turn off highlighting of long lines."
   (interactive)
   (unhighlight-regexp "^.*\\(?:.\\{81\\}\\).*$"))
-
-
-(global-unset-key "\C-o")
-
 
 ;; Clojure mode hooks.............................................
 (add-hook 'clojure-mode-hook
