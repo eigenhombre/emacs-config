@@ -12,14 +12,8 @@
 (package-initialize)
 (defvar my-packages)
 (setq my-packages
-      ;; '(company auto-complete autopair ac-cider cider color-theme
-      ;;   zenburn-theme diminish goto-last-change main-line maxframe
-      ;;   clojure-mode epl popup rainbow-delimiters smex undo-tree
-      ;;   flycheck flycheck-hdevtools org git-timemachine paredit
-      ;;   auto-indent-mode slamhound lorem-ipsum midje-mode
-      ;;   hungry-delete metar helm htmlize magit expand-region
-      ;;   clj-refactor floobits hideshow writeroom-mode hy-mode)
       '(cider
+	clojure-mode
         clj-refactor
 	company
 	helm
@@ -28,6 +22,7 @@
 	paredit
 	projectile
 	org
+	rainbow-delimiters
 	zenburn-theme))
 
 
@@ -59,6 +54,9 @@
     (setq exec-path (split-string path-from-shell path-separator))))
 
 
+(global-unset-key "\C-o")
+
+
 ;; Moar Shells.........................................................
 ;; Create shell in new buffer when needed, rather than just loading up
 ;; the existing shell buffer.
@@ -71,8 +69,8 @@
     (set-window-buffer currentbuf newbuf)
     (shell newbuf)))
 
-(global-set-key "\C-oS" 'create-shell-in-new-buffer)
 
+(global-set-key "\C-oS" 'create-shell-in-new-buffer)
 
 
 ;; Highlighting of long lines.....................................
@@ -88,10 +86,32 @@
   (unhighlight-regexp "^.*\\(?:.\\{81\\}\\).*$"))
 
 
-(global-unset-key "\C-o")
-
-
 ;; Clojure mode hooks.............................................
+(defun set-clojure-indents ()
+  ;; Handling Clojure indentation for certain macros
+  (put-clojure-indent 'DELETE* 2)
+  (put-clojure-indent 'GET* 2)
+  (put-clojure-indent 'POST* 2)
+  (put-clojure-indent 'PUT* 2)
+  (put-clojure-indent 'after 1)
+  (put-clojure-indent 'after-all 1)
+  (put-clojure-indent 'around 1)
+  (put-clojure-indent 'before 1)
+  (put-clojure-indent 'before-all 1)
+  (put-clojure-indent 'context 1)
+  (put-clojure-indent 'context* 2)
+  (put-clojure-indent 'describe 1)
+  (put-clojure-indent 'describe-examples 2)
+  (put-clojure-indent 'describe-with-dawg 1)
+  (put-clojure-indent 'describe-with-db 1)
+  (put-clojure-indent 'describe-with-server 1)
+  (put-clojure-indent 'it 1)
+  (put-clojure-indent 'match 1)
+  (put-clojure-indent 'try 0)
+  (put-clojure-indent 'watcher 1)
+  (put-clojure-indent 'with 1))
+
+
 (add-hook 'clojure-mode-hook
           '(lambda ()
              (paredit-mode 1)
@@ -119,7 +139,8 @@
 	       '(lambda ()
 		  (interactive)
 		  (paredit-forward)
-		  (cider-eval-last-sexp)))))
+		  (cider-eval-last-sexp)))
+	     (set-clojure-indents)))
 
 ;; Find Leiningen.............................................
 (add-to-list 'exec-path "/usr/local/bin")
@@ -143,6 +164,7 @@
                       nil (region-beginning) (region-end))))
 
 (global-set-key (kbd "C-c C-j h") 'json->clj-map)
+
 
 ;; Lots of keybindings
 ;;
@@ -272,6 +294,18 @@
   (lambda ()
     (paredit-forward)
    (eval (preceding-sexp))))
+
+
+;; General Lisp stuff
+;; Rainbow delimiters for all programming major modes:
+(require 'rainbow-delimiters)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+
+
+;; Show paren balancing nicely:
+(require 'paren)
+(set-face-background 'show-paren-match "white")
+(add-hook 'prog-mode-hook 'show-paren-mode)
 
 ;; Stuff for Editing Emacs Lisp......................
 ;; I add a hook for evaluating the expression just before point; I’ve
