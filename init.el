@@ -69,9 +69,9 @@
     (set-window-buffer currentbuf newbuf)
     (shell newbuf)))
 
+(global-unset-key "\C-o")
 
 (global-set-key "\C-oS" 'create-shell-in-new-buffer)
-
 
 ;; Highlighting of long lines.....................................
 (defun highlight-long-lines ()
