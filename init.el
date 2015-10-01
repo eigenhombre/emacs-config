@@ -377,7 +377,11 @@
 
 ;; Org Mode...................
 (require 'org)
+;; Export ” as “ and ”:
 (setq org-export-with-smart-quotes t)
+;; GTD-style TODO states:
+(setq org-todo-keywords
+      '((sequence "TODO" "STARTED" "WAITING" "SOMEDAY" "DONE")))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
