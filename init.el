@@ -365,6 +365,16 @@
 (global-company-mode 1)
 
 
+;; Correcting single-whitespaced toplevel forms
+(defun correct-single-whitespace ()
+  "Correct single-spaced Lisp toplevel forms."
+  (interactive)
+  (goto-char 1)
+  (while (search-forward-regexp ")\n\n(" nil t)
+    (replace-match ")\n\n\n(" t nil)))
+(global-set-key "\C-oQ" 'correct-single-whitespace)
+
+
 ;; Helm.......................
 (require 'helm)
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -381,7 +391,13 @@
 (setq org-export-with-smart-quotes t)
 ;; GTD-style TODO states:
 (setq org-todo-keywords
-      '((sequence "TODO" "STARTED" "WAITING" "SOMEDAY" "DONE")))
+      '((sequence "TODO" "STARTED" "WAITING" "SOMEDAY" "DONE" "CANCELED")))
+
+(setq org-todo-keyword-faces
+      '(("TODO" . org-warning)
+	("STARTED" . "yellow")
+	("DONE" . "green")
+	("CANCELED" . (:foreground "blue" :weight bold))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
