@@ -54,6 +54,21 @@
     (setq exec-path (split-string path-from-shell path-separator))))
 
 
+;; Kill shell buffers quickly.....................................
+
+;; “With this snippet, [a second] press of C-d will kill the buffer. It’s pretty nice, since you then just tap C-d twice to get rid of the shell and go on about your merry way[fn:: From http://whattheemacsd.com.]”
+(defun comint-delchar-or-eof-or-kill-buffer (arg)
+  (interactive "p")
+  (if (null (get-buffer-process (current-buffer)))
+      (kill-buffer)
+    (comint-delchar-or-maybe-eof arg)))
+
+(add-hook 'shell-mode-hook
+          (lambda ()
+            (define-key shell-mode-map
+              (kbd "C-d") 'comint-delchar-or-eof-or-kill-buffer)))
+
+
 (global-unset-key "\C-o")
 
 
@@ -391,13 +406,14 @@
 (setq org-export-with-smart-quotes t)
 ;; GTD-style TODO states:
 (setq org-todo-keywords
-      '((sequence "TODO" "STARTED" "WAITING" "SOMEDAY" "DONE" "CANCELED")))
+      '((sequence "TODO" "STARTED" "WAITING" "SOMEDAY" "DONE" "CANCELED" "ELSEWHERE")))
 
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
 	("STARTED" . "yellow")
-	("DONE" . "green")
-	("CANCELED" . (:foreground "blue" :weight bold))))
+	("DONE" . "#5F7F5F")
+	("ELSEWHERE" . "#5F7F5F")
+	("CANCELED" . "#8CD0D3")))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
