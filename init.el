@@ -35,7 +35,18 @@
     (mapc 'package-install uninstalled-packages)))
 
 
-;; Stuff for running shells within Emacs.........................
+;; Startup.........................................................
+;; Some configuration to make things quieter on start up:
+
+(setq inhibit-splash-screen t
+      initial-scratch-message nil)
+
+
+;; Turn on recentf-mode for reopening recently used files:
+
+(recentf-mode 1)
+
+;; Stuff for running shells within Emacs...........................
 ;;
 ;; Path Magic
 ;; Smooth the waters for starting processes from the shell. “Set up
