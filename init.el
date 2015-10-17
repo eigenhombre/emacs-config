@@ -396,8 +396,8 @@
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
 	("STARTED" . "yellow")
-	("DONE" . "green")
-	("CANCELED" . (:foreground "blue" :weight bold))))
+	("DONE" . "#8FB28F")       ;; zenburn-green+1
+	("CANCELED" . "#DFAF8F"))) ;; zenburn-orange
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -411,6 +411,13 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+
+;; Abbreviations: see http://pragmaticemacs.com/emacs/use-abbreviations-to-expand-text/
+(setq-default abbrev-mode t)
+(setq save-abbrevs t)
+(setq abbrev-file-name "~/.emacs.d/abbrevs.el")
+(quietly-read-abbrev-file)
 
 ;; Backups...........................
 ;; Tell Emacs to write backup files to their own directory, and make backups even for files in revision control:
