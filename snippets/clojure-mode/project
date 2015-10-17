@@ -1,0 +1,14 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: project
+# key: project
+# binding: direct-keybinding
+# --
+(defproject $1 "0.1.0-SNAPSHOT"
+  :description "$3"
+  :url "https://github.com/$4"
+  :dependencies [[org.clojure/clojure "1.7.0"]]
+  :aliases {"autotest" ["spec" "-a"]}
+  :plugins [[speclj "3.3.0"]]
+  :test-paths ["spec"]
+  :profiles {:dev {:dependencies [[speclj "3.3.0"]]}
+             :uberjar {:aot :all}})

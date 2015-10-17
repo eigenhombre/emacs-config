@@ -14,6 +14,7 @@
 (setq my-packages
       '(cider
 	clojure-mode
+	clojure-snippets
         clj-refactor
 	company
 	helm
@@ -23,6 +24,7 @@
 	projectile
 	org
 	rainbow-delimiters
+	yasnippet
 	zenburn-theme))
 
 
@@ -441,11 +443,12 @@
  )
 
 
-;; Abbreviations: see http://pragmaticemacs.com/emacs/use-abbreviations-to-expand-text/
-(setq-default abbrev-mode t)
-(setq save-abbrevs t)
-(setq abbrev-file-name "~/.emacs.d/abbrevs.el")
-(quietly-read-abbrev-file)
+;; Yasnippet
+(require 'yasnippet)
+(yas-global-mode 1)
+
+(add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
+(yas-load-directory "~/.emacs.d/snippets")
 
 ;; Backups...........................
 ;; Tell Emacs to write backup files to their own directory, and make backups even for files in revision control:
