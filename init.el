@@ -35,7 +35,18 @@
     (mapc 'package-install uninstalled-packages)))
 
 
-;; Stuff for running shells within Emacs.........................
+;; Startup.........................................................
+;; Some configuration to make things quieter on start up:
+
+(setq inhibit-splash-screen t
+      initial-scratch-message nil)
+
+
+;; Turn on recentf-mode for reopening recently used files:
+
+(recentf-mode 1)
+
+;; Stuff for running shells within Emacs...........................
 ;;
 ;; Path Magic
 ;; Smooth the waters for starting processes from the shell. “Set up
@@ -52,6 +63,21 @@
           (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
+
+
+;; Kill shell buffers quickly.....................................
+
+;; “With this snippet, [a second] press of C-d will kill the buffer. It’s pretty nice, since you then just tap C-d twice to get rid of the shell and go on about your merry way[fn:: From http://whattheemacsd.com.]”
+(defun comint-delchar-or-eof-or-kill-buffer (arg)
+  (interactive "p")
+  (if (null (get-buffer-process (current-buffer)))
+      (kill-buffer)
+    (comint-delchar-or-maybe-eof arg)))
+
+(add-hook 'shell-mode-hook
+          (lambda ()
+            (define-key shell-mode-map
+              (kbd "C-d") 'comint-delchar-or-eof-or-kill-buffer)))
 
 
 (global-unset-key "\C-o")
@@ -391,13 +417,15 @@
 (setq org-export-with-smart-quotes t)
 ;; GTD-style TODO states:
 (setq org-todo-keywords
-      '((sequence "TODO" "STARTED" "WAITING" "SOMEDAY" "DONE" "CANCELED")))
+      '((sequence "TODO" "STARTED" "WAITING" "SOMEDAY" "DONE" "CANCELED" "ELSEWHERE")))
 
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
 	("STARTED" . "yellow")
-	("DONE" . "#8FB28F")       ;; zenburn-green+1
-	("CANCELED" . "#DFAF8F"))) ;; zenburn-orange
+	("DONE" . "#5F7F5F")
+	("ELSEWHERE" . "#5F7F5F")
+	("CANCELED" . "#8CD0D3")))
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
