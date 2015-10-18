@@ -447,8 +447,32 @@
 (require 'yasnippet)
 (yas-global-mode 1)
 
+
 (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
 (yas-load-directory "~/.emacs.d/snippets")
+
+;; Moving sexps up and down.......................................
+(defun reverse-transpose-sexps (arg)
+  (interactive "*p")
+  (transpose-sexps (- arg))
+  ;; when transpose-sexps can no longer transpose, it throws an error and code
+  ;; below this line won't be executed. So, we don't have to worry about side
+  ;; effects of backward-sexp and forward-sexp.
+  (backward-sexp (1+ arg))
+  (forward-sexp 1))
+
+
+(global-set-key (kbd "S-s-<down>")
+		(lambda ()
+		  (interactive)
+		  (transpose-sexps 1)))
+
+
+(global-set-key (kbd "S-s-<up>")
+		(lambda ()
+		  (interactive)
+		  (reverse-transpose-sexps 1)))
+
 
 ;; Backups...........................
 ;; Tell Emacs to write backup files to their own directory, and make backups even for files in revision control:
