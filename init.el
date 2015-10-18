@@ -19,6 +19,7 @@
 	company
 	helm
 	helm-projectile
+	hideshow
 	magit
 	paredit
 	projectile
@@ -135,6 +136,7 @@
   (put-clojure-indent 'describe-with-server 1)
   (put-clojure-indent 'it 1)
   (put-clojure-indent 'match 1)
+  (put-clojure-indent 'solves 0)
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'watcher 1)
   (put-clojure-indent 'with 1))
@@ -231,6 +233,7 @@
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key "\C-ok" 'comment-region)
+(global-set-key "\C-c\C-f" 'recentf-open-files)
 (global-set-key "\C-ou" 'uncomment-region)
 (global-set-key "\C-on" 'er/expand-region)
 (global-set-key "\C-om" 'magit-status)
@@ -412,6 +415,11 @@
 (projectile-global-mode)
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
+
+;; Hideshow Package...........
+(load-library "hideshow")
+(add-hook 'clojure-mode-hook 'hs-minor-mode)
+(global-set-key [backtab] 'hs-toggle-hiding)
 
 ;; Org Mode...................
 (require 'org)
