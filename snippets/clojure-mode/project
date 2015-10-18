@@ -4,8 +4,8 @@
 # binding: direct-keybinding
 # --
 (defproject $1 "0.1.0-SNAPSHOT"
-  :description "$3"
-  :url "https://github.com/$4"
+  :description "$2"
+  :url "https://github.com/eigenhombre/$1"
   :dependencies [[org.clojure/clojure "1.7.0"]]
   :aliases {"autotest" ["spec" "-a"]}
   :plugins [[speclj "3.3.0"]]
