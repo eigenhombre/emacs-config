@@ -139,6 +139,7 @@
   (put-clojure-indent 'solves 0)
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'watcher 1)
+  (put-clojure-indent 'do-until-input 1)
   (put-clojure-indent 'with 1))
 
 
