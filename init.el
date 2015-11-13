@@ -12,7 +12,8 @@
 (package-initialize)
 (defvar my-packages)
 (setq my-packages
-      '(cider
+      '(aggressive-indent
+	cider
 	clojure-mode
 	clojure-snippets
         clj-refactor
