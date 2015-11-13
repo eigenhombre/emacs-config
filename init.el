@@ -16,7 +16,7 @@
 	cider
 	clojure-mode
 	clojure-snippets
-        clj-refactor
+	clj-refactor
 	company
 	helm
 	helm-projectile
@@ -32,7 +32,7 @@
 
 ;; Install missing packages:
 (let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x)))
-                                    my-packages)))
+				    my-packages)))
   (when (and (not (equal uninstalled-packages '()))
              (y-or-n-p (format "Install packages %s?"  uninstalled-packages)))
     (package-refresh-contents)
@@ -147,6 +147,7 @@
 (add-hook 'clojure-mode-hook
           '(lambda ()
              (paredit-mode 1)
+	     (aggressive-indent-mode 1)
              (highlight-long-lines)
 	     (clj-refactor-mode 1)
 	     (yas-minor-mode 1) ; for adding require/use/import
@@ -350,7 +351,8 @@
 ;;(add-hook 'emacs-lisp-mode-hook 'auto-indent-mode)
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
-            (paredit-mode 1)))
+            (paredit-mode 1)
+	    (aggressive-indent-mode 1)))
 
 (define-key emacs-lisp-mode-map (kbd "s-i")
   'eval-last-sexp)
