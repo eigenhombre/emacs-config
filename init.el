@@ -142,7 +142,8 @@
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'watcher 1)
   (put-clojure-indent 'do-until-input 1)
-  (put-clojure-indent 'with 1))
+  (put-clojure-indent 'with 1)
+  (put-clojure-indent 'section 1))
 
 
 (add-hook 'clojure-mode-hook
