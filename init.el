@@ -128,6 +128,7 @@
   (put-clojure-indent 'after-all 1)
   (put-clojure-indent 'around 1)
   (put-clojure-indent 'before 1)
+  (put-clojure-indent 'should 0)
   (put-clojure-indent 'before-all 1)
   (put-clojure-indent 'context 1)
   (put-clojure-indent 'context* 2)
