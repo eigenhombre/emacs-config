@@ -13,6 +13,7 @@
 (defvar my-packages)
 (setq my-packages
       '(aggressive-indent
+	beacon
 	cider
 	clojure-mode
 	clojure-snippets
@@ -516,5 +517,9 @@
   (let ((use-dialog-box nil))
     ad-do-it))
 
+;; Beacon Mode
+(beacon-mode 1)
+(setq beacon-push-mark 35)
+(setq beacon-color "#888888")
 
 (provide 'init)
