@@ -142,7 +142,24 @@
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'watcher 1)
   (put-clojure-indent 'do-until-input 1)
-  (put-clojure-indent 'with 1))
+  (put-clojure-indent 'with 1)
+  (put-clojure-indent 'section 1)
+  (put-clojure-indent 'subsection 1)
+  (put-clojure-indent 'subsubsection 1))
+
+
+(defun convert-selection-to-link ()
+  "For unmark: Convert selected text to Hiccup link"
+  (interactive)
+  (let* ((url (read-from-minibuffer "Enter link URL: "))
+	 (bounds (if (use-region-p)
+		     (cons (region-beginning) (region-end))
+		   (bounds-of-thing-at-point 'symbol)))
+         (text (buffer-substring-no-properties (car bounds) (cdr bounds)))
+	 (to-replace (insert (concat "\" [:a {:href \"" url "\"} \"" text "\"] \""))))
+    (when bounds
+      (delete-region (car bounds) (cdr bounds))
+      (insert to-replace))))
 
 
 (add-hook 'clojure-mode-hook
@@ -157,6 +174,7 @@
 	       'cider-eval-defun-at-point)
              (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
              (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
+	     (define-key clojure-mode-map (kbd "C-o K") 'convert-selection-to-link)
              (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
              (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
              (define-key clojure-mode-map (kbd "C-o y")
@@ -293,6 +311,16 @@
                           (interactive)
                           (find-file "~/.emacs.d/init.el")))
 
+(global-set-key "\C-o1"
+		(lambda ()
+		  (interactive)
+		  (cider-interactive-eval
+		   "(in-ns 'unmark.impl)
+                    (generate-blog!)
+                    (clojure.java.shell/sh \"open\" \"programming-languages.html\")")))
+
+;; Keyboard shortcuts for joining lines before and after point (thanks
+;; to http://whattheemacsd.com/ for the (join-line -1) trick):
 (global-set-key "\C-oW" (lambda ()
                           (interactive)
 			  (find-file "~/.emacs.d/init.el")
