@@ -19,6 +19,7 @@
 	clojure-snippets
 	clj-refactor
 	company
+	expand-region
 	helm
 	helm-projectile
 	hideshow
@@ -163,6 +164,19 @@
       (insert to-replace))))
 
 
+(defun convert-selection-to-code ()
+  "For unmark: Convert selected text to Hiccup link"
+  (interactive)
+  (let* ((bounds (if (use-region-p)
+		     (cons (region-beginning) (region-end))
+		   (bounds-of-thing-at-point 'symbol)))
+         (text (buffer-substring-no-properties (car bounds) (cdr bounds)))
+	 (to-replace (insert (concat "\" [:code \"" text "\"] \""))))
+    (when bounds
+      (delete-region (car bounds) (cdr bounds))
+      (insert to-replace))))
+
+
 (add-hook 'clojure-mode-hook
           '(lambda ()
              (paredit-mode 1)
@@ -176,6 +190,7 @@
              (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
              (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
 	     (define-key clojure-mode-map (kbd "C-o K") 'convert-selection-to-link)
+	     (define-key clojure-mode-map (kbd "C-o C") 'convert-selection-to-code)
              (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
              (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
              (define-key clojure-mode-map (kbd "C-o y")
@@ -318,7 +333,7 @@
 		  (cider-interactive-eval
 		   "(in-ns 'unmark.impl)
                     (generate-blog!)
-                    (clojure.java.shell/sh \"open\" \"programming-languages.html\")")))
+                    (clojure.java.shell/sh \"open\" \"marginalia-hacks.html\")")))
 
 ;; Keyboard shortcuts for joining lines before and after point (thanks
 ;; to http://whattheemacsd.com/ for the (join-line -1) trick):
