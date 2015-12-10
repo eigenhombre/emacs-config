@@ -137,6 +137,7 @@
   (put-clojure-indent 'describe-examples 2)
   (put-clojure-indent 'describe-with-dawg 1)
   (put-clojure-indent 'describe-with-db 1)
+  (put-clojure-indent 'describe-with-es 1)
   (put-clojure-indent 'describe-with-server 1)
   (put-clojure-indent 'it 1)
   (put-clojure-indent 'match 1)
