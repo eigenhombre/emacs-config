@@ -339,6 +339,16 @@
                     (generate-blog!)
                     (clojure.java.shell/sh \"open\" \"marginalia-hacks.html\")")))
 
+;; Run marginalia on current project. You need
+;; [michaelblume/marginalia "0.9.0"] installed in the dependencies for
+;; that project.
+(global-set-key "\C-o2"
+		(lambda ()
+		  (interactive
+		   (cider-interactive-eval
+		    "(require 'marginalia.core)
+                     (marginalia.core/run-marginalia [])"))))
+
 ;; Keyboard shortcuts for joining lines before and after point (thanks
 ;; to http://whattheemacsd.com/ for the (join-line -1) trick):
 (global-set-key "\C-oW" (lambda ()
