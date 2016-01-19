@@ -129,7 +129,7 @@
   (put-clojure-indent 'after-all 1)
   (put-clojure-indent 'around 1)
   (put-clojure-indent 'before 0)
-  (put-clojure-indent 'before-all 1)
+  (put-clojure-indent 'before-all 0)
   (put-clojure-indent 'context 1)
   (put-clojure-indent 'context* 2)
   (put-clojure-indent 'describe 1)
@@ -137,6 +137,7 @@
   (put-clojure-indent 'describe-with-dawg 1)
   (put-clojure-indent 'describe-with-db 1)
   (put-clojure-indent 'describe-with-es 1)
+  (put-clojure-indent 'describe-with-mock-etl-state 1)
   (put-clojure-indent 'describe-with-server 1)
   (put-clojure-indent 'do-until-input 1)
   (put-clojure-indent 'fact 1)
@@ -347,7 +348,9 @@
 		  (interactive
 		   (cider-interactive-eval
 		    "(require 'marginalia.core)
-                     (marginalia.core/run-marginalia [])"))))
+                     (marginalia.core/run-marginalia [\"src/heimdall/core.clj\"
+                                                      \"src\"
+                                                      \"test\"])"))))
 
 ;; Keyboard shortcuts for joining lines before and after point (thanks
 ;; to http://whattheemacsd.com/ for the (join-line -1) trick):
