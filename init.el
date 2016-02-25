@@ -128,24 +128,28 @@
   (put-clojure-indent 'after 1)
   (put-clojure-indent 'after-all 1)
   (put-clojure-indent 'around 1)
-  (put-clojure-indent 'before 1)
-  (put-clojure-indent 'should 0)
-  (put-clojure-indent 'before-all 1)
+  (put-clojure-indent 'before 0)
+  (put-clojure-indent 'before-all 0)
   (put-clojure-indent 'context 1)
   (put-clojure-indent 'context* 2)
   (put-clojure-indent 'describe 1)
   (put-clojure-indent 'describe-examples 2)
   (put-clojure-indent 'describe-with-dawg 1)
   (put-clojure-indent 'describe-with-db 1)
+  (put-clojure-indent 'describe-with-es 1)
+  (put-clojure-indent 'describe-with-mock-etl-state 1)
   (put-clojure-indent 'describe-with-server 1)
+  (put-clojure-indent 'do-until-input 1)
+  (put-clojure-indent 'fact 1)
+  (put-clojure-indent 'facts 1)
   (put-clojure-indent 'it 1)
   (put-clojure-indent 'match 1)
+  (put-clojure-indent 'section 1)
+  (put-clojure-indent 'should 0)
   (put-clojure-indent 'solves 0)
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'watcher 1)
-  (put-clojure-indent 'do-until-input 1)
   (put-clojure-indent 'with 1)
-  (put-clojure-indent 'section 1)
   (put-clojure-indent 'subsection 1)
   (put-clojure-indent 'subsubsection 1))
 
@@ -218,6 +222,7 @@
 ;;
 (add-hook 'cider-mode-hook #'eldoc-mode)
 (setq cider-auto-select-error-buffer nil)
+(setq cider-repl-pop-to-buffer-on-connect nil)
 (setq cider-interactive-eval-result-prefix ";; => ")
 (setq cider-repl-history-file (concat user-emacs-directory "../.cider-history"))
 ;; Fix https://github.com/clojure-emacs/cider/issues/1258:
@@ -335,6 +340,18 @@
 		   "(in-ns 'unmark.impl)
                     (generate-blog! \"/Users/jacobsen/Programming/eigenhombre.github.com\")
                     (clojure.java.shell/sh \"open\" \"/Users/jacobsen/Programming/eigenhombre.github.com/index.html\")")))
+
+;; Run marginalia on current project. You need
+;; [michaelblume/marginalia "0.9.0"] installed in the dependencies for
+;; that project.
+(global-set-key "\C-o2"
+		(lambda ()
+		  (interactive
+		   (cider-interactive-eval
+		    "(require 'marginalia.core)
+                     (marginalia.core/run-marginalia [\"src/heimdall/core.clj\"
+                                                      \"src\"
+                                                      \"test\"])"))))
 
 ;; Keyboard shortcuts for joining lines before and after point (thanks
 ;; to http://whattheemacsd.com/ for the (join-line -1) trick):
@@ -492,6 +509,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(cljr-favor-prefix-notation t)
  '(magit-push-always-verify nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
