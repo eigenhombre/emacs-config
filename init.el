@@ -304,6 +304,7 @@
 (global-set-key "\C-ol" 'goto-line)
 (global-set-key "\C-ob" 'end-of-buffer)
 (global-set-key "\C-op" 'fill-region)
+(global-set-key "\C-oP" 'fill-paragraph)
 (global-set-key "\C-og" 'save-buffers-kill-emacs)
 (global-set-key "\C-od" 'downcase-region)
 (global-set-key "\C-oR" 'indent-region)
@@ -344,8 +345,8 @@
 		  (interactive)
 		  (cider-interactive-eval
 		   "(in-ns 'unmark.impl)
-                    (generate-blog!)
-                    (clojure.java.shell/sh \"open\" \"marginalia-hacks.html\")")))
+                    (generate-blog! \"/Users/jacobsen/Programming/eigenhombre.github.com\")
+                    (clojure.java.shell/sh \"open\" \"/Users/jacobsen/Programming/eigenhombre.github.com/index.html\")")))
 
 ;; Run marginalia on current project. You need
 ;; [michaelblume/marginalia "0.9.0"] installed in the dependencies for
@@ -355,9 +356,9 @@
 		  (interactive
 		   (cider-interactive-eval
 		    "(require 'marginalia.core)
-                     (marginalia.core/run-marginalia [\"src/heimdall/core.clj\"
-                                                      \"src\"
-                                                      \"test\"])"))))
+                     (marginalia.core/run-marginalia nil)
+                     (clojure.java.shell/sh \"open\" \"docs/uberdoc.html\")"))))
+
 
 ;; Keyboard shortcuts for joining lines before and after point (thanks
 ;; to http://whattheemacsd.com/ for the (join-line -1) trick):
