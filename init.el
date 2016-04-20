@@ -349,9 +349,9 @@
 		  (interactive
 		   (cider-interactive-eval
 		    "(require 'marginalia.core)
-                     (marginalia.core/run-marginalia [\"src/heimdall/core.clj\"
-                                                      \"src\"
-                                                      \"test\"])"))))
+                     (marginalia.core/run-marginalia nil)
+                     (clojure.java.shell/sh \"open\" \"docs/uberdoc.html\")"))))
+
 
 ;; Keyboard shortcuts for joining lines before and after point (thanks
 ;; to http://whattheemacsd.com/ for the (join-line -1) trick):
