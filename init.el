@@ -20,13 +20,14 @@
 	clj-refactor
 	company
 	expand-region
+	git-timemachine
 	helm
 	helm-projectile
 	hideshow
 	magit
+	org
 	paredit
 	projectile
-	org
 	rainbow-delimiters
 	yasnippet
 	zenburn-theme))
@@ -125,12 +126,17 @@
   (put-clojure-indent 'GET* 2)
   (put-clojure-indent 'POST* 2)
   (put-clojure-indent 'PUT* 2)
+  (put-clojure-indent 'DELETE 2)
+  (put-clojure-indent 'GET 2)
+  (put-clojure-indent 'POST 2)
+  (put-clojure-indent 'PUT 2)
   (put-clojure-indent 'after 1)
   (put-clojure-indent 'after-all 1)
   (put-clojure-indent 'around 1)
+  (put-clojure-indent 'without-logging 0)
   (put-clojure-indent 'before 0)
   (put-clojure-indent 'before-all 0)
-  (put-clojure-indent 'context 1)
+  (put-clojure-indent 'context 2)
   (put-clojure-indent 'context* 2)
   (put-clojure-indent 'describe 1)
   (put-clojure-indent 'describe-examples 2)
@@ -151,6 +157,7 @@
   (put-clojure-indent 'watcher 1)
   (put-clojure-indent 'with 1)
   (put-clojure-indent 'subsection 1)
+  (put-clojure-indent 'log-timing 1)
   (put-clojure-indent 'subsubsection 1))
 
 
