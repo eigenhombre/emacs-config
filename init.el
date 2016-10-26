@@ -550,6 +550,11 @@
 	("CANCELED" . "#8CD0D3")))
 
 
+;; Magit / GitHub ...........
+(require 'magit-gh-pulls)
+(add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
