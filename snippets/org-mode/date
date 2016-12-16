@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: date
+# key: date
+# --
+#+DATE: $0

@@ -19,12 +19,15 @@
 	clj-refactor
 	clojure-mode
 	clojure-snippets
-	company
+	clj-refactor
+        company
 	expand-region
+	forecast
 	git-timemachine
 	helm
 	helm-projectile
 	hideshow
+	lorem-ipsum
 	js2-mode
 	lorem-ipsum
 	magit
@@ -36,6 +39,7 @@
 	paredit
 	projectile
 	rainbow-delimiters
+	tagedit
 	yasnippet
 	json-mode
 	zenburn-theme))
@@ -116,6 +120,16 @@
 (global-unset-key "\C-o")
 
 (global-set-key "\C-oS" 'create-shell-in-new-buffer)
+
+;; Term stuff
+(defun create-term-shell ()
+  (interactive)
+  (term "/bin/bash"))
+
+;; Per http://stackoverflow.com/questions/18278310/emacs-ansi-term-not-tab-completing : fix autocomplete
+(add-hook 'term-mode-hook (lambda()
+			    (setq yas-dont-activate t)))
+(global-set-key "\C-oT" 'create-term-shell)
 
 ;; Highlighting of long lines.....................................
 (defun highlight-long-lines ()
@@ -232,6 +246,9 @@
 		  (cider-eval-last-sexp)))
 	     (set-clojure-indents)))
 
+(add-to-list 'auto-mode-alist '("\\.garden" . clojure-mode))
+
+
 ;; Find Leiningen.............................................
 (add-to-list 'exec-path "/usr/local/bin")
 
@@ -312,7 +329,7 @@
                           (fill-paragraph)))
 (global-set-key "\C-]"  'fill-region)
 (global-set-key "\C-ot" 'beginning-of-buffer)
-(global-set-key "\C-oT" 'toggle-window-split)
+;; (global-set-key "\C-oT" 'toggle-window-split)
 (global-set-key "\C-N" 'enlarge-window)
 (global-set-key "\C-o\C-n" 'enlarge-window-horizontally)
 (global-set-key "\C-oc" 'paredit-duplicate-closest-sexp)
@@ -351,6 +368,9 @@
 (global-set-key "\C-oO" (lambda ()
                           (interactive)
                           (find-file "~/Dropbox/org/toplevel.org")))
+(global-set-key "\C-oP" (lambda ()
+                          (interactive)
+                          (find-file "~/Dropbox/org/painting-status.org")))
 (global-set-key "\C-oE" (lambda ()
                           (interactive)
                           (find-file "~/.emacs.d/init.el")))
@@ -543,14 +563,20 @@
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
 
+;; Hideshow Package...........
+(load-library "hideshow")
+(add-hook 'clojure-mode-hook 'hs-minor-mode)
+(add-hook 'html-mode-hook 'hs-minor-mode)
+(global-set-key [backtab] 'hs-toggle-hiding)
+
 ;; Org Mode...................
 (require 'org)
 ;; Export ” as “ and ”:
 (setq org-export-with-smart-quotes t)
 ;; GTD-style TODO states:
 (setq org-todo-keywords
-      '((sequence "TODO" "STARTED" "WAITING" "SOMEDAY" "DONE" "CANCELED" "ELSEWHERE")))
-
+      '((sequence "TODO" "STARTED" "|" "DONE(d!/!)" "WAITING" "SOMEDAY" "CANCELED")))
+(setq org-log-done 'time)
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
 	("STARTED" . "yellow")
@@ -587,6 +613,14 @@
 
 (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
 (yas-load-directory "~/.emacs.d/snippets")
+
+
+;; Org / Yasnippet conflict (http://orgmode.org/manual/Conflicts.html):
+(add-hook 'org-mode-hook
+          (lambda ()
+            (org-set-local 'yas/trigger-key [tab])
+            (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
+
 
 ;; Moving sexps up and down.......................................
 (defun reverse-transpose-sexps (arg)
@@ -628,6 +662,16 @@
 (setq vc-make-backup-files t)
 
 
+;; Weather Forecast
+(require 'forecast)
+(setq forecast-latitude 41.881832
+      forecast-longitude -87.623177
+      forecast-chicago "Chicago"
+      forecast-country "USA"
+      forecast-units 'us)
+(load (locate-user-emacs-file "forecast-api-key.el"))
+
+
 ;; Pesky dialog boxes :-(
 ;; http://superuser.com/questions/125569/how-to-fix-emacs-popup-dialogs-on-mac-os-x
 (defadvice yes-or-no-p (around prevent-dialog activate)
@@ -641,9 +685,20 @@
   (let ((use-dialog-box nil))
     ad-do-it))
 
+;; Omit #@!(*&^&! tabs!!!!
+(setq-default indent-tabs-mode nil)
+
 ;; Beacon Mode
 (beacon-mode 1)
 (setq beacon-push-mark 35)
 (setq beacon-color "#888888")
 
+;; Tagedit (https://github.com/magnars/tagedit)
+(eval-after-load "sgml-mode"
+  '(progn
+     (require 'tagedit)
+     (tagedit-add-paredit-like-keybindings)
+     (add-hook 'html-mode-hook (lambda () (tagedit-mode 1)))))
+
 (provide 'init)
+(put 'upcase-region 'disabled nil)
