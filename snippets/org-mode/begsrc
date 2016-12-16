@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: src
+# key: begsrc
+# --
+#+BEGIN_SRC
+#+END_SRC
+

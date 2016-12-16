@@ -1,0 +1,40 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: boot
+# key: boot
+# binding: direct-keybinding
+# --
+
+(set-env! :dependencies '[[enlive "1.1.6"]
+                          [environ "1.0.3"]
+                          [metosin/boot-alt-test "0.1.2"]]
+          :source-paths #{"src" "test"}
+          :resource-paths #{"resources"})
+
+
+(task-options! pom {:project '$1
+                    :version "0"}
+               aot {:all true}
+               target {:dir #{"target"}}
+               jar {:main '$1.core
+                    :file "$1.jar"})
+
+
+(require '[environ.core :refer [env]]
+         '[metosin.boot-alt-test :as bt])
+
+
+(deftask build []
+  (set-env! :source-paths #(disj % "test"))
+  (comp (aot) (pom) (uber) (jar) (target)))
+
+
+(deftask run-tests []
+  (merge-env! :source-paths #{"test"})
+  (bt/alt-test :report 'eftest.report.pretty/report
+               :fail true
+               ;; Default is parallel, which is horribly wrong...
+               :parallel false))
+
+
+(deftask auto []
+  (comp (watch) (run-tests)))
