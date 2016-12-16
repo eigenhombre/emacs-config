@@ -26,16 +26,18 @@
 	helm-projectile
 	hideshow
 	js2-mode
+	lorem-ipsum
 	magit
 	magit-gh-pulls
 	markdown-mode
 	nodejs-repl
+	olivetti
 	org
 	paredit
 	projectile
 	rainbow-delimiters
 	yasnippet
-        json-mode
+	json-mode
 	zenburn-theme))
 
 
@@ -80,7 +82,10 @@
 
 ;; Kill shell buffers quickly.....................................
 
-;; “With this snippet, [a second] press of C-d will kill the buffer. It’s pretty nice, since you then just tap C-d twice to get rid of the shell and go on about your merry way[fn:: From http://whattheemacsd.com.]”
+;; “With this snippet, [a second] press of C-d will kill the
+;; buffer. It’s pretty nice, since you then just tap C-d twice to get
+;; rid of the shell and go on about your merry way[fn:: From
+;; http://whattheemacsd.com.]”
 (defun comint-delchar-or-eof-or-kill-buffer (arg)
   (interactive "p")
   (if (null (get-buffer-process (current-buffer)))
@@ -197,7 +202,7 @@
 (add-hook 'clojure-mode-hook
           '(lambda ()
              (paredit-mode 1)
-	     (aggressive-indent-mode 1)
+	     ;; (aggressive-indent-mode 1)
              (highlight-long-lines)
 	     (clj-refactor-mode 1)
 	     (yas-minor-mode 1) ; for adding require/use/import
@@ -300,7 +305,11 @@
 (global-set-key "\C-ob" 'backward-word)
 (global-set-key "\C-oB" 'bury-buffer)
 (global-set-key "\C-oq" 'query-replace-regexp)
-(global-set-key "\C-oL" 'lorem-ipsum-insert-paragraphs)
+(global-set-key "\C-oL" (lambda ()
+                          (interactive)
+                          (mark)
+                          (lorem-ipsum-insert-paragraphs)
+                          (fill-paragraph)))
 (global-set-key "\C-]"  'fill-region)
 (global-set-key "\C-ot" 'beginning-of-buffer)
 (global-set-key "\C-oT" 'toggle-window-split)
@@ -561,7 +570,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(cljr-favor-prefix-notation t)
- '(magit-push-always-verify nil))
+ '(magit-push-always-verify nil)
+ '(recentf-max-menu-items 40))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
