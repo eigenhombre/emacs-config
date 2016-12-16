@@ -2,6 +2,8 @@
 # name: src
 # key: begsrc
 # --
+
 #+BEGIN_SRC
+$0
 #+END_SRC
 
