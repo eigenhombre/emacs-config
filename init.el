@@ -12,9 +12,11 @@
 (package-initialize)
 (defvar my-packages)
 (setq my-packages
-      '(aggressive-indent
+      '(ac-js2
+	aggressive-indent
 	beacon
 	cider
+	clj-refactor
 	clojure-mode
 	clojure-snippets
 	clj-refactor
@@ -26,13 +28,18 @@
 	helm-projectile
 	hideshow
 	lorem-ipsum
+	js2-mode
 	magit
+	magit-gh-pulls
+	markdown-mode
+	nodejs-repl
 	org
 	paredit
 	projectile
 	rainbow-delimiters
 	tagedit
 	yasnippet
+        json-mode
 	zenburn-theme))
 
 
@@ -220,7 +227,7 @@
              (define-key clojure-mode-map (kbd "C-o y")
                (lambda ()
 		 (interactive)
-		 (insert "\n;;=>\n")
+		 (insert "\n;;=>\n'")
 		 (cider-eval-last-sexp 't)))
 	     (define-key clojure-mode-map (kbd "C-o Y")
 	       (lambda ()
@@ -443,6 +450,7 @@
             (paredit-mode 1)
 	    (aggressive-indent-mode 1)))
 
+
 (define-key emacs-lisp-mode-map (kbd "s-i")
   'eval-last-sexp)
 
@@ -464,9 +472,46 @@
   (setq buffer-display-table (make-display-table))
   (aset buffer-display-table ?\^M []))
 
-;; JavaScript.................
+
+(add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
+
+
+;; Hideshow Package...........
+(load-library "hideshow")
+(add-hook 'clojure-mode-hook 'hs-minor-mode)
+(global-set-key [backtab] 'hs-toggle-hiding)
+(defvar hs-special-modes-alist
+  (mapcar 'purecopy
+	  '((c-mode "{" "}" "/[*/]" nil nil)
+	    (c++-mode "{" "}" "/[*/]" nil nil)
+	    (bibtex-mode ("@\\S(*\\(\\s(\\)" 1))
+	    (java-mode "{" "}" "/[*/]" nil nil)
+	    (js-mode "{" "}" "/[*/]" nil)
+            (js-mode "`" "`" "/[*/]" nil))))
+
+
 ;; Indentation
 (setq js-indent-level 2)
+(setq js2-highlight-level 3)
+;; JavaScript.................
+;; c.f. https://truongtx.me/2014/02/22/emacs-using-paredit-with-non-lisp-mode :
+;; https://truongtx.me/2014/02/23/set-up-javascript-development-environment-in-emacs
+(add-hook 'js-mode-hook
+	  (lambda ()
+	    (require 'nodejs-repl)
+	    (paredit-mode 1)
+	    (hs-minor-mode 1)
+	    (define-key js-mode-map "{" 'paredit-open-curly)
+	    (define-key js-mode-map "}" 'paredit-close-curly-and-newline)
+	    (define-key js-mode-map (kbd "C-o j") 'nodejs-repl)
+	    (define-key js-mode-map (kbd "s-i") 'nodejs-repl-send-last-sexp)
+	    (setq-default indent-tabs-mode nil)
+	    (define-key js-mode-map (kbd "s-I") 'nodejs-repl-send-region)
+	    (set (make-local-variable 'paredit-space-for-delimiter-predicates)
+		 '((lambda (endp delimiter) nil)))
+	    ;;(my-paredit-nonlisp)
+	    (aggressive-indent-mode 1)))
+
 
 ;; (require 'org-install)
 ;; (require 'ob-tangle)
@@ -529,6 +574,11 @@
 	("DONE" . "#5F7F5F")
 	("ELSEWHERE" . "#5F7F5F")
 	("CANCELED" . "#8CD0D3")))
+
+
+;; Magit / GitHub ...........
+(require 'magit-gh-pulls)
+(add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
 
 
 (custom-set-variables
