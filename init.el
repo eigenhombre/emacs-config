@@ -124,6 +124,8 @@
 ;; Per http://stackoverflow.com/questions/18278310/emacs-ansi-term-not-tab-completing : fix autocomplete
 (add-hook 'term-mode-hook (lambda()
 			    (setq yas-dont-activate t)))
+
+
 (global-set-key "\C-oT" 'create-term-shell)
 
 ;; Highlighting of long lines.....................................
@@ -610,6 +612,7 @@
 (add-hook 'org-mode-hook
           (lambda ()
             (org-set-local 'yas/trigger-key [tab])
+            (yas-minor-mode 1)
             (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
 
 

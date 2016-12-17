@@ -2,4 +2,6 @@
 # name: title
 # key: title
 # --
-#+TITLE: $0
+#+TITLE: $1
+#+DATE: $2
+#+OPTIONS: toc:nil num:nil
