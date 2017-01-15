@@ -5,3 +5,7 @@
 #+TITLE: $1
 #+DATE: $2
 #+OPTIONS: toc:nil num:nil
+
+# Put tag(s) here, bracketed by colons:
+* :$3:
+
