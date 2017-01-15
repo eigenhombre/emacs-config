@@ -525,8 +525,11 @@
 	    (aggressive-indent-mode 1)))
 
 
-;; (require 'org-install)
-;; (require 'ob-tangle)
+(require 'org-install)
+(require 'ob-tangle)
+(org-babel-do-load-languages
+ 'org-babel-load-languages '((sh . t)))
+
 ;; (org-babel-load-file (concat user-emacs-directory "org/init.org"))
 
 ;; (org-babel-load-file "tmp.org")
