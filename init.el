@@ -182,6 +182,7 @@
   (put-clojure-indent 'solves 0)
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'watcher 1)
+  (put-clojure-indent 'wcar 1)
   (put-clojure-indent 'with 1)
   (put-clojure-indent 'subsection 1)
   (put-clojure-indent 'log-timing 1)
