@@ -688,6 +688,11 @@
   (let ((use-dialog-box nil))
     ad-do-it))
 
+
+;; Open at startup:
+(find-file (concat (getenv "HOME") "/Dropbox/org/toplevel.org"))
+
+
 ;; Omit #@!(*&^&! tabs!!!!
 (setq-default indent-tabs-mode nil)
 
