@@ -184,6 +184,7 @@
   (put-clojure-indent 'solves 0)
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'watcher 1)
+  (put-clojure-indent 'wcar 1)
   (put-clojure-indent 'with 1)
   (put-clojure-indent 'subsection 1)
   (put-clojure-indent 'log-timing 1)
@@ -526,8 +527,11 @@
 	    (aggressive-indent-mode 1)))
 
 
-;; (require 'org-install)
-;; (require 'ob-tangle)
+(require 'org-install)
+(require 'ob-tangle)
+(org-babel-do-load-languages
+ 'org-babel-load-languages '((sh . t)))
+
 ;; (org-babel-load-file (concat user-emacs-directory "org/init.org"))
 
 ;; (org-babel-load-file "tmp.org")
@@ -690,6 +694,11 @@
   "Prevent y-or-n-p from activating a dialog"
   (let ((use-dialog-box nil))
     ad-do-it))
+
+
+;; Open at startup:
+(find-file (concat (getenv "HOME") "/Dropbox/org/toplevel.org"))
+
 
 ;; Omit #@!(*&^&! tabs!!!!
 (setq-default indent-tabs-mode nil)
