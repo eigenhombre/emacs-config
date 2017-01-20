@@ -10,6 +10,7 @@
 (add-to-list 'package-archives
              '("MELPA" . "http://melpa.org/packages/") t)
 (package-initialize)
+
 (defvar my-packages)
 (setq my-packages
       '(ac-js2
@@ -42,6 +43,7 @@
 	tagedit
 	yasnippet
 	json-mode
+	which-key
 	zenburn-theme))
 
 
@@ -622,6 +624,7 @@
           (lambda ()
             (org-set-local 'yas/trigger-key [tab])
             (yas-minor-mode 1)
+            (define-key org-mode-map (kbd "C-a") 'split-window-horizontally)
             (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
 
 
@@ -695,6 +698,10 @@
 (beacon-mode 1)
 (setq beacon-push-mark 35)
 (setq beacon-color "#888888")
+
+;; which-key
+(require 'which-key)
+(which-key-mode)
 
 ;; Tagedit (https://github.com/magnars/tagedit)
 (eval-after-load "sgml-mode"
