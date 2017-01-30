@@ -530,8 +530,13 @@
 (require 'org-install)
 (require 'ob-tangle)
 (org-babel-do-load-languages
- 'org-babel-load-languages '((sh . t)))
-
+ 'org-babel-load-languages '((sh . t)
+                             (plantuml . t)))
+(setq org-plantuml-jar-path
+      (expand-file-name "~/bin/plantuml.jar"))
+(defun my-org-confirm-babel-evaluate (lang body)
+  (not (string= lang "plantuml")))  ; don't ask for plantuml
+(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
 ;; (org-babel-load-file (concat user-emacs-directory "org/init.org"))
 
 ;; (org-babel-load-file "tmp.org")
@@ -679,7 +684,7 @@
       forecast-chicago "Chicago"
       forecast-country "USA"
       forecast-units 'us)
-(load (locate-user-emacs-file "forecast-api-key.el"))
+;;(load (locate-user-emacs-file "forecast-api-key.el"))
 
 
 ;; Pesky dialog boxes :-(
