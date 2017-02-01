@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: linktick
+# key: linktick
+# --
+[[file:./pd-$1.org][PD-$1]

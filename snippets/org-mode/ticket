@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: ticket
+# key: ticket
+# --
+# -*- org-export-babel-evaluate: nil -*-
+#+LaTeX_HEADER:\usepackage[margin=0.75in]{geometry}
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="style.css" />
+#+STARTUP: hidestars
+#+TITLE: PD-$1
+
+JIRA: [[https://opinionlab.atlassian.net/browse/PD-$1][PD-$1]

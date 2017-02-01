@@ -527,20 +527,6 @@
 	    (aggressive-indent-mode 1)))
 
 
-(require 'org-install)
-(require 'ob-tangle)
-(org-babel-do-load-languages
- 'org-babel-load-languages '((sh . t)
-                             (plantuml . t)))
-(setq org-plantuml-jar-path
-      (expand-file-name "~/bin/plantuml.jar"))
-(defun my-org-confirm-babel-evaluate (lang body)
-  (not (string= lang "plantuml")))  ; don't ask for plantuml
-(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
-;; (org-babel-load-file (concat user-emacs-directory "org/init.org"))
-
-;; (org-babel-load-file "tmp.org")
-
 ;; Company Mode............
 ;; stolen from https://github.com/bbatsov/prelude/blob/\
 ;; fe7997bc6e05647a935e279094a9c571d175e2dc/modules/prelude-company.el
@@ -584,6 +570,27 @@
 
 ;; Org Mode...................
 (require 'org)
+(require 'org-install)
+(require 'ob-tangle)
+(org-babel-do-load-languages
+ 'org-babel-load-languages '((sh . t)
+                             (clojure . t)
+                             (plantuml . t)))
+(setq org-plantuml-jar-path
+      (expand-file-name "~/bin/plantuml.jar"))
+(defun my-org-confirm-babel-evaluate (lang body)
+  (and (not (string= lang "plantuml"))
+       (not (string= lang "clojure"))
+       (not (string= lang "sh"))))
+(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+(setq org-babel-clojure-backend 'cider)
+(require 'ob-clojure)
+(require 'cider)
+
+;; (org-babel-load-file (concat user-emacs-directory "org/init.org"))
+
+;; (org-babel-load-file "tmp.org")
+
 ;; Export ” as “ and ”:
 (setq org-export-with-smart-quotes t)
 ;; GTD-style TODO states:
