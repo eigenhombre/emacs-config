@@ -158,6 +158,7 @@
   (put-clojure-indent 'DELETE 2)
   (put-clojure-indent 'GET 2)
   (put-clojure-indent 'POST 2)
+  (put-clojure-indent 'ANY 2)
   (put-clojure-indent 'PUT 2)
   (put-clojure-indent 'after 1)
   (put-clojure-indent 'after-all 1)
@@ -175,6 +176,7 @@
   (put-clojure-indent 'describe-with-mock-etl-state 1)
   (put-clojure-indent 'describe-with-server 1)
   (put-clojure-indent 'do-until-input 1)
+  (put-clojure-indent 'html/at 1)
   (put-clojure-indent 'fact 1)
   (put-clojure-indent 'facts 1)
   (put-clojure-indent 'it 1)
@@ -595,8 +597,8 @@
 (setq org-export-with-smart-quotes t)
 ;; GTD-style TODO states:
 (setq org-todo-keywords
-      '((sequence "TODO" "STARTED" "|" "DONE(d!/!)" "WAITING" "SOMEDAY" "CANCELED")))
-(setq org-log-done 'time)
+      '((sequence "TODO" "STARTED" "DONE(d!/!)" "WAITING" "SOMEDAY" "CANCELED")))
+;; (setq org-log-done 'time)
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
 	("STARTED" . "yellow")
@@ -617,7 +619,7 @@
  ;; If there is more than one, they won't work right.
  '(cljr-favor-prefix-notation t)
  '(magit-push-always-verify nil)
- '(recentf-max-menu-items 40))
+ '(recentf-max-menu-items 100))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

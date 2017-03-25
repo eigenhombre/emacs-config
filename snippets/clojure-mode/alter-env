@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: alter-env
+# key: alter-env
+# --
+(alter-var-root #'env
+                (fn [e]
+                  (assoc e :collections-environment "johnj"
+                           :collections-region "us-east-1")))
