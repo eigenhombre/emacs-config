@@ -1,14 +1,14 @@
-# -*- mode: snippet; require-final-newline: nil -*-
-# name: project
 # key: project
-# binding: direct-keybinding
+# name: project
 # --
-(defproject $1 "0.1.0-SNAPSHOT"
-  :description "$2"
-  :url "https://github.com/eigenhombre/$1"
-  :dependencies [[org.clojure/clojure "1.7.0"]]
-  :aliases {"autotest" ["spec" "-a"]}
-  :plugins [[speclj "3.3.0"]]
-  :test-paths ["spec"]
-  :profiles {:dev {:dependencies [[speclj "3.3.0"]]}
-             :uberjar {:aot :all}})
+(let [project "$1"
+      sh clojure.java.shell/sh
+      basepath "/Users/jjacobsen/ol-dev/ng-salt/dev2/projects/"
+      project-dir (str basepath project)
+      boot-file (str project-dir "/build.boot")]
+  (sh "mkdir" "-p" project-dir)
+  (sh "mkdir" "-p" (str project-dir "/src"))
+  (sh "mkdir" "-p" (str project-dir "/test"))
+  (sh "mkdir" "-p" (str project-dir "/resources"))
+  (sh "touch" boot-file)
+  (sh "open" "-a" "/usr/local/Caskroom/emacs/24.5-1/Emacs.app" boot-file))

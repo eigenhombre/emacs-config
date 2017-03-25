@@ -1,0 +1,51 @@
+# key: jetty
+# name: jetty
+# --
+(require '[clojure.tools.logging :as log]
+         '[compojure.core :refer [context defroutes ANY DELETE GET POST]]
+         '[compojure.route :as route]
+         '[ring.adapter.jetty :as jetty]
+         '[ring.logger :as logger]
+         '[ring.middleware.params :refer [wrap-params]])
+
+
+(defroutes app-routes
+  (GET "/" [] "welcome to your new home page")
+  (context "/v1" []
+    (ANY "/endpoint1" request
+      (do
+        (println "request:" request)
+        {:body (str "Request:" (pr-str request))
+         :status 200})))
+  (route/not-found "<h1>Page not found</h1>"))
+
+
+(defn ^:private wrap-exception-handling
+  "
+  Don't expose Jetty or other details to someone whose request
+  generated an exception.
+
+  C.f. https://8thlight.com/blog/mike-knepper/2015/05/19/
+  handling-exceptions-with-middleware-in-clojure.html
+  "
+  [handler]
+  (fn [request]
+    (try
+      (handler request)
+      (catch Exception e
+        (log/error e "Caught error running handler.")
+        {:status 500
+         :body "<p>There was an error processing your request.<p>\n"}))))
+
+
+(def app (-> app-routes
+             wrap-params
+             wrap-exception-handling
+             (logger/wrap-with-logger {:printer :no-color})))
+
+
+(comment
+  (def jetty-app (jetty/run-jetty app {:port 3000
+                                       :join? false
+                                       :send-server-version? false}))
+  (.stop jetty-app))

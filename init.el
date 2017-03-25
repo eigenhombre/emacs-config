@@ -10,6 +10,7 @@
 (add-to-list 'package-archives
              '("MELPA" . "http://melpa.org/packages/") t)
 (package-initialize)
+
 (defvar my-packages)
 (setq my-packages
       '(ac-js2
@@ -42,6 +43,7 @@
 	tagedit
 	yasnippet
 	json-mode
+	which-key
 	zenburn-theme))
 
 
@@ -156,6 +158,7 @@
   (put-clojure-indent 'DELETE 2)
   (put-clojure-indent 'GET 2)
   (put-clojure-indent 'POST 2)
+  (put-clojure-indent 'ANY 2)
   (put-clojure-indent 'PUT 2)
   (put-clojure-indent 'after 1)
   (put-clojure-indent 'after-all 1)
@@ -173,6 +176,7 @@
   (put-clojure-indent 'describe-with-mock-etl-state 1)
   (put-clojure-indent 'describe-with-server 1)
   (put-clojure-indent 'do-until-input 1)
+  (put-clojure-indent 'html/at 1)
   (put-clojure-indent 'fact 1)
   (put-clojure-indent 'facts 1)
   (put-clojure-indent 'it 1)
@@ -525,15 +529,6 @@
 	    (aggressive-indent-mode 1)))
 
 
-(require 'org-install)
-(require 'ob-tangle)
-(org-babel-do-load-languages
- 'org-babel-load-languages '((sh . t)))
-
-;; (org-babel-load-file (concat user-emacs-directory "org/init.org"))
-
-;; (org-babel-load-file "tmp.org")
-
 ;; Company Mode............
 ;; stolen from https://github.com/bbatsov/prelude/blob/\
 ;; fe7997bc6e05647a935e279094a9c571d175e2dc/modules/prelude-company.el
@@ -577,12 +572,33 @@
 
 ;; Org Mode...................
 (require 'org)
+(require 'org-install)
+(require 'ob-tangle)
+(org-babel-do-load-languages
+ 'org-babel-load-languages '((sh . t)
+                             (clojure . t)
+                             (plantuml . t)))
+(setq org-plantuml-jar-path
+      (expand-file-name "~/bin/plantuml.jar"))
+(defun my-org-confirm-babel-evaluate (lang body)
+  (and (not (string= lang "plantuml"))
+       (not (string= lang "clojure"))
+       (not (string= lang "sh"))))
+(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+(setq org-babel-clojure-backend 'cider)
+(require 'ob-clojure)
+(require 'cider)
+
+;; (org-babel-load-file (concat user-emacs-directory "org/init.org"))
+
+;; (org-babel-load-file "tmp.org")
+
 ;; Export ” as “ and ”:
 (setq org-export-with-smart-quotes t)
 ;; GTD-style TODO states:
 (setq org-todo-keywords
-      '((sequence "TODO" "STARTED" "|" "DONE(d!/!)" "WAITING" "SOMEDAY" "CANCELED")))
-(setq org-log-done 'time)
+      '((sequence "TODO" "STARTED" "DONE(d!/!)" "WAITING" "SOMEDAY" "CANCELED")))
+;; (setq org-log-done 'time)
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
 	("STARTED" . "yellow")
@@ -603,7 +619,7 @@
  ;; If there is more than one, they won't work right.
  '(cljr-favor-prefix-notation t)
  '(magit-push-always-verify nil)
- '(recentf-max-menu-items 40))
+ '(recentf-max-menu-items 100))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -626,6 +642,7 @@
           (lambda ()
             (org-set-local 'yas/trigger-key [tab])
             (yas-minor-mode 1)
+            (define-key org-mode-map (kbd "C-a") 'split-window-horizontally)
             (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
 
 
@@ -676,7 +693,7 @@
       forecast-chicago "Chicago"
       forecast-country "USA"
       forecast-units 'us)
-(load (locate-user-emacs-file "forecast-api-key.el"))
+;;(load (locate-user-emacs-file "forecast-api-key.el"))
 
 
 ;; Pesky dialog boxes :-(
@@ -704,6 +721,10 @@
 (beacon-mode 1)
 (setq beacon-push-mark 35)
 (setq beacon-color "#888888")
+
+;; which-key
+(require 'which-key)
+(which-key-mode)
 
 ;; Tagedit (https://github.com/magnars/tagedit)
 (eval-after-load "sgml-mode"

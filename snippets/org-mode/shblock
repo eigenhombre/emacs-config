@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: shblock
+
+# key: shblock
+# --
+#+BEGIN_SRC sh :exports both :results pp replace
+$0
+#+END_SRC

@@ -1,0 +1,26 @@
+# key: csv
+# name: csv
+# --
+;; (set-env! :dependencies '[[org.clojure/data.csv "0.1.3"]])
+(require '[clojure.data.csv :as csv])
+(comment
+
+(let [infile "$1"
+      [hdr & rows] (->> infile slurp csv/read-csv)
+      hdr (map (comp keyword
+                     #(clojure.string/replace % #"_| " "-")
+                     #(clojure.string/replace % #"\?|\.|\,|\'" "")
+                     clojure.string/lower-case)
+               hdr)
+      ;; Convert to map of {"name" ["dest1" "dest2"...] ...}
+      g (->> rows
+             (interleave (repeat hdr))
+             (partition 2)
+             (map (comp
+                   (partial into {})
+                   (partial map vec)
+                   (partial partition 2)
+                   (partial apply interleave))))]
+  g)
+
+)

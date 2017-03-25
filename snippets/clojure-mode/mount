@@ -1,0 +1,28 @@
+# -*- mode: snippet -*-
+# name: mount
+# key: mount
+# --
+(require '[mount.core :as mount :refer [defstate]])
+
+
+(defstate jetty-app
+  :start (jetty/run-jetty app {:port 3000
+                               :join? false
+                               :send-server-version? false})
+  :stop (.stop jetty-app))
+
+
+(defn -main []
+  (mount/start)
+  (.join (Thread/currentThread)))
+
+
+(comment  ;; REPL
+
+  (defn restart []
+    (mount/stop)
+    (mount/start))
+
+  (restart)
+
+)
