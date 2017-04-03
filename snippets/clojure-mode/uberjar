@@ -1,0 +1,34 @@
+# key: uberjar
+# name: uberjar
+# --
+(comment
+
+(clojure.java.shell/sh "lein" "überjar")
+
+(->> (clojure.java.shell/sh "ls" "target/uberjar/")
+     :out
+     (#(clojure.string/split % #"\n"))
+     (filter #(.contains % "standalone"))
+     first
+     (str "target/uberjar/")
+     (clojure.java.shell/sh "java" "-jar")
+     clojure.pprint/pprint)
+
+(let [pwd (System/getProperty "user.dir")
+      projname (->> pwd
+                    (#(clojure.string/split % #"/"))
+                    last)
+      uberjar (->> (clojure.java.shell/sh "ls" "target/uberjar/")
+                   :out
+                   (#(clojure.string/split % #"\n"))
+                   (filter #(.contains % "standalone"))
+                   first
+                   (str "target/uberjar/"))
+      fqpath (str pwd "/" uberjar)
+      cmd (str "java -jar " fqpath)
+      alias (format "alias %s='%s'\n" projname cmd)
+      _ (println alias)
+      bash-profile (str (System/getenv "HOME") "/.bash_profile")]
+  (spit bash-profile alias :append true))
+
+)

@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: newalias
+# key: newalias
+# --
+(let [pwd (System/getProperty "user.dir")
+      uberjar (->> (clojure.java.shell/sh "ls" "target/uberjar/")
+                   :out
+                   (#(clojure.string/split % #"\n"))
+                   (filter #(.contains % "standalone"))
+                   first
+                   (str "target/uberjar/"))
+      fqpath (str pwd "/" uberjar)
+      cmd (str "java -jar " fqpath)
+      alias (format "alias $1='%s'\n" cmd)
+      bash-profile (str (System/getenv "HOME") "/.bash_profile")]
+  (spit bash-profile alias :append true))
