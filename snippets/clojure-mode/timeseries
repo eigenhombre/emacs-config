@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: timeseries
+# key: timeseries
+# --
+;; add clj-time and incanter to project...
+(require '[incanter.charts :refer [time-series-plot]]
+         '[incanter.core :refer [view]])
+
+(let [n 100
+      times (sort (for [i (range n)]
+                    (t/minus (t/now) (t/hours (* 100 1000 (rand))))))
+      yvals (for [i (range n)] (* i i (rand)))]
+  (view (time-series-plot (map c/to-long times)
+                          yvals
+                          :x-label "t"
+                          :y-label "y"
+                          :size [1200 1200])))

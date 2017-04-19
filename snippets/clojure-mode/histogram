@@ -1,0 +1,33 @@
+# -*- mode: snippet -*-
+# name: histogram
+# key: histogram
+# --
+;; add clj-time and incanter to project...
+(require '[incanter.charts :refer [histogram]]
+         '[incanter.core :refer [view]])
+
+
+(let [n 1000
+      values (for [i (range 10000)]
+               (* i (rand) 1000))
+      color (java.awt.Color. 0x3b 0x6c 0x9d)
+      hist (histogram values
+                      :nbins 100
+                      :title "My Histogram"
+                      :x-label "x"
+                      :y-label "Frequency")
+      plot (.getPlot hist)
+      renderer (.getRenderer plot)]
+  (doto plot
+    (.setBackgroundAlpha 0.0)
+    (.setRangeGridlinesVisible false)
+    (.setDomainGridlinesVisible false))
+  (doto renderer
+    (.setPaint color)
+    (.setDrawBarOutline true)
+    (.setOutlinePaint color)
+    (.setOutlineStroke (java.awt.BasicStroke. 1))
+    (.setShadowVisible false))
+  (view hist
+        :width 900
+        :height 400))
