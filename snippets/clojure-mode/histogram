@@ -2,7 +2,7 @@
 # name: histogram
 # key: histogram
 # --
-;; add clj-time and incanter to project...
+;; add clj-time, incanter-core and incanter-charts to project...
 (require '[incanter.charts :refer [histogram]]
          '[incanter.core :refer [view]])
 
