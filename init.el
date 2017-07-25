@@ -600,7 +600,7 @@
 (setq org-export-with-smart-quotes t)
 ;; GTD-style TODO states:
 (setq org-todo-keywords
-      '((sequence "TODO" "STARTED" "DONE(d!/!)" "WAITING" "SOMEDAY" "CANCELED")))
+      '((sequence "TODO" "STARTED" "DONE" "WAITING" "SOMEDAY" "CANCELED")))
 ;; (setq org-log-done 'time)
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
