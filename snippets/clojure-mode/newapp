@@ -6,6 +6,6 @@
       sh clojure.java.shell/sh
       basepath "/Users/jjacobsen/ol-dev/ng-salt/dev2/projects/"
       project-dir (str basepath project)
-      src-file (str project-dir "/src/$1/core.clj")]
-  (sh "lein" "new" "app" "$1" :dir basepath)
-  (sh "open" "-a" "/usr/local/Caskroom/emacs/24.5-1/Emacs.app" src-file))
+      core-file (str project-dir "/src/" project "/core.clj")]
+  (sh "lein" "new" "app" project :dir basepath)
+  (sh "open" "-a" "/usr/local/Caskroom/emacs/24.5-1/Emacs.app" core-file))

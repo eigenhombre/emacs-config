@@ -3,8 +3,10 @@
 # --
 (comment
 
+;; Make the Uberjar
 (clojure.java.shell/sh "lein" "überjar")
 
+;; Execute the Uberjar
 (->> (clojure.java.shell/sh "ls" "target/uberjar/")
      :out
      (#(clojure.string/split % #"\n"))
@@ -14,6 +16,7 @@
      (clojure.java.shell/sh "java" "-jar")
      clojure.pprint/pprint)
 
+;; Add Uberjar to aliases
 (let [pwd (System/getProperty "user.dir")
       projname (->> pwd
                     (#(clojure.string/split % #"/"))
