@@ -2,9 +2,11 @@
 # name: timeseries
 # key: timeseries
 # --
-;; add clj-time and incanter to project...
+;; add clj-time, incanter-core, incanter-charts to project...
 (require '[incanter.charts :refer [time-series-plot]]
-         '[incanter.core :refer [view]])
+         '[incanter.core :refer [view]]
+         '[clj-time.core :as t]
+         '[clj-time.coerce :as c])
 
 (let [n 100
       times (sort (for [i (range n)]

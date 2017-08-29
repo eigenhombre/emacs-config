@@ -27,6 +27,7 @@
 	git-timemachine
 	helm
 	helm-projectile
+        hcl-mode
 	hideshow
 	lorem-ipsum
 	js2-mode
@@ -168,6 +169,7 @@
   (put-clojure-indent 'before-all 0)
   (put-clojure-indent 'context 2)
   (put-clojure-indent 'context* 2)
+  (put-clojure-indent 'check-cw-metric 2)
   (put-clojure-indent 'describe 1)
   (put-clojure-indent 'describe-examples 2)
   (put-clojure-indent 'describe-with-dawg 1)
@@ -184,6 +186,7 @@
   (put-clojure-indent 'section 1)
   (put-clojure-indent 'should 0)
   (put-clojure-indent 'solves 0)
+  (put-clojure-indent 'metrics/time 1)
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'watcher 1)
   (put-clojure-indent 'wcar 1)
