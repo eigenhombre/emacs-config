@@ -182,6 +182,8 @@
   (put-clojure-indent 'fact 1)
   (put-clojure-indent 'facts 1)
   (put-clojure-indent 'it 1)
+  (put-clojure-indent 'is 1)
+  (put-clojure-indent 'are 1)
   (put-clojure-indent 'match 1)
   (put-clojure-indent 'section 1)
   (put-clojure-indent 'should 0)
