@@ -187,6 +187,7 @@
   (put-clojure-indent 'should 0)
   (put-clojure-indent 'solves 0)
   (put-clojure-indent 'metrics/time 1)
+  (put-clojure-indent 'problem 1)
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'watcher 1)
   (put-clojure-indent 'wcar 1)
