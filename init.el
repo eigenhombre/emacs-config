@@ -177,6 +177,7 @@
   (put-clojure-indent 'describe-with-es 1)
   (put-clojure-indent 'describe-with-mock-etl-state 1)
   (put-clojure-indent 'describe-with-server 1)
+  (put-clojure-indent 'do-rate-limited 1)
   (put-clojure-indent 'do-until-input 1)
   (put-clojure-indent 'html/at 1)
   (put-clojure-indent 'fact 1)
@@ -384,6 +385,9 @@
 (global-set-key "\C-o7" (lambda ()
                           (interactive)
                           (find-file "~/Dropbox/org/olab.org")))
+(global-set-key "\C-o8" (lambda ()
+                          (interactive)
+                          (find-file "~/.bash_profile")))
 (global-set-key "\C-oP" (lambda ()
                           (interactive)
                           (find-file "~/Dropbox/org/painting-status.org")))
@@ -596,7 +600,7 @@
 (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
 (setq org-babel-clojure-backend 'cider)
 (require 'ob-clojure)
-(require 'cider)
+;;(require 'cider)
 
 ;; (org-babel-load-file (concat user-emacs-directory "org/init.org"))
 
@@ -651,6 +655,7 @@
           (lambda ()
             (org-set-local 'yas/trigger-key [tab])
             (yas-minor-mode 1)
+            (require 'ob-plantuml)
             (define-key org-mode-map (kbd "C-a") 'split-window-horizontally)
             (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
 
@@ -726,6 +731,10 @@
 ;; Omit #@!(*&^&! tabs!!!!
 (setq-default indent-tabs-mode nil)
 
+;; Markdown mode
+(custom-set-variables
+ '(markdown-command "/usr/local/bin/markdown"))
+
 ;; Beacon Mode
 (beacon-mode 1)
 (setq beacon-push-mark 35)
@@ -744,3 +753,4 @@
 
 (provide 'init)
 (put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)

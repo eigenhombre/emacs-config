@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: http
+# key: http
+# --
+;; add clj-http
+(require '[clj-http.client :as http])
+(http/post "https://xyz.com/v1/response"
+           {:throw-exceptions false
+            :headers {}
+            :form-params {:test "true"}})

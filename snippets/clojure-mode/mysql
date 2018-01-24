@@ -1,0 +1,25 @@
+# -*- mode: snippet -*-
+# name: mysql
+# key: mysql
+# --
+
+;; Add mysql/mysql-connector-java
+;; Add org.clojure/java.jdbc
+(require '[environ.core :refer [env]]
+         '[clojure.java.jdbc :as jdbc])
+
+(comment
+(let [host "localhost"
+      port 3306
+      user "root"
+      pass ""
+      conn
+      {:classname "com.mysql.cj.jdbc.Driver"
+       :subprotocol "mysql"
+       :subname (format "//%s:3306" host port)
+       :serverTimezone "UTC"
+       :database "odata_clean"
+       :user user
+       :password pass}]
+  (jdbc/query conn "select 1"))
+)
