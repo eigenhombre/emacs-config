@@ -358,6 +358,7 @@
 (global-set-key "\C-L" 'delete-other-windows)
 (global-set-key "\C-B" 'scroll-down)
 (global-set-key "\C-F" 'scroll-up)
+(global-set-key "\C-R" 'rename-buffer)
 (global-set-key "\C-V" 'save-buffer)
 (global-set-key "\C-R" 'isearch-forward)
 (global-set-key "\C-^" 'wnt-alog-add-entry)
