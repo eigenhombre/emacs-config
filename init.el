@@ -353,7 +353,6 @@
 (global-set-key "\C-oP" 'fill-paragraph)
 (global-set-key "\C-og" 'save-buffers-kill-emacs)
 (global-set-key "\C-od" 'downcase-region)
-(global-set-key "\C-oR" 'rename-buffer)
 (global-set-key "\C-or" 'rgrep)
 (global-set-key "\C-L" 'delete-other-windows)
 (global-set-key "\C-B" 'scroll-down)
