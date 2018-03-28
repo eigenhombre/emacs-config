@@ -179,6 +179,7 @@
   (put-clojure-indent 'describe-with-server 1)
   (put-clojure-indent 'do-rate-limited 1)
   (put-clojure-indent 'do-until-input 1)
+  (put-clojure-indent 'do-with-save-config 1)
   (put-clojure-indent 'html/at 1)
   (put-clojure-indent 'fact 1)
   (put-clojure-indent 'facts 1)
@@ -617,6 +618,22 @@
 	("DONE" . "#5F7F5F")
 	("ELSEWHERE" . "#5F7F5F")
 	("CANCELED" . "#8CD0D3")))
+
+;; Convert eval results to SRC blocks
+(defun replace-next-results-block ()
+  (interactive)
+  (search-forward "#+RESULTS:" nil t)
+  (replace-match "#+BEGIN_SRC")
+  (forward-line)
+  (while (string= (string (char-after)) ":")
+    (delete-char 2)
+    (forward-line))
+  (insert "#+END_SRC\n"))
+
+(global-set-key (kbd "s-r")
+                (lambda ()
+                  (interactive)
+                  (replace-next-results-block)))
 
 
 ;; Magit / GitHub ...........
