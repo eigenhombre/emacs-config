@@ -185,18 +185,24 @@
   (put-clojure-indent 'facts 1)
   (put-clojure-indent 'it 1)
   (put-clojure-indent 'is 1)
-  (put-clojure-indent 'are 1)
+  (put-clojure-indent 'are 2)
   (put-clojure-indent 'match 1)
   (put-clojure-indent 'section 1)
   (put-clojure-indent 'should 0)
+  (put-clojure-indent 'test-location 1)
   (put-clojure-indent 'solves 0)
   (put-clojure-indent 'metrics/time 1)
   (put-clojure-indent 'problem 1)
+  (put-clojure-indent 'mock-dl-good-and-fast 0)
+  (put-clojure-indent 'mock-dl-bad 0)
+  (put-clojure-indent 'mock-dl-short 0)
   (put-clojure-indent 'try 0)
+  (put-clojure-indent 'try+ 0)
   (put-clojure-indent 'watcher 1)
   (put-clojure-indent 'wcar 1)
   (put-clojure-indent 'with 1)
   (put-clojure-indent 'subsection 1)
+  (put-clojure-indent 'perf/p 1)
   (put-clojure-indent 'log-timing 1)
   (put-clojure-indent 'subsubsection 1))
 
@@ -259,6 +265,10 @@
 		  (interactive)
 		  (paredit-forward)
 		  (cider-eval-last-sexp)))
+             (define-key clojure-mode-map (kbd "C-o C-i")
+               (lambda ()
+                 (interactive)
+                 (cider-auto-test-mode 1)))
 	     (set-clojure-indents)))
 
 (add-to-list 'auto-mode-alist '("\\.garden" . clojure-mode))
@@ -278,16 +288,11 @@
 ;; Fix https://github.com/clojure-emacs/cider/issues/1258:
 (defvar cider-eval-progress-bar-show nil)
 
-
-;; JSON->Clojure snippet from Brett Lischalk
-(defun json->clj-map ()
-  (interactive)
-  (if (region-active-p)
-      (replace-regexp "\\(\"\\([A-z0-9_-]+\\)\"\s*:\\)" ":\\2 "
-                      nil (region-beginning) (region-end))))
-
-(global-set-key (kbd "C-c C-j h") 'json->clj-map)
-
+;; JSON
+(add-hook 'json-mode-hook
+          (lambda ()
+            (make-local-variable 'js-indent-level)
+            (setq js-indent-level 2)))
 
 ;; Lots of keybindings
 ;;
@@ -316,7 +321,7 @@
                           (interactive)
                           (org-babel-load-file (concat user-emacs-directory
 						       "org/init.org"))))
-(global-set-key "\C-A" 'split-window-horizontally)
+(global-set-key "\C-a" 'split-window-horizontally)
 (global-set-key "\C-oa" 'split-window-vertically)
 (global-set-key "\C-K" 'kill-line)
 (global-set-key "\C-os" 'isearch-forward-regexp)
@@ -384,7 +389,7 @@
                           (find-file "~/Dropbox/org/toplevel.org")))
 (global-set-key "\C-o7" (lambda ()
                           (interactive)
-                          (find-file "~/Dropbox/org/olab.org")))
+                          (find-file "~/Dropbox/org/opploans.org")))
 (global-set-key "\C-o8" (lambda ()
                           (interactive)
                           (find-file "~/.bash_profile")))
@@ -588,16 +593,35 @@
 (require 'org-install)
 (require 'ob-tangle)
 (org-babel-do-load-languages
- 'org-babel-load-languages '((sh . t)
+ 'org-babel-load-languages '(;; (sh . t)
                              (clojure . t)
                              (plantuml . t)))
 (setq org-plantuml-jar-path
       (expand-file-name "~/bin/plantuml.jar"))
+
+(setq my/org-babel-evaluated-languages
+      '(emacs-lisp plantuml))
+
 (defun my-org-confirm-babel-evaluate (lang body)
-  (and (not (string= lang "plantuml"))
-       (not (string= lang "clojure"))
-       (not (string= lang "sh"))))
+  (and (not (string= lang "ditaa"))
+       (not (string= lang "plantuml"))))
 (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+
+;; (defun my-org-confirm-babel-evaluate (lang body)
+;;   (and (not (string= lang "plantuml"))
+;;        (not (string= lang "clojure"))
+;;        (not (string= lang "sh"))))
+
+(add-to-list 'my/org-babel-evaluated-languages 'plantuml)
+;; (org-babel-do-load-languages
+;;  'org-babel-load-languages
+;;  (mapcar (lambda (lang)
+;;            (cons lang t))
+;;          my/org-babel-evaluated-languages))
+
+;; (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+
+
 (setq org-babel-clojure-backend 'cider)
 (require 'ob-clojure)
 ;;(require 'cider)
@@ -639,7 +663,6 @@
 ;; Magit / GitHub ...........
 (require 'magit-gh-pulls)
 (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
-
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -759,6 +782,13 @@
 ;; which-key
 (require 'which-key)
 (which-key-mode)
+
+;; Pop shells in current frame
+(add-to-list 'display-buffer-alist
+             `(,(regexp-quote "*shell") display-buffer-same-window))
+
+;; suppress irritating terminal warnings:
+(setenv "PAGER" "cat")
 
 ;; Tagedit (https://github.com/magnars/tagedit)
 (eval-after-load "sgml-mode"
