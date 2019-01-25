@@ -1,5 +1,3 @@
-(package-initialize)
-
 (defun filter (pred lst)
   "Use PRED to filter a list LST of elements."
   (delq nil (mapcar (lambda (x) (and (funcall pred x) x)) lst)))
@@ -9,6 +7,7 @@
              '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives
              '("MELPA" . "http://melpa.org/packages/") t)
+
 (package-initialize)
 
 (defvar my-packages)
@@ -20,10 +19,8 @@
 	clj-refactor
 	clojure-mode
 	clojure-snippets
-	clj-refactor
         company
 	expand-region
-	forecast
 	git-timemachine
 	helm
 	helm-projectile
@@ -396,6 +393,9 @@
 (global-set-key "\C-o8" (lambda ()
                           (interactive)
                           (find-file "~/.bash_profile")))
+(global-set-key "\C-o9" (lambda ()
+                          (interactive)
+                          (find-file "~/.bashrc")))
 (global-set-key "\C-oP" (lambda ()
                           (interactive)
                           (find-file "~/Dropbox/org/painting-status.org")))
@@ -639,7 +639,7 @@
 (setq org-export-with-smart-quotes t)
 ;; GTD-style TODO states:
 (setq org-todo-keywords
-      '((sequence "TODO" "STARTED" "DONE" "WAITING" "SOMEDAY" "CANCELED")))
+      '((sequence "TODO" "STARTED" "DONE(d!)" "WAITING(d!)" "SOMEDAY" "CANCELED")))
 ;; (setq org-log-done 'time)
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
@@ -747,17 +747,6 @@
 
 (setq vc-make-backup-files t)
 
-
-;; Weather Forecast
-(require 'forecast)
-(setq forecast-latitude 41.881832
-      forecast-longitude -87.623177
-      forecast-chicago "Chicago"
-      forecast-country "USA"
-      forecast-units 'us)
-;;(load (locate-user-emacs-file "forecast-api-key.el"))
-
-
 ;; Pesky dialog boxes :-(
 ;; http://superuser.com/questions/125569/how-to-fix-emacs-popup-dialogs-on-mac-os-x
 (defadvice yes-or-no-p (around prevent-dialog activate)
@@ -773,15 +762,15 @@
 
 
 ;; Open at startup:
-(find-file (concat (getenv "HOME") "/Dropbox/org/toplevel.org"))
-
+;;(find-file (concat (getenv "HOME") "/Dropbox/org/toplevel.org"))
 
 ;; Omit #@!(*&^&! tabs!!!!
 (setq-default indent-tabs-mode nil)
 
 ;; Markdown mode
-(custom-set-variables
- '(markdown-command "/usr/local/bin/markdown"))
+(autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown" t)
+(add-to-list 'auto-mode-alist '("\\.md.html\\'" . markdown-mode)
+             (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)))
 
 ;; Beacon Mode
 (beacon-mode 1)
@@ -799,12 +788,6 @@
 ;; suppress irritating terminal warnings:
 (setenv "PAGER" "cat")
 
-;; Tagedit (https://github.com/magnars/tagedit)
-(eval-after-load "sgml-mode"
-  '(progn
-     (require 'tagedit)
-     (tagedit-add-paredit-like-keybindings)
-     (add-hook 'html-mode-hook (lambda () (tagedit-mode 1)))))
 ;;; COMMON LISP STUFF
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (setq inferior-lisp-program "/usr/local/bin/sbcl")
