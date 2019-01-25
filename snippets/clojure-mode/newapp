@@ -4,8 +4,8 @@
 # --
 (let [project "$1"
       sh clojure.java.shell/sh
-      basepath "/Users/jjacobsen/ol-dev/ng-salt/dev2/projects/"
+      basepath "/Users/jacobsen/Programming/Lisp/Clojure/"
       project-dir (str basepath project)
       core-file (str project-dir "/src/" project "/core.clj")]
   (sh "lein" "new" "app" project :dir basepath)
-  (sh "open" "-a" "/usr/local/Caskroom/emacs/24.5-1/Emacs.app" core-file))
+  (sh "open" "-a" "/Users/jacobsen/Applications/Emacs.app" core-file))

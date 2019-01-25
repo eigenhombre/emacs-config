@@ -5,5 +5,5 @@
 #+CAPTION: $1
 #+NAME: $2
 #+ATTR_LATEX: :width 1\linewidth
-#+ATTR_HTML: :style max-height:$3px;max-width:$3px
+#+ATTR_HTML: :class img100
 [[file:./$2.jpg][file:./$2.jpg]]

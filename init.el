@@ -1,5 +1,3 @@
-(package-initialize)
-
 (defun filter (pred lst)
   "Use PRED to filter a list LST of elements."
   (delq nil (mapcar (lambda (x) (and (funcall pred x) x)) lst)))
@@ -9,6 +7,7 @@
              '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 (add-to-list 'package-archives
              '("MELPA" . "http://melpa.org/packages/") t)
+
 (package-initialize)
 
 (defvar my-packages)
@@ -28,6 +27,8 @@
 	helm
 	helm-projectile
 	hideshow
+        htmlize
+	lorem-ipsum
 	js2-mode
 	lorem-ipsum
 	lorem-ipsum
@@ -245,7 +246,7 @@
 	     (aggressive-indent-mode 1)
              (highlight-long-lines)
 	     (clj-refactor-mode 1)
-	     (yas-minor-mode 1) ; for adding require/use/import
+	     (yas-minor-mode 1) ;; for adding require/use/import
 	     (cljr-add-keybindings-with-prefix "C-c C-t")
              (define-key clojure-mode-map (kbd "C-o x")
 	       'cider-eval-defun-at-point)
@@ -270,13 +271,13 @@
   result)")))
              (define-key clojure-mode-map (kbd "C-o y")
                (lambda ()
-		 (interactive)
-		 (insert "\n;;=>\n'")
-		 (cider-eval-last-sexp 't)))
+	         (interactive)
+	         (insert "\n;;=>\n'")
+	         (cider-eval-last-sexp 't)))
 	     (define-key clojure-mode-map (kbd "C-o Y")
 	       (lambda ()
-		 (interactive)
-		 (cider-pprint-eval-last-sexp)))
+	         (interactive)
+	         (cider-pprint-eval-last-sexp)))
 	     (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
              (define-key clojure-mode-map (kbd "s-I")
 	       '(lambda ()
@@ -339,6 +340,7 @@
                           (interactive)
                           (org-babel-load-file (concat user-emacs-directory
 						       "org/init.org"))))
+(global-set-key "\C-o`" 'auto-fill-mode)
 (global-set-key "\C-a" 'split-window-horizontally)
 (global-set-key "\C-oa" 'split-window-vertically)
 (global-set-key "\C-K" 'kill-line)
@@ -414,6 +416,9 @@
 (global-set-key "\C-o8" (lambda ()
                           (interactive)
                           (find-file "~/.bash_profile")))
+(global-set-key "\C-o9" (lambda ()
+                          (interactive)
+                          (find-file "~/.bashrc")))
 (global-set-key "\C-oP" (lambda ()
                           (interactive)
                           (find-file "~/Dropbox/org/painting-status.org")))
@@ -472,6 +477,8 @@
   (global-set-key (kbd "s-=") 'text-scale-increase)
   (global-set-key (kbd "s--") 'text-scale-decrease))
 
+(add-to-list 'display-buffer-alist
+             `(,(regexp-quote "*shell") display-buffer-same-window))
 ;; Don’t pop up newly-opened files in a new frame – use existing one:
 (setq ns-pop-up-frames nil)
 
@@ -643,7 +650,7 @@
 (setq org-export-with-smart-quotes t)
 ;; GTD-style TODO states:
 (setq org-todo-keywords
-      '((sequence "TODO" "STARTED" "DONE" "WAITING" "SOMEDAY" "CANCELED")))
+      '((sequence "TODO" "STARTED" "DONE(d!)" "WAITING(d!)" "SOMEDAY" "CANCELED")))
 ;; (setq org-log-done 'time)
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
@@ -682,8 +689,14 @@
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
    (quote
-    (clj-refactor magit-gh-pulls adoc-mode zenburn-theme which-key json-mode yasnippet tagedit rainbow-delimiters projectile paredit olivetti nodejs-repl markdown-mode magit js2-mode lorem-ipsum hcl-mode helm-projectile helm git-timemachine forecast expand-region company clojure-snippets clojure-mode cider beacon aggressive-indent ac-js2)))
- '(recentf-max-menu-items 100))
+    (ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor
+     clojure-mode clojure-snippets company expand-region forecast
+     git-timemachine hcl-mode helm helm-projectile htmlize js2-mode
+     json-mode lorem-ipsum magit magit-gh-pulls markdown-mode
+     multiple-cursors nodejs-repl olivetti paredit projectile
+     rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+     '(recentf-max-menu-items 100)))))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -750,17 +763,6 @@
 
 (setq vc-make-backup-files t)
 
-
-;; Weather Forecast
-(require 'forecast)
-(setq forecast-latitude 41.881832
-      forecast-longitude -87.623177
-      forecast-chicago "Chicago"
-      forecast-country "USA"
-      forecast-units 'us)
-;;(load (locate-user-emacs-file "forecast-api-key.el"))
-
-
 ;; Pesky dialog boxes :-(
 ;; http://superuser.com/questions/125569/how-to-fix-emacs-popup-dialogs-on-mac-os-x
 (defadvice yes-or-no-p (around prevent-dialog activate)
@@ -774,13 +776,13 @@
   (let ((use-dialog-box nil))
     ad-do-it))
 
-
 ;; Omit #@!(*&^&! tabs!!!!
 (setq-default indent-tabs-mode nil)
 
 ;; Markdown mode
-(custom-set-variables
- '(markdown-command "/usr/local/bin/markdown"))
+(autoload 'markdown-mode "markdown-mode" "Major mode for editing Markdown" t)
+(add-to-list 'auto-mode-alist '("\\.md.html\\'" . markdown-mode)
+             (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)))
 
 ;; Beacon Mode
 (beacon-mode 1)
@@ -798,12 +800,45 @@
 ;; suppress irritating terminal warnings:
 (setenv "PAGER" "cat")
 
-;; Tagedit (https://github.com/magnars/tagedit)
-(eval-after-load "sgml-mode"
-  '(progn
-     (require 'tagedit)
-     (tagedit-add-paredit-like-keybindings)
-     (add-hook 'html-mode-hook (lambda () (tagedit-mode 1)))))
+;;; COMMON LISP STUFF
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "/usr/local/bin/sbcl")
+(add-hook 'lisp-mode-hook
+          (lambda ()
+            (paredit-mode 1)
+	    (aggressive-indent-mode 1)
+            (define-key lisp-mode-map (kbd "C-o j") 'slime)
+            (define-key lisp-mode-map (kbd "s-i") 'slime-eval-last-expression)
+            (define-key lisp-mode-map (kbd "C-o y") 'slime-pprint-eval-last-expression)))
+
+
+;; Random Sort
+;; (https://stackoverflow.com/questions/6172054/how-can-i-random-sort-lines-in-a-buffer)
+(defun random-sort-lines (beg end)
+  "Sort lines in region randomly."
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region beg end)
+      (goto-char (point-min))
+      (let ;; To make `end-of-line' and etc. to ignore fields.
+          ((inhibit-field-text-motion t))
+        (sort-subr nil 'forward-line 'end-of-line nil nil
+                   (lambda (s1 s2) (eq (random 2) 0)))))))
+
+;; Run command on multiple files:
+;; https://superuser.com/questions/176627/in-emacs-dired-how-can-i-run-a-command-on-multiple-marked-files/176629
+(defun mrc-dired-do-command (command)
+  "Run COMMAND on marked files. Any files not already open will be opened.
+After this command has been run, any buffers it's modified will remain
+open and unsaved."
+  (interactive "CRun on marked files M-x ")
+  (save-window-excursion
+    (mapc (lambda (filename)
+            (find-file filename)
+            (call-interactively command))
+          (dired-get-marked-files))))
+
 
 ;; I'm blind. So sue me.
 (set-face-attribute 'default nil :height 200)
