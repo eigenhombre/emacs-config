@@ -14,27 +14,27 @@
 (defvar my-packages)
 (setq my-packages
       '(ac-js2
+        adoc-mode
 	aggressive-indent
 	beacon
 	cider
-	clj-refactor
 	clojure-mode
 	clojure-snippets
-	clj-refactor
         company
 	expand-region
 	forecast
+        clj-refactor
 	git-timemachine
 	helm
 	helm-projectile
-        hcl-mode
 	hideshow
-	lorem-ipsum
 	js2-mode
+	lorem-ipsum
 	lorem-ipsum
 	magit
 	magit-gh-pulls
 	markdown-mode
+	multiple-cursors
 	nodejs-repl
 	olivetti
 	org
@@ -43,6 +43,7 @@
 	rainbow-delimiters
 	tagedit
 	yasnippet
+        hcl-mode
 	json-mode
 	which-key
 	zenburn-theme))
@@ -135,6 +136,7 @@
 
 
 (global-set-key "\C-oT" 'create-term-shell)
+(global-set-key "\C-a" 'split-window-horizontally)
 
 ;; Highlighting of long lines.....................................
 (defun highlight-long-lines ()
@@ -195,7 +197,11 @@
   (put-clojure-indent 'problem 1)
   (put-clojure-indent 'mock-dl-good-and-fast 0)
   (put-clojure-indent 'mock-dl-bad 0)
+  (put-clojure-indent 'patterns-match 0)
+  (put-clojure-indent 'process-safely 2)
   (put-clojure-indent 'mock-dl-short 0)
+  (put-clojure-indent 'middleware 1)
+  (put-clojure-indent 'testing-salesforce 3)
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'try+ 0)
   (put-clojure-indent 'watcher 1)
@@ -233,11 +239,10 @@
       (delete-region (car bounds) (cdr bounds))
       (insert to-replace))))
 
-
 (add-hook 'clojure-mode-hook
           '(lambda ()
              (paredit-mode 1)
-	     ;; (aggressive-indent-mode 1)
+	     (aggressive-indent-mode 1)
              (highlight-long-lines)
 	     (clj-refactor-mode 1)
 	     (yas-minor-mode 1) ; for adding require/use/import
@@ -245,11 +250,24 @@
              (define-key clojure-mode-map (kbd "C-o x")
 	       'cider-eval-defun-at-point)
              (define-key clojure-mode-map (kbd "C-o j") 'cider-jack-in)
-             (define-key clojure-mode-map (kbd "C-o J") 'cider-restart)
-	     (define-key clojure-mode-map (kbd "C-o K") 'convert-selection-to-link)
+             (define-key clojure-mode-map (kbd "C-o J")
+               (lambda () (interactive) (cider-quit) (cider-jack-in)))
+	     ;;(define-key clojure-mode-map (kbd "C-o K") 'convert-selection-to-link)
 	     (define-key clojure-mode-map (kbd "C-o C") 'convert-selection-to-code)
              (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
              (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
+             (define-key clojure-mode-map (kbd "C-o SPC")
+               (lambda ()
+                 (interactive)
+                 (cider-interactive-eval "(let [result (clojure.test/run-tests)]
+      (if
+          (->> result
+               ((juxt :fail :error))
+               (apply +)
+               zero?)
+        (clojure.java.shell/sh \"say\" \"ok\")
+        (clojure.java.shell/sh \"say\" \"fail\"))
+  result)")))
              (define-key clojure-mode-map (kbd "C-o y")
                (lambda ()
 		 (interactive)
@@ -331,6 +349,7 @@
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key "\C-ok" 'comment-region)
+(global-set-key "\C-oK" 'helm-show-kill-ring)
 (global-set-key "\C-c\C-f" 'recentf-open-files)
 (global-set-key "\C-ou" 'uncomment-region)
 (global-set-key "\C-on" 'er/expand-region)
@@ -349,7 +368,6 @@
                           (fill-paragraph)))
 (global-set-key "\C-]"  'fill-region)
 (global-set-key "\C-ot" 'beginning-of-buffer)
-;; (global-set-key "\C-oT" 'toggle-window-split)
 (global-set-key "\C-N" 'enlarge-window)
 (global-set-key "\C-o\C-n" 'enlarge-window-horizontally)
 (global-set-key "\C-oc" 'paredit-duplicate-closest-sexp)
@@ -357,7 +375,6 @@
 (global-set-key "\C-ob" 'end-of-buffer)
 (global-set-key "\C-op" 'fill-region)
 (global-set-key "\C-oP" 'fill-paragraph)
-(global-set-key "\C-og" 'save-buffers-kill-emacs)
 (global-set-key "\C-od" 'downcase-region)
 (global-set-key "\C-or" 'rgrep)
 (global-set-key "\C-L" 'delete-other-windows)
@@ -378,6 +395,7 @@
 (global-set-key "\C-\\" 'shell)
 (global-set-key "\C-oi" 'quoted-insert)
 (global-set-key "\e[1~" 'isearch-forward)
+(global-set-key "\C-oG" 'helm-projectile-grep)
 (global-set-key [select] 'set-mark-command)
 (global-set-key [insertchar] 'yank)
 (global-set-key [deletechar] 'kill-region)
@@ -387,6 +405,9 @@
 (global-set-key "\C-oO" (lambda ()
                           (interactive)
                           (find-file "~/Dropbox/org/toplevel.org")))
+(global-set-key "\C-o0" (lambda ()
+                          (interactive)
+                          (find-file "~/Dropbox/org/opploans-home.org")))
 (global-set-key "\C-o7" (lambda ()
                           (interactive)
                           (find-file "~/Dropbox/org/opploans.org")))
@@ -575,6 +596,8 @@
 ;; Helm.......................
 (require 'helm)
 (global-set-key (kbd "M-x") 'helm-M-x)
+;; https://github.com/bbatsov/helm-projectile/issues/116 :
+;;(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (helm-mode 1)
 
 ;; Projectile.................
@@ -593,34 +616,20 @@
 (require 'org-install)
 (require 'ob-tangle)
 (org-babel-do-load-languages
- 'org-babel-load-languages '(;; (sh . t)
+ 'org-babel-load-languages '((shell . t)
                              (clojure . t)
                              (plantuml . t)))
-(setq org-plantuml-jar-path
-      (expand-file-name "~/bin/plantuml.jar"))
+
+(setq org-plantuml-jar-path (concat (getenv "HOME")
+                                    "/bin/plantuml.jar"))
 
 (setq my/org-babel-evaluated-languages
-      '(emacs-lisp plantuml))
+      '(emacs-lisp plantuml sh))
 
 (defun my-org-confirm-babel-evaluate (lang body)
   (and (not (string= lang "ditaa"))
        (not (string= lang "plantuml"))))
 (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
-
-;; (defun my-org-confirm-babel-evaluate (lang body)
-;;   (and (not (string= lang "plantuml"))
-;;        (not (string= lang "clojure"))
-;;        (not (string= lang "sh"))))
-
-(add-to-list 'my/org-babel-evaluated-languages 'plantuml)
-;; (org-babel-do-load-languages
-;;  'org-babel-load-languages
-;;  (mapcar (lambda (lang)
-;;            (cons lang t))
-;;          my/org-babel-evaluated-languages))
-
-;; (setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
-
 
 (setq org-babel-clojure-backend 'cider)
 (require 'ob-clojure)
@@ -669,8 +678,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(cljr-favor-prefix-notation t)
  '(magit-push-always-verify nil)
+ '(markdown-command "/usr/local/bin/markdown")
+ '(package-selected-packages
+   (quote
+    (clj-refactor magit-gh-pulls adoc-mode zenburn-theme which-key json-mode yasnippet tagedit rainbow-delimiters projectile paredit olivetti nodejs-repl markdown-mode magit js2-mode lorem-ipsum hcl-mode helm-projectile helm git-timemachine forecast expand-region company clojure-snippets clojure-mode cider beacon aggressive-indent ac-js2)))
  '(recentf-max-menu-items 100))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -763,10 +775,6 @@
     ad-do-it))
 
 
-;; Open at startup:
-(find-file (concat (getenv "HOME") "/Dropbox/org/toplevel.org"))
-
-
 ;; Omit #@!(*&^&! tabs!!!!
 (setq-default indent-tabs-mode nil)
 
@@ -796,6 +804,9 @@
      (require 'tagedit)
      (tagedit-add-paredit-like-keybindings)
      (add-hook 'html-mode-hook (lambda () (tagedit-mode 1)))))
+
+;; I'm blind. So sue me.
+(set-face-attribute 'default nil :height 200)
 
 (provide 'init)
 (put 'upcase-region 'disabled nil)
