@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: beglisp
+# key: beglisp
+# --
+
+#+BEGIN_SRC emacs-lisp :exports code :results pp replace
+$0
+#+END_SRC
