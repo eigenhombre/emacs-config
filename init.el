@@ -29,12 +29,14 @@
 	helm-projectile
         hcl-mode
 	hideshow
+        htmlize
 	lorem-ipsum
 	js2-mode
 	lorem-ipsum
 	magit
 	magit-gh-pulls
 	markdown-mode
+	multiple-cursors
 	nodejs-repl
 	olivetti
 	org
@@ -230,10 +232,10 @@
 (add-hook 'clojure-mode-hook
           '(lambda ()
              (paredit-mode 1)
-	     ;; (aggressive-indent-mode 1)
+	     (aggressive-indent-mode 1)
              (highlight-long-lines)
 	     (clj-refactor-mode 1)
-	     (yas-minor-mode 1) ; for adding require/use/import
+	     (yas-minor-mode 1) ;; for adding require/use/import
 	     (cljr-add-keybindings-with-prefix "C-c C-t")
              (define-key clojure-mode-map (kbd "C-o x")
 	       'cider-eval-defun-at-point)
@@ -245,19 +247,19 @@
              (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
              (define-key clojure-mode-map (kbd "C-o y")
                (lambda ()
-		 (interactive)
-		 (insert "\n;;=>\n'")
-		 (cider-eval-last-sexp 't)))
+	         (interactive)
+	         (insert "\n;;=>\n'")
+	         (cider-eval-last-sexp 't)))
 	     (define-key clojure-mode-map (kbd "C-o Y")
 	       (lambda ()
-		 (interactive)
-		 (cider-pprint-eval-last-sexp)))
+	         (interactive)
+	         (cider-pprint-eval-last-sexp)))
 	     (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
              (define-key clojure-mode-map (kbd "s-I")
 	       '(lambda ()
-		  (interactive)
-		  (paredit-forward)
-		  (cider-eval-last-sexp)))
+	          (interactive)
+	          (paredit-forward)
+	          (cider-eval-last-sexp)))
 	     (set-clojure-indents)))
 
 (add-to-list 'auto-mode-alist '("\\.garden" . clojure-mode))
@@ -316,6 +318,7 @@
                           (org-babel-load-file (concat user-emacs-directory
 						       "org/init.org"))))
 (global-set-key "\C-A" 'split-window-horizontally)
+(global-set-key "\C-o`" 'auto-fill-mode)
 (global-set-key "\C-oa" 'split-window-vertically)
 (global-set-key "\C-K" 'kill-line)
 (global-set-key "\C-os" 'isearch-forward-regexp)
@@ -445,6 +448,8 @@
   (global-set-key (kbd "s-=") 'text-scale-increase)
   (global-set-key (kbd "s--") 'text-scale-decrease))
 
+(add-to-list 'display-buffer-alist
+             `(,(regexp-quote "*shell") display-buffer-same-window))
 ;; Don’t pop up newly-opened files in a new frame – use existing one:
 (setq ns-pop-up-frames nil)
 
@@ -631,6 +636,10 @@
  ;; If there is more than one, they won't work right.
  '(cljr-favor-prefix-notation t)
  '(magit-push-always-verify nil)
+ '(markdown-command "/usr/local/bin/markdown")
+ '(package-selected-packages
+   (quote
+    (htmlize clj-refactor cider clojure-mode zenburn-theme yasnippet which-key rainbow-delimiters paredit multiple-cursors magit-gh-pulls beacon aggressive-indent ac-js2)))
  '(recentf-max-menu-items 100))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -749,6 +758,45 @@
      (require 'tagedit)
      (tagedit-add-paredit-like-keybindings)
      (add-hook 'html-mode-hook (lambda () (tagedit-mode 1)))))
+;;; COMMON LISP STUFF
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "/usr/local/bin/sbcl")
+(add-hook 'lisp-mode-hook
+          (lambda ()
+            (paredit-mode 1)
+	    (aggressive-indent-mode 1)
+            (define-key lisp-mode-map (kbd "C-o j") 'slime)
+            (define-key lisp-mode-map (kbd "s-i") 'slime-eval-last-expression)
+            (define-key lisp-mode-map (kbd "C-o y") 'slime-pprint-eval-last-expression)))
+
+
+;; Random Sort
+;; (https://stackoverflow.com/questions/6172054/how-can-i-random-sort-lines-in-a-buffer)
+(defun random-sort-lines (beg end)
+  "Sort lines in region randomly."
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region beg end)
+      (goto-char (point-min))
+      (let ;; To make `end-of-line' and etc. to ignore fields.
+          ((inhibit-field-text-motion t))
+        (sort-subr nil 'forward-line 'end-of-line nil nil
+                   (lambda (s1 s2) (eq (random 2) 0)))))))
+
+;; Run command on multiple files:
+;; https://superuser.com/questions/176627/in-emacs-dired-how-can-i-run-a-command-on-multiple-marked-files/176629
+(defun mrc-dired-do-command (command)
+  "Run COMMAND on marked files. Any files not already open will be opened.
+After this command has been run, any buffers it's modified will remain
+open and unsaved."
+  (interactive "CRun on marked files M-x ")
+  (save-window-excursion
+    (mapc (lambda (filename)
+            (find-file filename)
+            (call-interactively command))
+          (dired-get-marked-files))))
+
 
 (provide 'init)
 (put 'upcase-region 'disabled nil)
