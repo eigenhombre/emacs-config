@@ -709,6 +709,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(cljr-favor-prefix-notation t)
  '(magit-push-always-verify nil)
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
@@ -737,7 +738,7 @@
 ;; Org / Yasnippet conflict (http://orgmode.org/manual/Conflicts.html):
 (add-hook 'org-mode-hook
           (lambda ()
-            (org-set-local 'yas/trigger-key [tab])
+            ;;(org-set-local 'yas/trigger-key [tab])
             (yas-minor-mode 1)
             (require 'ob-plantuml)
             (define-key org-mode-map (kbd "C-a") 'split-window-horizontally)
@@ -828,12 +829,23 @@
             (paredit-mode 1)
 	    (aggressive-indent-mode 1)
             (define-key lisp-mode-map (kbd "C-o j") 'slime)
-            (define-key lisp-mode-map (kbd "s-i") 'slime-eval-last-expression)
-            (define-key lisp-mode-map (kbd "C-o y") 'slime-pprint-eval-last-expression)))
+            (define-key lisp-mode-map (kbd "s-i") ' slime-eval-last-expression)
+            (define-key lisp-mode-map (kbd "s-I")
+              (lambda ()
+                (interactive)
+                (paredit-forward)
+                (slime-eval-last-expression)))
+            (define-key lisp-mode-map (kbd "C-o y")
+              (lambda ()
+                (interactive)
+                (insert "\n;;=>\n'")
+                (setq current-prefix-arg t) ; C-u
+                (slime-eval-last-expression)))))
 
 
 ;; Random Sort
-;; (https://stackoverflow.com/questions/6172054/how-can-i-random-sort-lines-in-a-buffer)
+;; (https://stackoverflow.com/questions/6172054/\
+;; how-can-i-random-sort-lines-in-a-buffer
 (defun random-sort-lines (beg end)
   "Sort lines in region randomly."
   (interactive "r")
