@@ -440,13 +440,13 @@
                           (interactive)
                           (find-file "~/.emacs.d/init.el")))
 
-(global-set-key "\C-o1"
-		(lambda ()
-		  (interactive)
-		  (cider-interactive-eval
-		   "(in-ns 'unmark.impl)
-                    (generate-blog! \"/Users/jacobsen/Programming/eigenhombre.github.com\")
-                    (clojure.java.shell/sh \"open\" \"/Users/jacobsen/Programming/eigenhombre.github.com/index.html\")")))
+;; (global-set-key "\C-o1"
+;; 		(lambda ()
+;; 		  (interactive)
+;; 		  (cider-interactive-eval
+;; 		   "(in-ns 'unmark.impl)
+;;                     (generate-blog! \"/Users/jacobsen/Programming/eigenhombre.github.com\")
+;;                     (clojure.java.shell/sh \"open\" \"/Users/jacobsen/Programming/eigenhombre.github.com/index.html\")")))
 
 ;; Run marginalia on current project. You need
 ;; [michaelblume/marginalia "0.9.0"] installed in the dependencies for
@@ -683,6 +683,10 @@
 	("ELSEWHERE" . "#5F7F5F")
 	("CANCELED" . "#8CD0D3")))
 
+;; https://emacs.stackexchange.com/questions/19863/how-to-set-my-own-date-format-for-org :
+(setq-default org-display-custom-times t)
+(setq org-time-stamp-custom-formats '("<%A, %B %e, %Y>" . "<%a %b %e %Y %H:%M>"))
+
 ;; Convert eval results to SRC blocks
 (defun replace-next-results-block ()
   (interactive)
@@ -842,6 +846,23 @@
                 (setq current-prefix-arg t) ; C-u
                 (slime-eval-last-expression)))))
 
+;;; Journalling:
+(defun open-journal-file ()
+  (let* ((today
+          (format-time-string "%Y-%m-%d"))
+         (path
+          (concat (getenv "HOME")
+                  "/Dropbox/org/journal/"
+                  today
+                  ".org")))
+    (message (concat "opening " path " ..."))
+    (find-file path)
+    (outline-show-all)))
+
+(global-set-key "\C-o1"
+                (lambda ()
+                  (interactive)
+                  (open-journal-file)))
 
 ;; Random Sort
 ;; (https://stackoverflow.com/questions/6172054/\
