@@ -660,6 +660,10 @@
 	("ELSEWHERE" . "#5F7F5F")
 	("CANCELED" . "#8CD0D3")))
 
+;; https://emacs.stackexchange.com/questions/19863/how-to-set-my-own-date-format-for-org :
+(setq-default org-display-custom-times t)
+(setq org-time-stamp-custom-formats '("<%A, %B %e, %Y>" . "<%a %b %e %Y %H:%M>"))
+
 ;; Convert eval results to SRC blocks
 (defun replace-next-results-block ()
   (interactive)
