@@ -13,27 +13,28 @@
 (defvar my-packages)
 (setq my-packages
       '(ac-js2
-        adoc-mode
 	aggressive-indent
 	beacon
 	cider
 	clojure-mode
 	clojure-snippets
-        company
 	expand-region
 	forecast
-        clj-refactor
 	git-timemachine
 	helm
 	helm-projectile
 	hideshow
-        htmlize
-	lorem-ipsum
 	js2-mode
+	lorem-ipsum
 	lorem-ipsum
 	lorem-ipsum
 	magit
 	magit-gh-pulls
+        adoc-mode
+        clj-refactor
+        company
+        geiser
+        htmlize
 	markdown-mode
 	multiple-cursors
 	nodejs-repl
@@ -42,6 +43,7 @@
 	paredit
 	projectile
 	rainbow-delimiters
+        scala-mode
 	tagedit
 	yasnippet
         hcl-mode
@@ -167,19 +169,20 @@
   (put-clojure-indent 'after 1)
   (put-clojure-indent 'after-all 1)
   (put-clojure-indent 'around 1)
-  (put-clojure-indent 'without-logging 0)
   (put-clojure-indent 'before 0)
   (put-clojure-indent 'before-all 0)
+  (put-clojure-indent 'check-cw-metric 2)
   (put-clojure-indent 'context 2)
   (put-clojure-indent 'context* 2)
-  (put-clojure-indent 'check-cw-metric 2)
   (put-clojure-indent 'describe 1)
   (put-clojure-indent 'describe-examples 2)
   (put-clojure-indent 'describe-with-dawg 1)
   (put-clojure-indent 'describe-with-db 1)
   (put-clojure-indent 'describe-with-es 1)
+  (put-clojure-indent 'discard-stdout 0)
   (put-clojure-indent 'describe-with-mock-etl-state 1)
   (put-clojure-indent 'describe-with-server 1)
+  (put-clojure-indent 'without-logging 0)
   (put-clojure-indent 'do-rate-limited 1)
   (put-clojure-indent 'do-until-input 1)
   (put-clojure-indent 'do-with-save-config 1)
@@ -187,7 +190,7 @@
   (put-clojure-indent 'fact 1)
   (put-clojure-indent 'facts 1)
   (put-clojure-indent 'it 1)
-  (put-clojure-indent 'is 1)
+  (put-clojure-indent 'is 0)
   (put-clojure-indent 'are 2)
   (put-clojure-indent 'match 1)
   (put-clojure-indent 'section 1)
@@ -195,21 +198,32 @@
   (put-clojure-indent 'test-location 1)
   (put-clojure-indent 'solves 0)
   (put-clojure-indent 'metrics/time 1)
+  (put-clojure-indent 'nolog 0)
   (put-clojure-indent 'problem 1)
   (put-clojure-indent 'mock-dl-good-and-fast 0)
   (put-clojure-indent 'mock-dl-bad 0)
   (put-clojure-indent 'patterns-match 0)
   (put-clojure-indent 'process-safely 2)
+  (put-clojure-indent 'wrap-response 2)
   (put-clojure-indent 'mock-dl-short 0)
   (put-clojure-indent 'middleware 1)
-  (put-clojure-indent 'testing-salesforce 3)
+  (put-clojure-indent 'route-middleware 1)
+  (put-clojure-indent 'testing-salesforce 4)
+  (put-clojure-indent 'hellish-copy 4)
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'try+ 0)
   (put-clojure-indent 'watcher 1)
   (put-clojure-indent 'wcar 1)
   (put-clojure-indent 'with 1)
+  (put-clojure-indent 'with-expect-write-to-kinesis 0)
+  (put-clojure-indent 'with-level 1)
+  (put-clojure-indent 'wrap-response 3)
+  (put-clojure-indent 'with-audit-client 2)
+  (put-clojure-indent 'with-adjusted-laa 1)
+  (put-clojure-indent 'symbol-macrolet 1)
   (put-clojure-indent 'subsection 1)
   (put-clojure-indent 'perf/p 1)
+  (put-clojure-indent 'op/p 1)
   (put-clojure-indent 'log-timing 1)
   (put-clojure-indent 'subsubsection 1))
 
@@ -551,6 +565,11 @@
 	    (js-mode "{" "}" "/[*/]" nil)
             (js-mode "`" "`" "/[*/]" nil))))
 
+;; Highlight stuff.
+(setq-default
+ whitespace-line-column 80
+ whitespace-style       '(face lines-tail))
+
 
 ;; Indentation
 (setq js-indent-level 2)
@@ -618,6 +637,9 @@
 (add-hook 'html-mode-hook 'hs-minor-mode)
 (global-set-key [backtab] 'hs-toggle-hiding)
 
+;; Scheme stuff
+;;(require 'geiser-install)
+
 ;; Org Mode...................
 (require 'org)
 (require 'org-install)
@@ -651,8 +673,9 @@
 ;; GTD-style TODO states:
 (setq org-todo-keywords
       '((sequence "TODO" "STARTED" "DONE" "WAITING" "CANCELED")))
+(setq org-log-states-order-reversed nil)
 ;; (setq org-log-done 'time)
-(setq org-log-into-drawer t)
+(setq org-log-done nil)
 (setq org-todo-keyword-faces
       '(("TODO" . org-warning)
 	("STARTED" . "yellow")
@@ -757,8 +780,9 @@
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
    (quote
-    (adoc-mode htmlize clj-refactor cider clojure-mode zenburn-theme yasnippet which-key rainbow-delimiters paredit multiple-cursors magit-gh-pulls beacon aggressive-indent ac-js2)))
- '(recentf-max-menu-items 100))
+    (geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+            (quote
+             (recentf-max-menu-items 100))))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
