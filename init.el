@@ -680,6 +680,68 @@
                   (interactive)
                   (replace-next-results-block)))
 
+;; https://maxdiefenbach.de/howto/emacs/org-mode/2017/03/22/org_table_move_cell.html
+;; FIXME: Make this more beautiful
+;; org-table move cell
+;; https://www.mail-archive.com/emacs-orgmode@gnu.org/msg98407.html
+;; https://www.reddit.com/r/emacs/comments/583n1x/movecopy_a_cel_to_the_right/
+(defun md-org-table-swap-cells (row col nextrow nextcol)
+  (interactive)
+  (let ((curfield (org-table-get row col))
+        (nextfield (org-table-get nextrow nextcol)))
+    (org-table-analyze)
+    (org-table-put row col nextfield)
+    (org-table-put nextrow nextcol curfield)
+    (org-table-align)
+    (org-table-goto-field (format "@%s$%s" nextrow nextcol))
+    (message "md-org-table-swap-cells %s:%s <-> %s:%s"
+             (format "@%s$%s" row col) curfield (format "@%s$%s" nextrow nextcol) nextfield)))
+
+(defun md-org-table-swap-cell-right ()
+  (interactive)
+  (if (org-at-table-p)
+      (let* ((col (org-table-current-column))
+             (row (org-table-current-dline))
+             (nextrow row)
+             (nextcol (+ col 1)))
+        (md-org-table-swap-cells row col nextrow nextcol))
+    (org-shiftright)))
+(define-key org-mode-map (kbd "S-<right>") 'md-org-table-swap-cell-right)
+
+(defun md-org-table-swap-cell-left ()
+  (interactive)
+  (if (org-at-table-p)
+      (let* ((col (org-table-current-column))
+             (row (org-table-current-dline))
+             (nextrow row)
+             (nextcol (- col 1)))
+        (md-org-table-swap-cells row col nextrow nextcol))
+    (org-shiftleft)))
+(define-key org-mode-map (kbd "S-<left>") 'md-org-table-swap-cell-left)
+
+(defun md-org-table-swap-cell-up ()
+  (interactive)
+  (if (org-at-table-p)
+      (let* ((col (org-table-current-column))
+             (row (org-table-current-dline))
+             (nextrow (- row 1))
+             (nextcol col))
+        (md-org-table-swap-cells row col nextrow nextcol))
+    (org-shiftup)))
+(define-key org-mode-map (kbd "S-<up>") 'md-org-table-swap-cell-up)
+
+(defun md-org-table-swap-cell-down ()
+  (interactive)
+  (if (org-at-table-p)
+      (let* ((col (org-table-current-column))
+             (row (org-table-current-dline))
+             (nextrow (+ row 1))
+             (nextcol col))
+        (md-org-table-swap-cells row col nextrow nextcol))
+    (org-shiftdown)))
+(define-key org-mode-map (kbd "S-<down>") 'md-org-table-swap-cell-down)
+
+
 
 ;; Magit / GitHub ...........
 (require 'magit-gh-pulls)
@@ -809,6 +871,7 @@
             (paredit-mode 1)
 	    (aggressive-indent-mode 1)
             (define-key lisp-mode-map (kbd "C-o j") 'slime)
+            (define-key lisp-mode-map (kbd "C-c q") 'slime-quit-lisp)
             (define-key lisp-mode-map (kbd "s-i") ' slime-eval-last-expression)
             (define-key lisp-mode-map (kbd "s-I")
               (lambda ()
@@ -822,7 +885,7 @@
                 (setq current-prefix-arg t) ; C-u
                 (slime-eval-last-expression)))))
 
-;;; Journalling:
+;;; Journaling:
 (defun open-journal-file ()
   (let* ((today
           (format-time-string "%Y-%m-%d"))
