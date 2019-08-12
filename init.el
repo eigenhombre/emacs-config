@@ -20,7 +20,8 @@
 	clojure-snippets
 	expand-region
 	forecast
-	git-timemachine
+	gist
+        git-timemachine
 	helm
 	helm-projectile
 	hideshow
