@@ -376,6 +376,7 @@
 (global-set-key "\C-oh" 'unhighlight-long-lines)
 (global-set-key "\C-ob" 'backward-word)
 (global-set-key "\C-oB" 'bury-buffer)
+(global-set-key "\C-o3" 'rot13-region)
 (global-set-key "\C-oq" 'query-replace-regexp)
 (global-set-key "\C-oL" (lambda ()
                           (interactive)
@@ -635,6 +636,7 @@
 (load-library "hideshow")
 (add-hook 'clojure-mode-hook 'hs-minor-mode)
 (add-hook 'html-mode-hook 'hs-minor-mode)
+(add-hook 'lisp-mode-hook 'hs-minor-mode)
 (global-set-key [backtab] 'hs-toggle-hiding)
 
 ;; Scheme stuff
@@ -902,6 +904,8 @@
                 (interactive)
                 (paredit-forward)
                 (slime-eval-last-expression)))
+            (define-key lisp-mode-map (kbd "C-o Y")
+              'slime-pprint-eval-last-expression)
             (define-key lisp-mode-map (kbd "C-o y")
               (lambda ()
                 (interactive)
