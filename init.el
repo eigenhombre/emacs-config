@@ -501,8 +501,11 @@
 (defun jj-move-forward-and-eval ()
   (lambda ()
     (paredit-forward)
-   (eval (preceding-sexp))))
+    (eval (preceding-sexp))))
 
+;; Scrolling
+(setq scroll-step            1
+      scroll-conservatively  10000)
 
 ;; General Lisp stuff
 ;; Rainbow delimiters for all programming major modes:
