@@ -507,6 +507,9 @@
 (setq scroll-step            1
       scroll-conservatively  10000)
 
+;; Visual line mode
+(global-set-key "\C-oV" 'visual-line-mode)
+
 ;; General Lisp stuff
 ;; Rainbow delimiters for all programming major modes:
 (require 'rainbow-delimiters)
