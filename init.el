@@ -214,6 +214,7 @@
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'try+ 0)
   (put-clojure-indent 'watcher 1)
+  (put-clojure-indent 'wait-for 1)
   (put-clojure-indent 'wcar 1)
   (put-clojure-indent 'with 1)
   (put-clojure-indent 'with-expect-write-to-kinesis 0)
