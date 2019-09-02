@@ -932,10 +932,25 @@
           (concat (getenv "HOME")
                   "/Dropbox/org/journal/"
                   today
-                  ".org")))
+                  ".org"))
+         (hdr
+          (list (concat "#+TITLE: [" today "]")
+                "#+OPTIONS: toc:nil num:nil author:nil date:nil"
+                "#+STARTUP: align"
+                "#+HTML_HEAD: <link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\" />"
+                "#+LaTeX_CLASS: article"
+                "#+LaTeX_CLASS_OPTIONS: [9pt,twocolumn,portrait]"
+                "#+LATEX_HEADER: \\usepackage[margin=0.5in]{geometry}"
+                "#+LATEX_HEADER: \\usepackage{enumitem}")))
     (message (concat "opening " path " ..."))
     (find-file path)
-    (outline-show-all)))
+    (outline-show-all)
+    (unless (save-excursion
+              (goto-char (point-min))
+              (search-forward "#+TITLE" nil t))
+      (insert (apply 'concat
+                     (mapcar (lambda (s) (concat s "\n"))
+                             hdr))))))
 
 (global-set-key "\C-o1"
                 (lambda ()
