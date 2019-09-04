@@ -132,17 +132,10 @@
 
 (global-set-key "\C-oS" 'create-shell-in-new-buffer)
 
-;; Term stuff
-(defun create-term-shell ()
-  (interactive)
-  (term "/bin/bash"))
-
 ;; Per http://stackoverflow.com/questions/18278310/emacs-ansi-term-not-tab-completing : fix autocomplete
 (add-hook 'term-mode-hook (lambda()
 			    (setq yas-dont-activate t)))
 
-
-(global-set-key "\C-oT" 'create-term-shell)
 (global-set-key "\C-a" 'split-window-horizontally)
 
 ;; Highlighting of long lines.....................................
@@ -956,6 +949,42 @@
                   (interactive)
                   (open-journal-file)))
 
+;; FIXME: This is ugly, make it beautiful.
+(defun all-the-things ()
+  (interactive)
+  (delete-other-windows)
+  (split-window-right)
+  (split-window-right)
+  (split-window-right)
+  (split-window-below)
+  (windmove-right)
+  (split-window-below)
+  (windmove-right)
+  (split-window-below)
+  (windmove-right)
+  (split-window-below)
+  (balance-windows)
+  (windmove-left)
+  (windmove-left)
+  (switch-to-buffer (nth 1 (buffer-list)))
+  (windmove-right)
+  (switch-to-buffer (nth 2 (buffer-list)))
+  (windmove-right)
+  (switch-to-buffer (nth 3 (buffer-list)))
+  (windmove-down)
+  (switch-to-buffer (nth 4 (buffer-list)))
+  (windmove-left)
+  (switch-to-buffer (nth 5 (buffer-list)))
+  (windmove-left)
+  (switch-to-buffer (nth 6 (buffer-list)))
+  (windmove-left)
+  (switch-to-buffer (nth 7 (buffer-list)))
+  (windmove-up))
+
+(global-set-key "\C-oT"
+                (lambda ()
+                  (interactive)
+                  (all-the-things)))
 ;; Random Sort
 ;; (https://stackoverflow.com/questions/6172054/\
 ;; how-can-i-random-sort-lines-in-a-buffer
