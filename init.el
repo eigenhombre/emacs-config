@@ -938,6 +938,7 @@
                       (search-forward "#+TITLE" nil t)))))
     (message (concat "opening " path " ..."))
     (find-file path)
+    (outline-show-all)
     (unless (funcall has-hdr)
       (save-excursion
         (goto-char (point-min))
