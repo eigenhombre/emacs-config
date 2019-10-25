@@ -21,21 +21,16 @@
 	expand-region
 	forecast
 	gist
-        git-timemachine
 	helm
 	helm-projectile
 	hideshow
 	js2-mode
+	json-mode
 	lorem-ipsum
 	lorem-ipsum
 	lorem-ipsum
 	magit
 	magit-gh-pulls
-        adoc-mode
-        clj-refactor
-        company
-        geiser
-        htmlize
 	markdown-mode
 	multiple-cursors
 	nodejs-repl
@@ -44,12 +39,18 @@
 	paredit
 	projectile
 	rainbow-delimiters
-        scala-mode
 	tagedit
-	yasnippet
-        hcl-mode
-	json-mode
 	which-key
+	yasnippet
+        adoc-mode
+        clj-refactor
+        company
+        geiser
+        git-timemachine
+        hcl-mode
+        htmlize
+        racket-mode
+        scala-mode
 	zenburn-theme))
 
 
@@ -128,6 +129,13 @@
     (set-window-buffer currentbuf newbuf)
     (shell newbuf)))
 
+(global-unset-key "\C-w")
+(global-set-key "\C-wl" (lambda ()
+                          (interactive)
+                          (prettify-symbols-mode 1)))
+(global-set-key "\C-wL" (lambda ()
+                          (interactive)
+                          (prettify-symbols-mode 0)))
 (global-unset-key "\C-o")
 
 (global-set-key "\C-oS" 'create-shell-in-new-buffer)
@@ -336,7 +344,8 @@
 ;; under X, instead of the default, backspace behavior.
 (global-set-key [delete] 'delete-char)
 (global-set-key [kp-delete] 'delete-char)
-
+(global-set-key (kbd "C-h") 'delete-backward-char)
+(global-set-key (kbd "C-?") 'help-command)
 (define-key function-key-map "\e[1~" [find])
 (define-key function-key-map "\e[2~" [insertchar])
 (define-key function-key-map "\e[3~" [deletechar])
@@ -557,20 +566,6 @@
 
 (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
 
-
-;; Hideshow Package...........
-(load-library "hideshow")
-(add-hook 'clojure-mode-hook 'hs-minor-mode)
-(global-set-key [backtab] 'hs-toggle-hiding)
-(defvar hs-special-modes-alist
-  (mapcar 'purecopy
-	  '((c-mode "{" "}" "/[*/]" nil nil)
-	    (c++-mode "{" "}" "/[*/]" nil nil)
-	    (bibtex-mode ("@\\S(*\\(\\s(\\)" 1))
-	    (java-mode "{" "}" "/[*/]" nil nil)
-	    (js-mode "{" "}" "/[*/]" nil)
-            (js-mode "`" "`" "/[*/]" nil))))
-
 ;; Highlight stuff.
 (setq-default
  whitespace-line-column 80
@@ -640,6 +635,15 @@
 ;; Hideshow Package...........
 (load-library "hideshow")
 (add-hook 'clojure-mode-hook 'hs-minor-mode)
+(global-set-key [backtab] 'hs-toggle-hiding)
+(defvar hs-special-modes-alist
+  (mapcar 'purecopy
+	  '((c-mode "{" "}" "/[*/]" nil nil)
+	    (c++-mode "{" "}" "/[*/]" nil nil)
+	    (bibtex-mode ("@\\S(*\\(\\s(\\)" 1))
+	    (java-mode "{" "}" "/[*/]" nil nil)
+	    (js-mode "{" "}" "/[*/]" nil)
+            (js-mode "`" "`" "/[*/]" nil))))
 (add-hook 'html-mode-hook 'hs-minor-mode)
 (add-hook 'lisp-mode-hook 'hs-minor-mode)
 (global-set-key [backtab] 'hs-toggle-hiding)
@@ -787,9 +791,9 @@
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
    (quote
-    (geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
-            (quote
-             (recentf-max-menu-items 100))))))
+    (racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+                 (quote
+                  (recentf-max-menu-items 100))))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -896,11 +900,30 @@
 
 ;;; COMMON LISP STUFF
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
-(setq inferior-lisp-program "/usr/local/bin/sbcl")
+;;(setq inferior-lisp-program "/usr/local/bin/sbcl")
+(setq inferior-lisp-program "/usr/local/bin/sbcl --dynamic-space-size 8192")
+
+(defun lisp-indents ()
+  (put 'with-charms 'lisp-indent-function 0)
+  (put 'with-screen-dims 'lisp-indent-function 2)
+  (put 'defcolors 'lisp-indent-function 0)
+  (put '->> 'common-lisp-indent-function 0)
+  (put '-> 'common-lisp-indent-function 0)
+  (put 'lazy 'common-lisp-indent-function 1)
+  (put 'lazy-for 'common-lisp-indent-function 1)
+  (put 'define-aspect 'common-lisp-indent-function '1))
+
 (add-hook 'lisp-mode-hook
           (lambda ()
+            (lisp-indents)
             (paredit-mode 1)
 	    (aggressive-indent-mode 1)
+            (define-key lisp-mode-map (kbd "C-o Z")
+              (lambda ()
+                (interactive)
+                (slime-connect "localhost" 5555)
+                (message "Don't forget: (loop (sleep 1))")))
+            (load "/Users/jacobsen/quicklisp/clhs-use-local.el" t)
             (define-key lisp-mode-map (kbd "C-o j") 'slime)
             (define-key lisp-mode-map (kbd "C-c q") 'slime-quit-lisp)
             (define-key lisp-mode-map (kbd "s-i") ' slime-eval-last-expression)
@@ -1017,6 +1040,38 @@ open and unsaved."
 
 ;; I'm blind. So sue me.
 (set-face-attribute 'default nil :height 200)
+
+
+;; Racket setup
+(defun racket-eval-insert-last-sexp ()
+  "Eval the previous sexp asynchronously and `message' the result."
+  (interactive)
+  (racket--cmd/async
+   `(eval
+     ,(buffer-substring-no-properties (racket--repl-last-sexp-start)
+                                      (point)))
+   (lambda (v)
+     (insert (substring v
+                        2
+                        (- (length v) 2))))))
+
+(add-hook 'racket-mode-hook
+          (lambda ()
+            (message "Hi, it's racket.")
+            (paredit-mode 1)
+            (define-key racket-mode-map (kbd "s-i")
+              'racket-send-last-sexp)
+            (define-key racket-mode-map (kbd "C-o y")
+              (lambda ()
+	        (interactive)
+	        (insert "\n;;=>\n'")
+                ;;(insert (racket-eval-insert-last-sexp))
+                (insert (racket-insert-last-sexp))))
+            (define-key racket-mode-map (kbd "s-I")
+              (lambda ()
+                (interactive)
+                (paredit-forward)
+                (racket-send-last-sexp)))))
 
 (provide 'init)
 (put 'upcase-region 'disabled nil)
