@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: package
+# key: package
+# --
+(defpackage $1
+  (:use :common-lisp)
+  (:export ;; ...
+           ))
+
+(in-package $1)
+

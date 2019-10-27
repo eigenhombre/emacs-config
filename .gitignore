@@ -1,4 +1,7 @@
+elpa*
 .mc-lists.el
+forecast-api-key.el
+.quicklisp
 ac-comphist.dat
 auto-save-list/
 backups/
@@ -17,8 +20,8 @@ saved-places
 snippets/clojure-mode/elasticsearch
 snippets/clojure-mode/jenkins
 snippets/clojure-mode/mssql
-snippets/org-mode/ticket
 snippets/org-mode/daily-tasks
+snippets/org-mode/ticket
 src/
 tramp
 var/

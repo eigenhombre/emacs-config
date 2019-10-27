@@ -1,0 +1,4 @@
+# key: bmark
+# name: bmark
+# --
+- [[$1][$2]]

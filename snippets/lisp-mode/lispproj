@@ -1,0 +1,8 @@
+# key: lispproj
+# name: lispproj
+# --
+(ql:quickload "cl-project")
+(let* ((projname "$1")
+       (home (getenv "LISP_HOME"))
+       (projpath (concatenate 'string home "/" projname)))
+  (cl-project:make-project (pathname projpath)))
