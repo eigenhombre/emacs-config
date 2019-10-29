@@ -39,6 +39,8 @@
 	paredit
 	projectile
 	rainbow-delimiters
+        restclient
+        scala-mode
 	tagedit
 	which-key
 	yasnippet
@@ -171,7 +173,9 @@
   (put-clojure-indent 'ANY 2)
   (put-clojure-indent 'POST 2)
   (put-clojure-indent 'PUT 2)
+  (put-clojure-indent 'addtest 1)
   (put-clojure-indent 'after 1)
+  (put-clojure-indent 'api 0)
   (put-clojure-indent 'after-all 1)
   (put-clojure-indent 'are 2)
   (put-clojure-indent 'around 1)
@@ -210,6 +214,7 @@
   (put-clojure-indent 'process-safely 2)
   (put-clojure-indent 'route-middleware 1)
   (put-clojure-indent 'section 1)
+  (put-clojure-indent 'service-unavailable 0)
   (put-clojure-indent 'should 0)
   (put-clojure-indent 'solves 0)
   (put-clojure-indent 'test-location 1)
@@ -227,6 +232,7 @@
   (put-clojure-indent 'wrap-response 3)
   (put-clojure-indent 'with-audit-client 2)
   (put-clojure-indent 'with-adjusted-laa 1)
+  (put-clojure-indent 'undocumented 0)
   (put-clojure-indent 'symbol-macrolet 1)
   (put-clojure-indent 'subsection 1)
   (put-clojure-indent 'perf/p 1)
@@ -791,7 +797,7 @@
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
    (quote
-    (racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+    (restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
                  (quote
                   (recentf-max-menu-items 100))))))
 
@@ -973,42 +979,50 @@
                   (interactive)
                   (open-journal-file)))
 
-;; FIXME: This is ugly, make it beautiful.
+;; ;; FIXME: This is ugly, make it beautiful.
+;; (defun all-the-things-old ()
+;;   (interactive)
+;;   (delete-other-windows)
+;;   (split-window-right)
+;;   (split-window-right)
+;;   (split-window-right)
+;;   (split-window-below)
+;;   (windmove-right)
+;;   (split-window-below)
+;;   (windmove-right)
+;;   (split-window-below)
+;;   (windmove-right)
+;;   (split-window-below)
+;;   (balance-windows)
+;;   (windmove-left)
+;;   (windmove-left)
+;;   (switch-to-buffer (nth 1 (buffer-list)))
+;;   (windmove-right)
+;;   (switch-to-buffer (nth 2 (buffer-list)))
+;;   (windmove-right)
+;;   (switch-to-buffer (nth 3 (buffer-list)))
+;;   (windmove-down)
+;;   (switch-to-buffer (nth 4 (buffer-list)))
+;;   (windmove-left)
+;;   (switch-to-buffer (nth 5 (buffer-list)))
+;;   (windmove-left)
+;;   (switch-to-buffer (nth 6 (buffer-list)))
+;;   (windmove-left)
+;;   (switch-to-buffer (nth 7 (buffer-list)))
+;;   (windmove-up))
+
 (defun all-the-things ()
-  (interactive)
-  (delete-other-windows)
-  (split-window-right)
-  (split-window-right)
   (split-window-right)
   (split-window-below)
   (windmove-right)
-  (split-window-below)
-  (windmove-right)
-  (split-window-below)
-  (windmove-right)
-  (split-window-below)
-  (balance-windows)
-  (windmove-left)
-  (windmove-left)
-  (switch-to-buffer (nth 1 (buffer-list)))
-  (windmove-right)
-  (switch-to-buffer (nth 2 (buffer-list)))
-  (windmove-right)
-  (switch-to-buffer (nth 3 (buffer-list)))
-  (windmove-down)
-  (switch-to-buffer (nth 4 (buffer-list)))
-  (windmove-left)
-  (switch-to-buffer (nth 5 (buffer-list)))
-  (windmove-left)
-  (switch-to-buffer (nth 6 (buffer-list)))
-  (windmove-left)
-  (switch-to-buffer (nth 7 (buffer-list)))
-  (windmove-up))
+  (split-window-below))
 
 (global-set-key "\C-oT"
                 (lambda ()
                   (interactive)
-                  (all-the-things)))
+                  (all-the-things)
+                  (message "Woot.")))
+
 ;; Random Sort
 ;; (https://stackoverflow.com/questions/6172054/\
 ;; how-can-i-random-sort-lines-in-a-buffer
