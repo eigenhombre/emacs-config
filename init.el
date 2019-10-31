@@ -1015,7 +1015,11 @@
   (split-window-right)
   (split-window-below)
   (windmove-right)
-  (split-window-below))
+  (switch-to-buffer (nth 1 (buffer-list)))
+  (split-window-below)
+  (switch-to-buffer (nth 2 (buffer-list)))
+  (windmove-left)
+  (switch-to-buffer (nth 3 (buffer-list))))
 
 (global-set-key "\C-oT"
                 (lambda ()
