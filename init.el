@@ -37,6 +37,7 @@
 	olivetti
 	org
 	paredit
+        poet-theme
 	projectile
 	rainbow-delimiters
         restclient
@@ -435,13 +436,13 @@
 ;; Shortcuts for jumping directly into or evaluating commonly-used buffers:
 (global-set-key "\C-oO" (lambda ()
                           (interactive)
-                          (find-file "~/Dropbox/org/toplevel.org")))
+                          (find-file "~/org/toplevel.org")))
 (global-set-key "\C-o0" (lambda ()
                           (interactive)
-                          (find-file "~/Dropbox/org/opploans-home.org")))
+                          (find-file "~/org/opploans-home.org")))
 (global-set-key "\C-o7" (lambda ()
                           (interactive)
-                          (find-file "~/Dropbox/org/opploans.org")))
+                          (find-file "~/org/opploans.org")))
 (global-set-key "\C-o8" (lambda ()
                           (interactive)
                           (find-file "~/.bash_profile")))
@@ -450,7 +451,7 @@
                           (find-file "~/.bashrc")))
 (global-set-key "\C-oP" (lambda ()
                           (interactive)
-                          (find-file "~/Dropbox/org/painting-status.org")))
+                          (find-file "~/org/painting-status.org")))
 (global-set-key "\C-oE" (lambda ()
                           (interactive)
                           (find-file "~/.emacs.d/init.el")))
@@ -500,6 +501,7 @@
 ;; window.
 (when window-system
   (load-theme 'zenburn t)
+  ;;(load-theme 'poet t)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (set-exec-path-from-shell-PATH)
@@ -793,13 +795,17 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(cljr-favor-prefix-notation t)
+ '(custom-safe-themes
+   (quote
+    ("6973f93f55e4a6ef99aa34e10cd476bc59e2f0c192b46ec00032fe5771afd9ad" "ec5f697561eaf87b1d3b087dd28e61a2fc9860e4c862ea8e6b0b77bd4967d0ba" default)))
+ '(line-spacing 0.2)
  '(magit-push-always-verify nil)
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
    (quote
-    (restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
-                 (quote
-                  (recentf-max-menu-items 100))))))
+    (restclient poet-theme racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+                (quote
+                 (recentf-max-menu-items 100))))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -950,7 +956,7 @@
 ;;; Journaling:
 (defun open-journal-file ()
   (let* ((today (format-time-string "%Y-%m-%d"))
-         (path (concat (getenv "HOME") "/Dropbox/org/journal/" today ".org"))
+         (path (concat (getenv "HOME") "/org/journal/" today ".org"))
          (hdr-list (list (concat "#+TITLE: [" today "]")
                          "#+OPTIONS: toc:nil num:nil author:nil date:nil"
                          "#+STARTUP: align"
@@ -972,6 +978,7 @@
       (save-excursion
         (goto-char (point-min))
         (insert hdr)))
+    (visual-line-mode)
     (message "Enjoy your journaling!")))
 
 (global-set-key "\C-o1"
