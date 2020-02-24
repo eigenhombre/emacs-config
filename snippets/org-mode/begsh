@@ -2,6 +2,6 @@
 # name: begsh
 # key: begsh
 # --
-#+BEGIN_SRC sh :exports code :results pp replace
+#+BEGIN_SRC bash :exports both :results pp replace :eval never-export
 $0
 #+END_SRC
