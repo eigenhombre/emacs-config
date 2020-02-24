@@ -1,12 +1,13 @@
-elpa*
 .mc-lists.el
-forecast-api-key.el
+.org-id-locations
 .quicklisp
 ac-comphist.dat
 auto-save-list/
 backups/
 bookmarks
+elpa*
 elpa/
+forecast-api-key.el
 init.el~
 org/init.dvi
 org/init.el
