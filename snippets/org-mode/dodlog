@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: dodlog
+# key: dodlog
+# --
+Summary: $1
+Author: John Jacobsen
+Date: `(format-time-string "%Y-%m-%d")`
+Description:
+$2
+Resolution:
+$3
+

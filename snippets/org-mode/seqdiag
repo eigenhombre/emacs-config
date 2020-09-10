@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: seqdiag
+# key: seqdiag
+# --
+
+#+begin_src plantuml :file $1.png
+title $2
+
+Thing->Thing2: I want coffee
+Thing2->Thing: We're out. Here's some tea.
+#+end_src

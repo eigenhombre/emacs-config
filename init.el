@@ -27,13 +27,14 @@
 	js2-mode
 	json-mode
         flycheck
+	flycheck-clj-kondo
 	lorem-ipsum
 	magit
-	magit-gh-pulls
+	;; magit-gh-pulls
 	markdown-mode
 	multiple-cursors
 	nodejs-repl
-	olivetti
+        olivetti
 	org
 	paredit
 	projectile
@@ -174,12 +175,13 @@
   (put-clojure-indent 'PUT 2)
   (put-clojure-indent 'addtest 1)
   (put-clojure-indent 'after 1)
-  (put-clojure-indent 'api 0)
   (put-clojure-indent 'after-all 1)
+  ;; (put-clojure-indent 'api 1)
   (put-clojure-indent 'are 1)
   (put-clojure-indent 'around 1)
   (put-clojure-indent 'before 0)
   (put-clojure-indent 'before-all 0)
+  (put-clojure-indent 'cond-> 1)
   (put-clojure-indent 'check-cw-metric 2)
   (put-clojure-indent 'context 2)
   (put-clojure-indent 'context* 2)
@@ -196,7 +198,9 @@
   (put-clojure-indent 'do-with-save-config 1)
   (put-clojure-indent 'fact 1)
   (put-clojure-indent 'facts 1)
+  (put-clojure-indent 'props/for-all 1)
   (put-clojure-indent 'hellish-copy 4)
+  (put-clojure-indent 'holiday-test 2)
   (put-clojure-indent 'html/at 1)
   (put-clojure-indent 'is 0)
   (put-clojure-indent 'it 1)
@@ -208,9 +212,12 @@
   (put-clojure-indent 'mock-dl-short 0)
   (put-clojure-indent 'nolog 0)
   (put-clojure-indent 'patterns-match 0)
+  (put-clojure-indent 'possible-schedules 1)
+  (put-clojure-indent 'schedule-dates 1)
   (put-clojure-indent 'pending 1)
   (put-clojure-indent 'problem 1)
   (put-clojure-indent 'process-safely 2)
+  (put-clojure-indent 'prop/for-all 1)
   (put-clojure-indent 'route-middleware 1)
   (put-clojure-indent 'section 1)
   (put-clojure-indent 'service-unavailable 0)
@@ -218,11 +225,12 @@
   (put-clojure-indent 'solves 0)
   (put-clojure-indent 'test-location 1)
   (put-clojure-indent 'testing-salesforce 4)
+  (put-clojure-indent 'throws-with 1)
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'try+ 0)
   (put-clojure-indent 'watcher 1)
   (put-clojure-indent 'without-logging 0)
-  (put-clojure-indent 'wrap-response 2)
+  (put-clojure-indent 'wrap-response 1)
   (put-clojure-indent 'wait-for 1)
   (put-clojure-indent 'wcar 1)
   (put-clojure-indent 'with 1)
@@ -239,7 +247,8 @@
   (put-clojure-indent 'perf/p 1)
   (put-clojure-indent 'op/p 1)
   (put-clojure-indent 'log-timing 1)
-  (put-clojure-indent 'subsubsection 1))
+  (put-clojure-indent 'subsubsection 1)
+  (put-clojure-indent 'prop/for-all 1))
 
 
 (defun convert-selection-to-link ()
@@ -285,23 +294,24 @@
 	     (define-key clojure-mode-map (kbd "C-o C") 'convert-selection-to-code)
              (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
              (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
-             (define-key clojure-mode-map (kbd "C-o SPC")
-               (lambda ()
-                 (interactive)
-                 (cider-interactive-eval "(let [result (clojure.test/run-tests)]
-      (if
-          (->> result
-               ((juxt :fail :error))
-               (apply +)
-               zero?)
-        (clojure.java.shell/sh \"say\" \"ok\")
-        (clojure.java.shell/sh \"say\" \"fail\"))
-  result)")))
+             ;;            (define-key clojure-mode-map (kbd "C-o SPC")
+             ;;              (lambda ()
+             ;;                (interactive)
+             ;;                (cider-interactive-eval "(let [result (clojure.test/run-tests)]
+             ;;     (if
+             ;;         (->> result
+             ;;              ((juxt :fail :error))
+             ;;              (apply +)
+             ;;              zero?)
+             ;;       (clojure.java.shell/sh \"say\" \"ok\")
+             ;;       (clojure.java.shell/sh \"say\" \"fail\"))
+             ;; result)")))
              (define-key clojure-mode-map (kbd "C-o y")
                (lambda ()
 	         (interactive)
-	         (insert "\n;;=>\n'")
-	         (cider-eval-last-sexp 't)))
+	         (insert "\n;;=>\n\n")
+	         (cider-eval-last-sexp 't)
+                 (join-line)))
 	     (define-key clojure-mode-map (kbd "C-o Y")
 	       (lambda ()
 	         (interactive)
@@ -513,6 +523,22 @@
 ;; Don’t pop up newly-opened files in a new frame – use existing one:
 (setq ns-pop-up-frames nil)
 
+(when (featurep 'ns)
+  (defun ns-raise-emacs ()
+    "Raise Emacs."
+    (ns-do-applescript "tell application \"Emacs\" to activate"))
+
+  (defun ns-raise-emacs-with-frame (frame)
+    "Raise Emacs and select the provided frame."
+    (with-selected-frame frame
+      (when (display-graphic-p)
+        (ns-raise-emacs))))
+
+  (add-hook 'after-make-frame-functions 'ns-raise-emacs-with-frame)
+
+  (when (display-graphic-p)
+    (ns-raise-emacs)))
+
 (defun jj-move-forward-and-eval ()
   (lambda ()
     (paredit-forward)
@@ -542,6 +568,7 @@
 ;; do want paredit though.
 (define-key emacs-lisp-mode-map (kbd "<s-return>") 'eval-last-sexp)
 
+(require 'flycheck-clj-kondo)
 ;;(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
 ;;(add-hook 'emacs-lisp-mode-hook 'auto-indent-mode)
 (add-hook 'emacs-lisp-mode-hook
@@ -802,8 +829,8 @@
 
 
 ;; Magit / GitHub ...........
-(require 'magit-gh-pulls)
-(add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
+;; (require 'magit-gh-pulls)
+;; (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -811,13 +838,16 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(cljr-favor-prefix-notation t)
+ '(global-linum-mode t)
+ '(helm-completion-style (quote emacs))
+ '(line-number-mode nil)
  '(magit-push-always-verify nil)
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
    (quote
-    (flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
-              (quote
-               (recentf-max-menu-items 100))))))
+    (flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+                        (quote
+                         (recentf-max-menu-items 100))))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -841,6 +871,8 @@
             ;;(org-set-local 'yas/trigger-key [tab])
             (yas-minor-mode 1)
             (require 'ob-plantuml)
+            (setq org-babel-default-header-args:sh
+                  '((:prologue . "exec 2>&1") (:epilogue . ":")))
             (define-key org-mode-map (kbd "C-a") 'split-window-horizontally)
             (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
 
@@ -921,10 +953,10 @@
 ;; suppress irritating terminal warnings:
 (setenv "PAGER" "cat")
 
-;;; COMMON LISP STUFF
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-;;(setq inferior-lisp-program "/usr/local/bin/sbcl")
-(setq inferior-lisp-program "/usr/local/bin/sbcl --dynamic-space-size 8192")
+;; ;;; COMMON LISP STUFF
+;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+;; ;;(setq inferior-lisp-program "/usr/local/bin/sbcl")
+;; (setq inferior-lisp-program "/usr/local/bin/sbcl --dynamic-space-size 8192")
 
 (defun lisp-indents ()
   (put 'with-charms 'lisp-indent-function 0)
@@ -1073,10 +1105,15 @@ open and unsaved."
             (call-interactively command))
           (dired-get-marked-files))))
 
+;; Run Emacs as a client for `emacsclient`
+(server-start)
 
 ;; I'm blind. So sue me.
 (set-face-attribute 'default nil :height 200)
 
+
+;; Play around with transparency a little bit
+(set-frame-parameter (selected-frame) 'alpha '(95 . 80))
 
 ;; Racket setup
 (defun racket-eval-insert-last-sexp ()
