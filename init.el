@@ -4,9 +4,11 @@
 
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+             '("ELPA" . "http://elpa.gnu.org/packages/") t)
 (add-to-list 'package-archives
              '("MELPA" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 
 (package-initialize)
 
@@ -838,7 +840,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(cljr-favor-prefix-notation t)
- '(global-linum-mode t)
+ '(global-linum-mode nil)
  '(helm-completion-style (quote emacs))
  '(line-number-mode nil)
  '(magit-push-always-verify nil)
