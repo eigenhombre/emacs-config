@@ -201,6 +201,7 @@
   (put-clojure-indent 'fact 1)
   (put-clojure-indent 'facts 1)
   (put-clojure-indent 'props/for-all 1)
+  (put-clojure-indent 'for-all-mock-reports 1)
   (put-clojure-indent 'hellish-copy 4)
   (put-clojure-indent 'holiday-test 2)
   (put-clojure-indent 'html/at 1)
@@ -734,6 +735,7 @@
 
 ;; Export ” as “ and ”:
 (setq org-export-with-smart-quotes t)
+(setq org-export-backends '(ascii html latex md))
 ;; GTD-style TODO states:
 (setq org-todo-keywords
       '((sequence "TODO" "STARTED" "DONE" "WAITING" "CANCELED" "DEFERRED")))
