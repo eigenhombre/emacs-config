@@ -20,6 +20,7 @@
 	cider
 	clojure-mode
 	clojure-snippets
+        decide
 	expand-region
 	forecast
 	gist
@@ -387,7 +388,10 @@
 (global-set-key "\C-oa" 'split-window-vertically)
 (global-set-key "\C-K" 'kill-line)
 (global-set-key "\C-os" 'isearch-forward-regexp)
-(global-set-key "\C-oD" 'find-name-dired)
+;;(global-set-key "\C-oD" 'find-name-dired)
+(global-set-key "\C-oD" (lambda ()
+                          (interactive)
+                          (insert (format-time-string "%Y-%m-%d %H:%M"))))
 (global-set-key "\C-xS" 'sort-lines)
 (global-set-key "\C-w" 'backward-kill-word)
 (global-set-key "\C-x\C-k" 'kill-region)
@@ -583,13 +587,18 @@
 (define-key emacs-lisp-mode-map (kbd "s-i")
   'eval-last-sexp)
 
+(define-key emacs-lisp-mode-map (kbd "C-o y")
+  (lambda ()
+    (interactive)
+    (insert "\n;;=>\n'")
+    (eval-last-sexp 't)
+    (insert "\n")))
+
 (define-key emacs-lisp-mode-map (kbd "s-I")
   (lambda ()
     (interactive)
     (paredit-forward)
-    ;;(eval-last-sexp)
-    ))
-
+    (eval-last-sexp nil)))
 
 ;; Python stuff
 ;;(setq flycheck-flake8rc "/path/to/your/flake8-config-file")
@@ -1149,6 +1158,10 @@ open and unsaved."
                 (interactive)
                 (paredit-forward)
                 (racket-send-last-sexp)))))
+
+;; Babashka
+(add-to-list 'auto-mode-alist '("\\.bb\\'" . clojure-mode))
+
 
 (provide 'init)
 (put 'upcase-region 'disabled nil)
