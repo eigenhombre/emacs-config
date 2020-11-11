@@ -855,12 +855,53 @@
  '(helm-completion-style (quote emacs))
  '(line-number-mode nil)
  '(magit-push-always-verify nil)
+ '(recentf-max-menu-items 100)
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
-   (quote
-    (flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
-                        (quote
-                         (recentf-max-menu-items 100))))))
+    (quote
+     (ac-js2
+      adoc-mode
+      aggressive-indent
+      bea
+      beacon
+      cider
+      clj-refactor
+      clojure-mode
+      clojure-snippets
+      company
+      decide
+      expand-region
+      flake8
+      flycheck
+      flycheck-clj-kondo
+      forecast
+      geiser
+      gist
+      git-timemachine
+      hcl-mode
+      helm
+      helm-projectile
+      htmlize
+      js2-mode
+      json-mode
+      lorem-ipsum
+      magit
+      magit-gh-pulls
+      markdown-mode
+      multiple-cursors
+      nodejs-repl
+      olivetti
+      paredit
+      poet-theme
+      projectile
+      racket-mode
+      rainbow-delimiters
+      restclient
+      scala-mode
+      tagedit
+      which-key
+      yasnippet
+      zenburn-theme))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
