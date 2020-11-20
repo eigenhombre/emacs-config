@@ -445,6 +445,7 @@
 (global-set-key "\C-oi" 'quoted-insert)
 (global-set-key "\e[1~" 'isearch-forward)
 (global-set-key "\C-oG" 'helm-projectile-grep)
+(global-set-key (kbd "\C-o SPC") 'artist-mode)
 (global-set-key [select] 'set-mark-command)
 (global-set-key [insertchar] 'yank)
 (global-set-key [deletechar] 'kill-region)
