@@ -518,12 +518,12 @@
 ;; visual noise, fix up the PATH for shells, and allow resizing of
 ;; window.
 (when window-system
-  (load-theme 'zenburn t)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (set-exec-path-from-shell-PATH)
   (global-set-key (kbd "s-=") 'text-scale-increase)
   (global-set-key (kbd "s--") 'text-scale-decrease))
+(load-theme 'zenburn t)
 
 
 (add-to-list 'display-buffer-alist
