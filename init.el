@@ -368,7 +368,7 @@
 ;; under X, instead of the default, backspace behavior.
 (global-set-key [delete] 'delete-char)
 (global-set-key [kp-delete] 'delete-char)
-(global-set-key (kbd "C-h") 'delete-backward-char)
+;;(global-set-key (kbd "C-h") 'delete-backward-char)
 (global-set-key (kbd "C-?") 'help-command)
 (define-key function-key-map "\e[1~" [find])
 (define-key function-key-map "\e[2~" [insertchar])
@@ -862,9 +862,9 @@
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
    (quote
-    (decide flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
-            (quote
-             (recentf-max-menu-items 100))))))
+    (rust-mode org-roam bash-completion decide flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+               (quote
+                (recentf-max-menu-items 100))))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
