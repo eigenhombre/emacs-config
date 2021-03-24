@@ -15,7 +15,8 @@
 (defvar my-packages)
 (setq my-packages
       '(ac-js2
-	aggressive-indent
+        aggressive-indent
+        bash-completion
 	beacon
 	cider
 	clojure-mode
@@ -33,16 +34,18 @@
 	flycheck-clj-kondo
 	lorem-ipsum
 	magit
-	;; magit-gh-pulls
+	magit-gh-pulls
 	markdown-mode
 	multiple-cursors
 	nodejs-repl
         olivetti
 	org
+        org-roam
 	paredit
-	projectile
+        projectile
 	rainbow-delimiters
         restclient
+        rust-mode
         scala-mode
 	tagedit
 	which-key
@@ -425,7 +428,7 @@
 (global-set-key "\C-op" 'fill-region)
 (global-set-key "\C-oP" 'fill-paragraph)
 (global-set-key "\C-od" 'downcase-region)
-(global-set-key "\C-or" 'rgrep)
+;;(global-set-key "\C-or" 'rgrep)
 (global-set-key "\C-L" 'delete-other-windows)
 (global-set-key "\C-B" 'scroll-down)
 (global-set-key "\C-F" 'scroll-up)
@@ -1120,7 +1123,7 @@ open and unsaved."
           (dired-get-marked-files))))
 
 ;; Run Emacs as a client for `emacsclient`
-(server-start)
+;;(server-start)
 
 ;; I'm blind. So sue me.
 (set-face-attribute 'default nil :height 200)
@@ -1163,6 +1166,20 @@ open and unsaved."
 ;; Babashka
 (add-to-list 'auto-mode-alist '("\\.bb\\'" . clojure-mode))
 
+;; ;; Org-Roam stuff
+;; (setq org-roam-directory "~/org-roam")
+;; (add-hook
+;;  'org-roam-mode-hook
+;;  (lambda ()
+;;    (define-key org-roam-mode-map (kbd "C-o r n") 'org-roam-find-file)
+;;    (define-key org-roam-mode-map (kbd "C-o r l") 'org-roam-insert)
+;;    (define-key org-roam-mode-map (kbd "C-o r g") 'org-roam-graph)
+;;    (define-key org-roam-mode-map (kbd "C-o r t") 'org-roam-buffer-toggle-display)))
+;; (add-hook 'after-init-hook 'org-roam-mode)
+
+;; Bash completion
+(require 'bash-completion)
+(bash-completion-setup)
 
 (provide 'init)
 (put 'upcase-region 'disabled nil)
