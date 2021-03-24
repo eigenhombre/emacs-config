@@ -1180,6 +1180,20 @@ open and unsaved."
 (require 'bash-completion)
 (bash-completion-setup)
 
+;; Insert time
+;; (https://stackoverflow.com/questions/251908/how-can-i-insert-current-date-and-time-into-a-file-using-emacs)
+(defvar current-time-format "%H:%M:%S "
+  "Format of date to insert with `insert-current-time' func.
+  Note the weekly scope of the command's precision.")
+(defun insert-current-time ()
+  "insert the current time (1-week scope) into the current buffer."
+  (interactive)
+  (insert (format-time-string current-time-format (current-time))))
+
+(global-set-key "\C-o5" 'insert-current-time)
+
+
+
 (provide 'init)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
