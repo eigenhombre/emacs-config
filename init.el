@@ -460,7 +460,7 @@
                           (find-file "~/org/toplevel.org")))
 (global-set-key "\C-o0" (lambda ()
                           (interactive)
-                          (find-file "~/org/opploans-home.org")))
+                          (find-file "~/org/opploans/opploans-home.org")))
 (global-set-key "\C-o7" (lambda ()
                           (interactive)
                           (find-file "~/org/opploans.org")))
@@ -527,6 +527,7 @@
   (global-set-key (kbd "s--") 'text-scale-decrease))
 (tool-bar-mode -1)
 (menu-bar-mode -1)
+;; (load-theme 'wheatgrass t)
 (load-theme 'zenburn t)
 
 (add-to-list 'display-buffer-alist
