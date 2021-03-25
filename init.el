@@ -174,6 +174,7 @@
   (put-clojure-indent 'GET* 2)
   (put-clojure-indent 'POST* 2)
   (put-clojure-indent 'PUT* 2)
+  (put-clojure-indent 'PATCH 2)
   (put-clojure-indent 'DELETE 2)
   (put-clojure-indent 'GET 2)
   (put-clojure-indent 'ANY 2)
@@ -286,6 +287,8 @@
 
 (add-hook 'clojure-mode-hook
           '(lambda ()
+	     ;; Tell Cider about deftest equivalents:
+	     (add-to-list 'cider-test-defining-forms "defsystest")
              (paredit-mode 1)
 	     (aggressive-indent-mode 1)
              (highlight-long-lines)
@@ -301,6 +304,11 @@
 	     (define-key clojure-mode-map (kbd "C-o C") 'convert-selection-to-code)
              (define-key clojure-mode-map (kbd "C-<up>") 'paredit-backward)
              (define-key clojure-mode-map (kbd "C-<down>") 'paredit-forward)
+             (define-key clojure-mode-map (kbd "C-c k")
+               (lambda ()
+                 (interactive)
+                 (save-buffer)
+                 (cider-load-buffer)))
              ;;            (define-key clojure-mode-map (kbd "C-o SPC")
              ;;              (lambda ()
              ;;                (interactive)
@@ -453,6 +461,7 @@
 (global-set-key [insertchar] 'yank)
 (global-set-key [deletechar] 'kill-region)
 (global-set-key (kbd "s-0") 'org-todo-list)
+(global-set-key (kbd "M-k") 'kill-current-buffer)
 
 ;; Shortcuts for jumping directly into or evaluating commonly-used buffers:
 (global-set-key "\C-oO" (lambda ()
