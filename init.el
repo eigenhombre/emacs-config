@@ -344,7 +344,7 @@
 	     (set-clojure-indents)))
 
 (add-to-list 'auto-mode-alist '("\\.garden" . clojure-mode))
-
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
 ;; Find Leiningen.............................................
 (add-to-list 'exec-path "/usr/local/bin")
