@@ -560,6 +560,10 @@
   (when (display-graphic-p)
     (ns-raise-emacs)))
 
+;; Fix up paredit for terminal emacs
+(define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)
+(define-key paredit-mode-map (kbd "M-}") 'paredit-forward-barf-sexp)
+
 (defun jj-move-forward-and-eval ()
   (lambda ()
     (paredit-forward)
