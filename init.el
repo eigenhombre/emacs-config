@@ -870,15 +870,13 @@
  ;; If there is more than one, they won't work right.
  '(cljr-favor-prefix-notation t)
  '(global-linum-mode nil)
- '(helm-completion-style (quote emacs))
+ '(helm-completion-style 'emacs)
  '(line-number-mode nil)
  '(magit-push-always-verify nil)
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
-   (quote
-    (rust-mode org-roam bash-completion decide flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
-               (quote
-                (recentf-max-menu-items 100))))))
+   '(rust-mode org-roam bash-completion decide flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+               '(recentf-max-menu-items 100))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -934,8 +932,8 @@
 ;; Multiple cursors
 (require 'multiple-cursors)
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "M->") 'mc/mark-next-like-this)
+(global-set-key (kbd "M-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 ;; Backups...........................
