@@ -285,6 +285,11 @@
       (delete-region (car bounds) (cdr bounds))
       (insert to-replace))))
 
+(defun eval-forward ()
+  (interactive)
+  (paredit-forward)
+  (cider-eval-last-sexp))
+
 (add-hook 'clojure-mode-hook
           '(lambda ()
 	     ;; Tell Cider about deftest equivalents:
@@ -334,11 +339,9 @@
 	         (interactive)
 	         (cider-pprint-eval-last-sexp)))
 	     (define-key clojure-mode-map (kbd "s-i") 'cider-eval-last-sexp)
-             (define-key clojure-mode-map (kbd "s-I")
-	       '(lambda ()
-		  (interactive)
-		  (paredit-forward)
-		  (cider-eval-last-sexp)))
+             (define-key clojure-mode-map (kbd "C-c i") 'cider-eval-last-sexp)
+             (define-key clojure-mode-map (kbd "s-I") 'eval-forward)
+             (define-key clojure-mode-map (kbd "C-c TAB") 'eval-forward)
              (define-key clojure-mode-map (kbd "C-o C-i")
                (lambda ()
                  (interactive)
