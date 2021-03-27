@@ -288,8 +288,10 @@
 (add-hook 'clojure-mode-hook
           '(lambda ()
 	     ;; Tell Cider about deftest equivalents:
-	     (add-to-list 'cider-test-defining-forms "defsystest")
              (paredit-mode 1)
+	     ;; Fix up paredit for terminal emacs
+	     (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)
+	     (define-key paredit-mode-map (kbd "M-}") 'paredit-forward-barf-sexp)
 	     (aggressive-indent-mode 1)
              (highlight-long-lines)
 	     (clj-refactor-mode 1)
@@ -341,6 +343,7 @@
                (lambda ()
                  (interactive)
                  (cider-auto-test-mode 1)))
+	     (add-to-list 'cider-test-defining-forms "defsystest")
 	     (set-clojure-indents)))
 
 (add-to-list 'auto-mode-alist '("\\.garden" . clojure-mode))
@@ -559,10 +562,6 @@
 
   (when (display-graphic-p)
     (ns-raise-emacs)))
-
-;; Fix up paredit for terminal emacs
-(define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)
-(define-key paredit-mode-map (kbd "M-}") 'paredit-forward-barf-sexp)
 
 (defun jj-move-forward-and-eval ()
   (lambda ()
