@@ -294,9 +294,9 @@
           '(lambda ()
 	     ;; Tell Cider about deftest equivalents:
              (paredit-mode 1)
-	     ;; Fix up paredit for terminal emacs
-	     (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)
-	     (define-key paredit-mode-map (kbd "M-}") 'paredit-forward-barf-sexp)
+	     ;; ;; Fix up paredit for terminal emacs
+	     ;; (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)
+	     ;; (define-key paredit-mode-map (kbd "M-}") 'paredit-forward-barf-sexp)
 	     (aggressive-indent-mode 1)
              (highlight-long-lines)
 	     (clj-refactor-mode 1)
@@ -743,6 +743,34 @@
                              (clojure . t)
                              (plantuml . t)))
 
+;; https://emacs.stackexchange.com/questions/2952/display-errors-and-warnings-in-an-org-mode-code-block:
+(defvar org-babel-eval-verbose t
+  "A non-nil value makes `org-babel-eval' display")
+
+(defun org-babel-eval (cmd body)
+  "Run CMD on BODY.
+If CMD succeeds then return its results, otherwise display
+STDERR with `org-babel-eval-error-notify'."
+  (let ((err-buff (get-buffer-create " *Org-Babel Error*")) exit-code)
+    (with-current-buffer err-buff (erase-buffer))
+    (with-temp-buffer
+      (insert body)
+      (setq exit-code
+            (org-babel--shell-command-on-region
+             (point-min)
+             (point-max)
+             cmd
+             err-buff))
+      (if (or (not (numberp exit-code))
+              (> exit-code 0)
+              (and org-babel-eval-verbose
+                   (> (buffer-size err-buff) 0))) ; new condition
+          (progn
+            (with-current-buffer err-buff
+              (org-babel-eval-error-notify exit-code (buffer-string)))
+            nil)
+        (buffer-string)))))
+
 (setq org-plantuml-jar-path (concat (getenv "HOME")
                                     "/bin/plantuml.jar"))
 
@@ -776,7 +804,8 @@
 	("STARTED" . "yellow")
 	("DONE" . "#5F7F5F")
 	("ELSEWHERE" . "#5F7F5F")
-	("CANCELED" . "#8CD0D3")))
+	("CANCELED" . "#8CD0D3")
+        ("SOMEDAY" . "#8CD0D3")))
 
 ;; https://emacs.stackexchange.com/questions/19863/how-to-set-my-own-date-format-for-org :
 (setq-default org-display-custom-times t)
@@ -934,8 +963,8 @@
 ;; Multiple cursors
 (require 'multiple-cursors)
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "M->") 'mc/mark-next-like-this)
-(global-set-key (kbd "M-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 ;; Backups...........................
@@ -1205,6 +1234,18 @@ open and unsaved."
   (interactive)
   (insert (format-time-string current-time-format (current-time))))
 
+(global-set-key "\C-o5" 'insert-current-time)
+
+(defun insert-current-time ()
+  "insert the current time (1-week scope) into the current buffer."
+  (interactive)
+  (insert (format-time-string "%H:%M:%S " (current-time))))
+
+(defun insert-current-date ()
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d" (current-time))))
+
+(global-set-key "\C-o4" 'insert-current-date)
 (global-set-key "\C-o5" 'insert-current-time)
 
 
