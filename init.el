@@ -899,7 +899,7 @@ STDERR with `org-babel-eval-error-notify'."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(cljr-favor-prefix-notation t)
+ '(cljr-favor-prefix-notation nil)
  '(global-linum-mode nil)
  '(helm-completion-style 'emacs)
  '(line-number-mode nil)
