@@ -32,12 +32,14 @@
 	gist
 	helm
 	helm-projectile
-	hideshow
+        hideshow
 	js2-mode
 	json-mode
-        flycheck
-	flycheck-clj-kondo
+	flycheck
+        ;; flycheck-clj-kondo
 	lorem-ipsum
+	lsp-mode
+	lsp-ui
 	magit
 	magit-gh-pulls
 	markdown-mode
@@ -239,6 +241,8 @@
   (put-clojure-indent 'test-location 1)
   (put-clojure-indent 'testing-salesforce 4)
   (put-clojure-indent 'throws-with 1)
+  (put-clojure-indent 'thrown? 1)
+  (put-clojure-indent 'thrown-with-exception? 1)
   (put-clojure-indent 'try 0)
   (put-clojure-indent 'try+ 0)
   (put-clojure-indent 'watcher 1)
@@ -252,6 +256,7 @@
   (put-clojure-indent 'wrap-response 3)
   (put-clojure-indent 'with-audit-client 2)
   (put-clojure-indent 'with-adjusted-laa 1)
+  (put-clojure-indent 'within-temp-ns 0)
   (put-clojure-indent 'require-valid-admin-api-key 1)
   (put-clojure-indent 'require-valid-service-api-key 1)
   (put-clojure-indent 'undocumented 0)
@@ -1063,9 +1068,14 @@ STDERR with `org-babel-eval-error-notify'."
                 (slime-eval-last-expression)))))
 
 ;;; Journaling:
+(setq org-home (concat (getenv "HOME") "/org"))
+;;; Context-specific path:
+(setq org-journal-path (concat org-home "/opploans/journal"))
+
 (defun open-journal-file ()
+  (mkdir org-journal-path t)
   (let* ((today (format-time-string "%Y-%m-%d"))
-         (path (concat (getenv "HOME") "/org/journal/" today ".org"))
+         (path (concat org-journal-path "/" today ".org"))
          (hdr-list (list (concat "#+TITLE: [" today "]")
                          "#+OPTIONS: toc:nil num:nil author:nil date:nil"
                          "#+STARTUP: align"
