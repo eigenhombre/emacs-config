@@ -9,18 +9,21 @@
              '("MELPA" . "http://melpa.org/packages/") t)
 (add-to-list 'package-archives
              '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-
+(add-to-list 'package-archives
+             '("lambdaisland" . "http://lambdaisland.github.io/elpa/") t)
 (package-initialize)
 
 (defvar my-packages)
 (setq my-packages
-      '(ac-js2
+      '(a
+        ac-js2
         aggressive-indent
         bash-completion
 	beacon
 	cider
 	clojure-mode
 	clojure-snippets
+        dash
         decide
 	expand-region
 	forecast
@@ -1248,6 +1251,156 @@ open and unsaved."
 (global-set-key "\C-o4" 'insert-current-date)
 (global-set-key "\C-o5" 'insert-current-time)
 
+;; Gaming stuff: move elsewhere!
+(defun d6 () (+ 1 (random 6)))
+(defun d2.6 () (+ (d6) (d6)))
+(defun as-h (n) (format "%X" n))
+
+(defun uxp (n)
+  (apply 'concat (cl-loop repeat n
+                          collect (as-h (+ (random 6)
+                                           (random 6)
+                                           2)))))
+(defun uwp () (uxp 7))
+(defun upp () (uxp 6))
+
+;; Name generation stuff: move elsewhere!
+(require 'dash)
+(require 'a)       ;; Clojure-like alist semantics
+(require 'cl-lib)
+
+(defun take (n coll)
+  (cl-loop for el in coll
+           repeat n
+           collect el))
+
+(defun clj-partition (n step coll)
+  (when-let ((s coll))
+    (let ((p (take n s)))
+      (when (= n (length p))
+        (cons p (clj-partition n step (nthcdr step s)))))))
+
+(clj-partition 3 1 '(1 2 3 4))
+;;=>
+'((1 2 3) (2 3 4))
+
+(setq source-names '(aimee aim air aid))
+
+(seq-random-elt source-names)
+(defun make-raw-chain (coll)
+  (cl-loop for n in coll
+           append
+           (cl-loop for x in
+                    (clj-partition 3 1 (let ((ns (symbol-name n)))
+                                         (append (cl-loop for elt across ns
+                                                          collect (char-to-string elt))
+                                                 '(stop))))
+                    collect (list (take 2 x) (caddr x)))))
+
+(make-raw-chain source-names)
+;;=>
+'((("a" "i") "m")
+  (("i" "m") "e")
+  (("m" "e") "e")
+  (("e" "e") stop)
+  (("a" "i") "m")
+  (("i" "m") stop)
+  (("a" "i") "r")
+  (("i" "r") stop)
+  (("a" "i") "d")
+  (("i" "d") stop))
+
+(defun repeat (n x)
+  (cl-loop repeat n collect x))
+
+(defun frequencies (coll)
+  "Like Clojure `frequencies`: https://emacs.stackexchange.com
+   /questions/13514/
+   how-to-obtain-the-statistic-of-the-the-frequency-of-words-in-a-buffer"
+  (cl-loop with result = nil
+           for elt in coll
+           do (cl-incf (cdr (or (assoc elt result)
+                                (car (push (cons elt 0) result)))))
+           finally return result))
+
+(frequencies '("a" "bb" "BB" "bb" "aa" "a"))
+
+(frequencies (make-raw-chain source-names))
+;;=>
+'(((("i" "d") stop) . 1)
+  ((("a" "i") "d") . 1)
+  ((("i" "r") stop) . 1)
+  ((("a" "i") "r") . 1)
+  ((("i" "m") stop) . 1)
+  ((("e" "e") stop) . 1)
+  ((("m" "e") "e") . 1)
+  ((("i" "m") "e") . 1)
+  ((("a" "i") "m") . 2))
+
+;; (let ((ret nil))
+;;   (cl-loop for ((ngram nxt) . n) in (frequencies (make-raw-chain source-names))
+;;            do (let (cur ()))))
+
+(cl-loop
+ for ((ngram nxt) . n) in (frequencies (make-raw-chain source-names))
+ collect (list ngram nxt n))
+;;=>
+'((("i" "d") stop 1)
+  (("a" "i") "d" 1)
+  (("i" "r") stop 1)
+  (("a" "i") "r" 1)
+  (("i" "m") stop 1)
+  (("e" "e") stop 1)
+  (("m" "e") "e" 1)
+  (("i" "m") "e" 1)
+  (("a" "i") "m" 2))
+
+(defun group-ngram-transitions (transitions)
+  (let ((grouped-transitions
+         (-group-by #'car (cl-loop
+                           for ((ngram nxt) . n) in (frequencies transitions)
+                           collect (list ngram nxt n)))))
+    (cl-loop for (ngram . coll) in grouped-transitions
+             collect (cons ngram (cl-loop for (_ b c) in coll
+                                          collect (cons b c))))))
+
+(group-ngram-transitions (make-raw-chain source-names))
+;;=>
+'((("i" "d")
+   (stop . 1))
+  (("a" "i")
+   ("d" . 1)
+   ("r" . 1)
+   ("m" . 2))
+  (("i" "r")
+   (stop . 1))
+  (("i" "m")
+   (stop . 1)
+   ("e" . 1))
+  (("e" "e")
+   (stop . 1))
+  (("m" "e")
+   ("e" . 1)))
+
+(defun pick-entry (entries)
+  (let* ((n (cl-loop for (k . v) in entries sum v))
+         (r (random n))
+         (pos 0))
+    (cl-loop named foo
+             for (k . v) in entries
+             do (setq pos (+ v pos))
+             when (> pos r)
+             return k)))
+
+(defun choose-for-ngram (entries ngram)
+  (pick-entry (a-get entries ngram)))
+
+;; (frequencies
+;;  (cl-loop repeat 10000 collect (choose-for-ngram grouped-and-simplified
+;;                                                  '("a" "i"))))
+
+;; ;;=>
+;; '(("d" . 2446) ("r" . 2553) ("m" . 5001))
 
 
 (provide 'init)
