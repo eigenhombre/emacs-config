@@ -300,9 +300,28 @@
   (paredit-forward)
   (cider-eval-last-sexp))
 
+(add-hook 'cider-mode-hook
+          ;; Tell Cider about deftest equivalents:
+          '(lambda ()
+             (add-to-list 'cider-test-defining-forms "defsystest")))
+
+;; ;; LSP setup, not Clojure-specific:
+;; (add-hook 'lsp-mode-hook
+;; 	  '(lambda ()
+;;              (setq lsp-enable-indentation nil)
+;;              (setq lsp-prefer-flymake nil)
+;;              (setq flycheck-display-errors-function 'flycheck-display-error-messages)
+;; 	     (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)))
+
+;; (global-flycheck-mode t)
+
+;; (require 'lsp)
+;; (require 'lsp-ui)
+
+;; (setq lsp-ui-doc-position 'top)
+
 (add-hook 'clojure-mode-hook
           '(lambda ()
-	     ;; Tell Cider about deftest equivalents:
              (paredit-mode 1)
 	     ;; ;; Fix up paredit for terminal emacs
 	     ;; (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)
@@ -310,6 +329,7 @@
 	     (aggressive-indent-mode 1)
              (highlight-long-lines)
 	     (clj-refactor-mode 1)
+             ;; (lsp)
 	     (yas-minor-mode 1) ;; for adding require/use/import
 	     (cljr-add-keybindings-with-prefix "C-c C-t")
              (define-key clojure-mode-map (kbd "C-o x")
@@ -605,7 +625,7 @@
 ;; do want paredit though.
 (define-key emacs-lisp-mode-map (kbd "<s-return>") 'eval-last-sexp)
 
-(require 'flycheck-clj-kondo)
+;; (require 'flycheck-clj-kondo)
 ;;(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
 ;;(add-hook 'emacs-lisp-mode-hook 'auto-indent-mode)
 (add-hook 'emacs-lisp-mode-hook
@@ -635,7 +655,7 @@
 (add-hook 'python-mode-hook
           (lambda ()
             (interactive
-             (flycheck-mode)
+             ;; (flycheck-mode)
              (setq flycheck-display-errors-function
                    #'flycheck-display-error-messages-unless-error-list)
              (setq flycheck-python-flake8-executable "/usr/local/bin/flake8")
@@ -725,9 +745,42 @@
 (setq projectile-completion-system 'helm)
 (helm-projectile-on)
 
+;; Java indents
+(defun my-indent-setup ()
+  (c-set-offset 'arglist-intro '+))
+(add-hook 'java-mode-hook 'my-indent-setup)
+;; ..... https://emacs.stackexchange.com/questions/560/get-emacs-to-indent-fluent-builder-inside-argument-list:
+(defun my-java-lineup-cascaded-calls (langelem)
+  (save-excursion
+    (back-to-indentation)
+    (let ((operator (and (looking-at "\\.")
+                         (regexp-quote (match-string 0))))
+          (stmt-start (c-langelem-pos langelem)) col)
+
+      (when (and operator
+                 (looking-at operator)
+                 (zerop (c-backward-token-2 1 t stmt-start)))
+        (if (and (eq (char-after) ?\()
+                 (zerop (c-backward-token-2 2 t stmt-start))
+                 (looking-at operator))
+            (progn
+              (setq col (current-column))
+
+              (while (and (zerop (c-backward-token-2 1 t stmt-start))
+                          (eq (char-after) ?\()
+                          (zerop (c-backward-token-2 2 t stmt-start))
+                          (looking-at operator))
+                (setq col (current-column)))
+              (vector col))
+          (vector (+ (current-column)
+                     c-basic-offset)))))))
+
+;; (add-to-list 'c-offsets-alist '(arglist-cont . my-java-lineup-cascaded-calls))
+
 ;; Hideshow Package...........
 (load-library "hideshow")
 (add-hook 'clojure-mode-hook 'hs-minor-mode)
+(add-hook 'java-mode-hook 'hs-minor-mode)
 (global-set-key [backtab] 'hs-toggle-hiding)
 (defvar hs-special-modes-alist
   (mapcar 'purecopy
@@ -918,8 +971,10 @@ STDERR with `org-babel-eval-error-notify'."
  '(magit-push-always-verify nil)
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
-   '(rust-mode org-roam bash-completion decide flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
-               '(recentf-max-menu-items 100))))
+   (quote
+    (lsp-ui lsp-mode rust-mode org-roam bash-completion decide flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+            (quote
+             (recentf-max-menu-items 100))))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -1237,8 +1292,8 @@ open and unsaved."
 ;; (add-hook 'after-init-hook 'org-roam-mode)
 
 ;; Bash completion
-(require 'bash-completion)
-(bash-completion-setup)
+;; (require 'bash-completion)
+;; (bash-completion-setup)
 
 ;; Insert time
 ;; (https://stackoverflow.com/questions/251908/how-can-i-insert-current-date-and-time-into-a-file-using-emacs)
