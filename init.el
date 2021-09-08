@@ -1519,7 +1519,6 @@ open and unsaved."
   (cl-loop with cur = (reverse arg)
            with ret = cur
            with stop = nil
-           repeat 5
            with next = nil
            do (progn
                 (setq next (choose-for-ngram grouped-transitions
