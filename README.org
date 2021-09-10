@@ -1,4 +1,4 @@
-* Emacs configuration
+* My Emacs Configuration
 
 Maybe don't use this for now, except to steal snippets.  
 Old version in =org/init.org=.  The [[org/init.pdf][PDF file]] provides a more literate
