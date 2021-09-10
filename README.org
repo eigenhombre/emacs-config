@@ -1,8 +1,8 @@
 * Emacs configuration
 
+Maybe don't use this for now, except to steal snippets.  
 Old version in =org/init.org=.  The [[org/init.pdf][PDF file]] provides a more literate
-version.  New version / rework in progress.  Maybe don't use this for
-now, except to steal snippets.
+version, which I abandoned.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
