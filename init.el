@@ -67,6 +67,8 @@
         htmlize
         racket-mode
         scala-mode
+        typescript-mode
+        yaml-mode
 	zenburn-theme))
 
 
@@ -191,12 +193,12 @@
   (put-clojure-indent 'addtest 1)
   (put-clojure-indent 'after 1)
   (put-clojure-indent 'after-all 1)
-  ;; (put-clojure-indent 'api 1)
+  ;;(put-clojure-indent 'api 0)
   (put-clojure-indent 'are 1)
   (put-clojure-indent 'around 1)
   (put-clojure-indent 'before 0)
   (put-clojure-indent 'before-all 0)
-  (put-clojure-indent 'cond-> 1)
+  (put-clojure-indent 'cond-> 0)
   (put-clojure-indent 'check-cw-metric 2)
   (put-clojure-indent 'context 2)
   (put-clojure-indent 'context* 2)
@@ -234,7 +236,10 @@
   (put-clojure-indent 'problem 1)
   (put-clojure-indent 'process-safely 2)
   (put-clojure-indent 'prop/for-all 1)
+  (put-clojure-indent 'proxy 1)
   (put-clojure-indent 'route-middleware 1)
+  (put-clojure-indent 'redef-dl-fast 0)
+  (put-clojure-indent 'redef-dl 0)
   (put-clojure-indent 'section 1)
   (put-clojure-indent 'service-unavailable 0)
   (put-clojure-indent 'should 0)
@@ -320,7 +325,6 @@
 ;; (require 'lsp-ui)
 
 ;; (setq lsp-ui-doc-position 'top)
-
 (add-hook 'clojure-mode-hook
           '(lambda ()
              (paredit-mode 1)
@@ -808,11 +812,15 @@
 (org-babel-do-load-languages
  'org-babel-load-languages '((shell . t)
                              (clojure . t)
+                             (python . t)
                              (plantuml . t)))
 
 ;; https://emacs.stackexchange.com/questions/2952/display-errors-and-warnings-in-an-org-mode-code-block:
 (defvar org-babel-eval-verbose t
   "A non-nil value makes `org-babel-eval' display")
+
+(setq org-indent-indentation-per-level 0)
+(setq org-adapt-indentation nil)
 
 (defun org-babel-eval (cmd body)
   "Run CMD on BODY.
@@ -979,6 +987,7 @@ STDERR with `org-babel-eval-error-notify'."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(cider-test-default-exclude-selectors '("" "slow"))
  '(cljr-favor-prefix-notation nil)
  '(global-linum-mode nil)
  '(helm-completion-style 'emacs)
@@ -992,6 +1001,11 @@ STDERR with `org-babel-eval-error-notify'."
 ;;    '(lsp-mode go-mode rust-mode org-roam bash-completion decide flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
 ;;               '(recentf-max-menu-items 100))))
 ;; >>>>>>> 626ca2c (Home state)
+;; =======
+;;    '(yaml-mode typescript-mode typescript lsp-ui lsp-mode rust-mode org-roam bash-completion decide flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+;;                '(recentf-max-menu-items 100)))
+;;  '(ring-bell-function 'ignore))
+;; >>>>>>> 62b1bee (Work)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -1098,8 +1112,8 @@ STDERR with `org-babel-eval-error-notify'."
 
 ;; ;;; COMMON LISP STUFF
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
-;; ;;(setq inferior-lisp-program "/usr/local/bin/sbcl")
-;; (setq inferior-lisp-program "/usr/local/bin/sbcl --dynamic-space-size 8192")
+;;(setq inferior-lisp-program "/usr/local/bin/sbcl")
+(setq inferior-lisp-program "/usr/local/bin/sbcl --dynamic-space-size 8192")
 
 (defun lisp-indents ()
   (put 'with-charms 'lisp-indent-function 0)
@@ -1268,7 +1282,7 @@ open and unsaved."
 
 
 ;; Play around with transparency a little bit
-(set-frame-parameter (selected-frame) 'alpha '(95 . 80))
+(set-frame-parameter (selected-frame) 'alpha '(99 . 80))
 
 ;; Racket setup
 (defun racket-eval-insert-last-sexp ()
