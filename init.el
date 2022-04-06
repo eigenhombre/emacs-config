@@ -30,6 +30,7 @@
 	expand-region
 	forecast
 	gist
+        go-mode
 	helm
 	helm-projectile
         hideshow
@@ -38,8 +39,8 @@
 	flycheck
         ;; flycheck-clj-kondo
 	lorem-ipsum
-	lsp-mode
 	lsp-ui
+        lsp-mode
 	magit
 	magit-gh-pulls
 	markdown-mode
@@ -441,7 +442,7 @@
                           (insert (format-time-string "%Y-%m-%d %H:%M"))))
 (global-set-key "\C-xS" 'sort-lines)
 ;;(global-set-key "\C-w" 'backward-kill-word)
-(global-set-key "\C-x\C-k" 'kill-region)
+;; (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key "\C-ok" 'comment-region)
 (global-set-key "\C-oK" 'helm-show-kill-ring)
@@ -786,6 +787,7 @@
   (mapcar 'purecopy
 	  '((c-mode "{" "}" "/[*/]" nil nil)
 	    (c++-mode "{" "}" "/[*/]" nil nil)
+	    (go-mode "{" "}" "/[*/]" nil nil)
 	    (bibtex-mode ("@\\S(*\\(\\s(\\)" 1))
 	    (java-mode "{" "}" "/[*/]" nil nil)
 	    (js-mode "{" "}" "/[*/]" nil)
@@ -954,6 +956,19 @@ STDERR with `org-babel-eval-error-notify'."
 (define-key org-mode-map (kbd "S-<down>") 'md-org-table-swap-cell-down)
 
 
+;; LSP stuff (home - sync w/ work):
+(require 'lsp-mode)
+(add-hook 'go-mode-hook #'lsp)
+(add-hook 'go-mode 'hs-minor-mode)
+
+(defun my-go-mode-hook ()
+  "https://groups.google.com/g/golang-nuts/c/c176nKcyoDQ"
+  (setq gofmt-command "goimports")
+  (add-hook 'before-save-hook 'gofmt-before-save)
+  (hs-minor-mode)
+  (setq tab-width 2 indent-tabs-mode 1))
+
+(add-hook 'go-mode-hook 'my-go-mode-hook)
 
 ;; Magit / GitHub ...........
 ;; (require 'magit-gh-pulls)
@@ -971,10 +986,12 @@ STDERR with `org-babel-eval-error-notify'."
  '(magit-push-always-verify nil)
  '(markdown-command "/usr/local/bin/markdown")
  '(package-selected-packages
-   (quote
-    (lsp-ui lsp-mode rust-mode org-roam bash-completion decide flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
-            (quote
-             (recentf-max-menu-items 100))))))
+   '(lsp-ui lsp-mode go-mode rust-mode org-roam bash-completion decide flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+            '(recentf-max-menu-items 100))))
+;; =======
+;;    '(lsp-mode go-mode rust-mode org-roam bash-completion decide flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
+;;               '(recentf-max-menu-items 100))))
+;; >>>>>>> 626ca2c (Home state)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -1092,7 +1109,8 @@ STDERR with `org-babel-eval-error-notify'."
   (put '-> 'common-lisp-indent-function 0)
   (put 'lazy 'common-lisp-indent-function 1)
   (put 'lazy-for 'common-lisp-indent-function 1)
-  (put 'define-aspect 'common-lisp-indent-function '1))
+  (put 'define-aspect 'common-lisp-indent-function 1)
+  (put 'testing 'common-lisp-indent-function 1))
 
 (add-hook 'lisp-mode-hook
           (lambda ()
@@ -1107,7 +1125,7 @@ STDERR with `org-babel-eval-error-notify'."
             (load "/Users/jacobsen/quicklisp/clhs-use-local.el" t)
             (define-key lisp-mode-map (kbd "C-o j") 'slime)
             (define-key lisp-mode-map (kbd "C-c q") 'slime-quit-lisp)
-            (define-key lisp-mode-map (kbd "s-i") ' slime-eval-last-expression)
+            (define-key lisp-mode-map (kbd "s-i") 'slime-eval-last-expression)
             (define-key lisp-mode-map (kbd "s-I")
               (lambda ()
                 (interactive)
@@ -1120,7 +1138,13 @@ STDERR with `org-babel-eval-error-notify'."
                 (interactive)
                 (insert "\n;;=>\n'")
                 (setq current-prefix-arg t) ; C-u
-                (slime-eval-last-expression)))))
+                (slime-eval-last-expression)))
+            ;; Remove the following if you want to restore Slime tracing:
+            (define-key lisp-mode-map (kbd "C-c C-n") nil)
+            (define-key lisp-mode-map (kbd "C-c C-n C-t")
+              (lambda ()
+                (interactive)
+                (slime-interactive-eval "(asdf:test-system :miners)")))))
 
 ;;; Journaling:
 (setq org-home (concat (getenv "HOME") "/org"))
@@ -1583,8 +1607,8 @@ open and unsaved."
 (defun generate-name (arg)
   (cl-loop with cur = (reverse arg)
            with ret = cur
-           with stop = nil
-           with next = nil
+           with stop
+           with next
            do (progn
                 (setq next (choose-for-ngram grouped-transitions
                                              (reverse cur)))
@@ -1598,6 +1622,16 @@ open and unsaved."
            until stop
            finally (return (apply #'concat (reverse ret)))))
 
+(comment
+ (cl-loop repeat 10 collect (generate-name '("a" "i"))))
+
+(defun namegen-char-behind-point-as-lc-string (n-chars-back)
+  (char-to-string (downcase (char-after (- (point) n-chars-back)))))
+
+(defun namegen-seed-from-point ()
+  (list (namegen-char-behind-point-as-lc-string 2)
+        (namegen-char-behind-point-as-lc-string 1)))
+
 (defvar namegen-mode-map
   (let ((map (make-sparse-keymap)))
     ;; Turn the mode off:
@@ -1606,12 +1640,10 @@ open and unsaved."
         (interactive)
         (namegen-mode 'toggle)))
     ;; "grow" name starting at point based on previous two characters:
-    (define-key map (kbd "n")
+    (define-key map (kbd "<tab>")
       (lambda ()
         (interactive)
-        (let ((seed (list (char-to-string (char-after (- (point) 2)))
-                          (char-to-string (char-after (- (point) 1))))))
-          (insert (substring (generate-name seed) 2)))))
+        (insert (substring (generate-name (namegen-seed-from-point)) 2))))
     map))
 
 (define-minor-mode namegen-mode
@@ -1626,16 +1658,16 @@ open and unsaved."
                                   (namegen-mode t)))
 
 (comment
- (namegen-mode 'toggle)
+ (namegen-mode 'toggle))
 
- )
-;; (frequencies
-;;  (cl-loop repeat 10000 collect (choose-for-ngram grouped-and-simplified
-;;                                                  '("a" "i"))))
+;; Keyboard macros
+(fset 'blogtags
+      (kmacro-lambda-form [?\C-s ?d ?r ?a ?f ?t ?\C-e right up ?\C-k ?t ?a ?g ?s ?: ?  ?\[ ?\" ?s ?o ?u ?t ?h ?p ?o ?l ?e ?\" ?\] ?\C-s ?* ?  left left down ?\s-x return ?- ?- ?- return] 0 "%d"))
+(global-set-key [24 11 49] 'blogtags)
 
-;; ;;=>
-;; '(("d" . 2446) ("r" . 2553) ("m" . 5001))
-
+(fset 'picmac
+      (kmacro-lambda-form [?\C-s ?# ?+ ?N ?A ?M ?E ?\C-e right up ?\C-t down down down right right right right right right right right left ?\s-x ?< ?< backspace backspace ?\{ ?\{ ?< ?\S-  ?p ?i ?c ?  ?\C-e backspace backspace ?  ?\} ?\} backspace backspace ?> ?\} ?\}] 0 "%d"))
+(global-set-key [24 11 50] 'picmac)
 
 (provide 'init)
 (put 'upcase-region 'disabled nil)

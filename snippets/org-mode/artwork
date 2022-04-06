@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: artwork
+# key: artwork
+# --
+#+NAME: $1
+#+ATTR_LATEX: :width 1\linewidth
+#+ATTR_HTML: :class img100
+[[file:./$1.jpg][file:./$1.jpg]]
+| Title |
+| Year|
+| Medium |
+| Dimensions |
+| Framed? |
+| Price |
+-----
