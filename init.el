@@ -504,6 +504,9 @@
 (global-set-key (kbd "s-0") 'org-todo-list)
 (global-set-key (kbd "M-k") 'kill-current-buffer)
 
+(global-set-key "\C-cdts" (lambda ()
+                            (interactive)
+                            (insert (format-time-string "%Y-%m-%d %H%M%S"))))
 ;; Shortcuts for jumping directly into or evaluating commonly-used buffers:
 (global-set-key "\C-oO" (lambda ()
                           (interactive)
@@ -997,15 +1000,6 @@ STDERR with `org-babel-eval-error-notify'."
  '(package-selected-packages
    '(lsp-ui lsp-mode go-mode rust-mode org-roam bash-completion decide flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
             '(recentf-max-menu-items 100))))
-;; =======
-;;    '(lsp-mode go-mode rust-mode org-roam bash-completion decide flycheck-clj-kondo flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
-;;               '(recentf-max-menu-items 100))))
-;; >>>>>>> 626ca2c (Home state)
-;; =======
-;;    '(yaml-mode typescript-mode typescript lsp-ui lsp-mode rust-mode org-roam bash-completion decide flycheck flake8 restclient racket-mode geiser scala-mode ac-js2 adoc-mode aggressive-indent bea beacon cider clj-refactor clojure-mode clojure-snippets company expand-region forecast git-timemachine hcl-mode helm helm-projectile htmlize js2-mode json-mode lorem-ipsum magit magit-gh-pulls markdown-mode multiple-cursors nodejs-repl olivetti paredit projectile rainbow-delimiters tagedit which-key yasnippet zenburn-theme
-;;                '(recentf-max-menu-items 100)))
-;;  '(ring-bell-function 'ignore))
-;; >>>>>>> 62b1bee (Work)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -1110,10 +1104,9 @@ STDERR with `org-babel-eval-error-notify'."
 ;; suppress irritating terminal warnings:
 (setenv "PAGER" "cat")
 
-;; ;;; COMMON LISP STUFF
-;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
-;;(setq inferior-lisp-program "/usr/local/bin/sbcl")
-(setq inferior-lisp-program "/usr/local/bin/sbcl --dynamic-space-size 8192")
+;; COMMON LISP STUFF
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "/opt/homebrew/bin/sbcl --dynamic-space-size 8192 --noinform")
 
 (defun lisp-indents ()
   (put 'with-charms 'lisp-indent-function 0)
@@ -1125,6 +1118,17 @@ STDERR with `org-babel-eval-error-notify'."
   (put 'lazy-for 'common-lisp-indent-function 1)
   (put 'define-aspect 'common-lisp-indent-function 1)
   (put 'testing 'common-lisp-indent-function 1))
+
+(defun get-common-lisp-test-package-name ()
+  (save-excursion
+    (goto-char 0)
+    (goto-char (re-search-forward "defpackage"))
+    (forward-symbol 1)
+    (let* ((package-name (thing-at-point 'symbol t))
+           (maybe-has-colon (if (string-match-p "-test$" package-name)
+                                package-name
+                              (concatenate 'string package-name "-test"))))
+      (replace-regexp-in-string "\\:" ""  maybe-has-colon))))
 
 (add-hook 'lisp-mode-hook
           (lambda ()
@@ -1158,7 +1162,24 @@ STDERR with `org-babel-eval-error-notify'."
             (define-key lisp-mode-map (kbd "C-c C-n C-t")
               (lambda ()
                 (interactive)
-                (slime-interactive-eval "(asdf:test-system :miners)")))))
+                (let* ((test-package-name (get-common-lisp-test-package-name))
+                       (to-eval (concatenate 'string "(" test-package-name ":run-tests)")))
+                  (slime-interactive-eval to-eval))))))
+
+(comment
+ ;; Used for testing Common Lisp -- change buffer name if you have a
+ ;; different working buffer loaded already:
+ (defmacro in-test-buffer (&rest body)
+   (let ((cb (gensym))
+         (result (gensym)))
+     `(let ((,cb (current-buffer)))
+        (set-buffer (get-buffer "pizza-pi.lisp"))
+        (let ((,result (progn
+                         ,@body)))
+          (set-buffer ,cb)
+          ,result))))
+
+ (in-test-buffer (get-common-lisp-test-package-name)))
 
 ;;; Journaling:
 (setq org-home (concat (getenv "HOME") "/org"))
