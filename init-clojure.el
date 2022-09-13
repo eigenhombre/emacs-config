@@ -225,3 +225,6 @@
 		    "(require 'marginalia.core)
                      (marginalia.core/run-marginalia nil)
                      (clojure.java.shell/sh \"open\" \"docs/uberdoc.html\")"))))
+
+;; Babashka
+(add-to-list 'auto-mode-alist '("\\.bb\\'" . clojure-mode))
